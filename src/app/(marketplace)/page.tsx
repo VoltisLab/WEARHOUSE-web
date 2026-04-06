@@ -34,8 +34,8 @@ export default function MarketplaceHomePage() {
 
   return (
     <div className="space-y-8 pb-6">
-      <section className="rounded-2xl bg-gradient-to-br from-[#ab28b2]/14 via-white to-prel-bg-grouped p-6 shadow-ios ring-1 ring-[var(--prel-primary)]/18 md:p-8 lg:p-10">
-        <h1 className="text-[26px] font-bold leading-tight tracking-tight text-prel-label md:text-3xl lg:text-4xl">
+      <section className="rounded-2xl bg-gradient-to-br from-[#ab28b2]/14 via-white to-prel-bg-grouped p-4 shadow-ios ring-1 ring-[var(--prel-primary)]/18 sm:p-6 md:p-8 lg:p-10">
+        <h1 className="text-[24px] font-bold leading-tight tracking-tight text-prel-label sm:text-[26px] md:text-3xl lg:text-4xl">
           Discover pre-loved fashion
         </h1>
         <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-prel-secondary-label md:text-[16px]">
@@ -87,7 +87,7 @@ export default function MarketplaceHomePage() {
           </p>
         ) : null}
         {(!mounted || loading) && !data ? (
-          <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
@@ -102,7 +102,7 @@ export default function MarketplaceHomePage() {
             ))}
           </div>
         ) : null}
-        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
           {rows.map((p) => (
             <MarketplaceProductCard key={p.id} p={p} />
           ))}

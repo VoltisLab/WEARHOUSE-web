@@ -7,6 +7,12 @@ import { useMemo, useState } from "react";
 import { MARKETPLACE_PRODUCT } from "@/graphql/queries/marketplace";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { formatMoney } from "@/lib/format";
+import {
+  formatProductCondition,
+  humanizeEnumLabel,
+  productPriceDisplay,
+  sizeDisplayValue,
+} from "@/lib/product-display";
 import { normalizeProductImageUrls } from "@/lib/product-images";
 import { publicItemUrl, publicWebHostname } from "@/lib/constants";
 import { useClientMounted } from "@/lib/use-client-mounted";
@@ -65,23 +71,43 @@ export default function MarketplaceProductPage() {
     );
   }
 
-  const price =
+  const { sale, original } = productPriceDisplay(
+    Number(p.price ?? 0),
     p.discountPrice != null && String(p.discountPrice) !== ""
-      ? p.discountPrice
-      : p.price;
+      ? Number(p.discountPrice)
+      : null,
+  );
+
+  const metaRows: { label: string; value: string }[] = [];
+  if (p.category?.name?.trim())
+    metaRows.push({ label: "Category", value: p.category.name.trim() });
+  if (p.size?.name?.trim()) {
+    const sz = sizeDisplayValue(p.size.name);
+    if (sz && sz !== "—") metaRows.push({ label: "Size", value: sz });
+  }
+  if (p.brand?.name?.trim())
+    metaRows.push({ label: "Brand", value: p.brand.name.trim() });
+  if (p.condition) {
+    const cond = formatProductCondition(String(p.condition));
+    if (cond && cond !== "—") metaRows.push({ label: "Condition", value: cond });
+  }
+  if (p.style?.trim()) {
+    const st = humanizeEnumLabel(p.style.trim());
+    if (st && st !== "—") metaRows.push({ label: "Style", value: st });
+  }
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6 pb-10 lg:space-y-8">
+    <div className="mx-auto max-w-6xl space-y-5 pb-10 sm:space-y-6 md:space-y-8">
       <Link
         href="/search"
-        className="inline-block text-[15px] font-semibold text-[var(--prel-primary)]"
+        className="inline-block min-h-[44px] py-2 text-[15px] font-semibold text-[var(--prel-primary)] [-webkit-tap-highlight-color:transparent]"
       >
         ← Browse
       </Link>
 
-      <div className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-start lg:gap-10 xl:gap-12">
-        <div className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border lg:sticky lg:top-24">
-          <div className="relative aspect-square bg-prel-bg-grouped md:aspect-[4/5] lg:aspect-square">
+      <div className="md:grid md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] md:items-start md:gap-6 lg:gap-10 xl:gap-12">
+        <div className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border md:sticky md:top-[4.75rem] lg:top-24">
+          <div className="relative aspect-square w-full bg-prel-bg-grouped md:aspect-[4/5] lg:aspect-square">
             {urls.length > 0 ? (
               <SafeImage
                 src={urls[safeSlide]}
@@ -123,27 +149,42 @@ export default function MarketplaceProductPage() {
           ) : null}
         </div>
 
-        <div className="mt-6 space-y-6 lg:mt-0">
-          <div className="space-y-2">
-            <h1 className="text-[22px] font-bold leading-tight text-prel-label md:text-[26px] lg:text-[28px]">
+        <div className="mt-5 space-y-5 sm:mt-6 sm:space-y-6 md:mt-0">
+          <div className="space-y-3">
+            <h1 className="text-[22px] font-bold leading-tight text-prel-label sm:text-[24px] md:text-[26px] lg:text-[28px]">
               {p.name}
             </h1>
-            <p className="text-[24px] font-bold text-[var(--prel-primary)] md:text-[28px]">
-              {formatMoney(price)}
-            </p>
-            <div className="flex flex-wrap gap-x-3 gap-y-1 text-[13px] text-prel-secondary-label md:text-[14px]">
-              {p.category?.name ? <span>{p.category.name}</span> : null}
-              {p.size?.name ? <span>{p.size.name}</span> : null}
-              {p.brand?.name ? <span>{p.brand.name}</span> : null}
-              {p.condition ? <span>{String(p.condition)}</span> : null}
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <p className="text-[24px] font-bold text-[var(--prel-primary)] sm:text-[26px] md:text-[28px]">
+                {formatMoney(sale)}
+              </p>
+              {original != null ? (
+                <p className="text-[17px] font-semibold text-prel-secondary-label line-through">
+                  {formatMoney(original)}
+                </p>
+              ) : null}
             </div>
+            {metaRows.length > 0 ? (
+              <dl className="mt-1 space-y-2 rounded-xl bg-white/80 px-4 py-3 shadow-ios ring-1 ring-prel-glass-border sm:px-4 sm:py-3.5">
+                {metaRows.map(({ label, value }) => (
+                  <div key={label} className="flex flex-col gap-0.5">
+                    <dt className="text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
+                      {label}
+                    </dt>
+                    <dd className="text-[15px] font-medium leading-snug text-prel-label">
+                      {value}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
           </div>
 
           <a
             href={publicItemUrl(p.listingCode, p.id)}
             target="_blank"
             rel="noreferrer"
-            className="flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-[var(--prel-primary)] text-[16px] font-semibold text-white shadow-ios lg:max-w-md"
+            className="flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-[var(--prel-primary)] text-[16px] font-semibold text-white shadow-ios [-webkit-tap-highlight-color:transparent] active:opacity-95 md:max-w-md"
           >
             Open on {publicWebHostname()}
           </a>

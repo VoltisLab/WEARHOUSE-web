@@ -182,7 +182,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col bg-prel-bg-grouped text-prel-label">
       <header className="sticky top-0 z-40 border-b border-prel-separator bg-prel-nav/95 pt-[env(safe-area-inset-top)] backdrop-blur-md md:pt-0">
-        <div className="mx-auto flex h-[52px] max-w-7xl items-center gap-3 px-4 md:h-[4.25rem] md:gap-6 md:px-8 lg:px-10">
+        <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-[4.25rem] md:gap-6 md:px-8 lg:px-10">
           <Link
             href="/"
             className="shrink-0 text-[20px] font-bold tracking-tight text-[var(--prel-primary)] md:text-[22px]"
@@ -208,7 +208,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 pt-5 md:max-w-7xl md:px-8 md:pt-8 lg:px-10">
+      <main className="mx-auto w-full max-w-lg flex-1 px-3 pt-4 sm:max-w-2xl sm:px-5 sm:pt-5 md:max-w-7xl md:px-8 md:pt-8 lg:px-10">
         {children}
       </main>
 

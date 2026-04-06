@@ -29,6 +29,7 @@ export const MARKETPLACE_FEED = gql`
       listingCode
       status
       price
+      discountPrice
       imagesUrl
       seller {
         username

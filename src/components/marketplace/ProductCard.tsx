@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { formatMoney } from "@/lib/format";
+import { productPriceDisplay } from "@/lib/product-display";
 import { firstProductImageUrl } from "@/lib/product-images";
 
 export type MarketplaceProductRow = {
@@ -11,6 +12,7 @@ export type MarketplaceProductRow = {
   listingCode?: string | null;
   status?: string | null;
   price?: number | string | null;
+  discountPrice?: number | string | null;
   imagesUrl?: unknown;
   seller?: { username?: string | null } | null;
   category?: { name?: string | null } | null;
@@ -18,6 +20,12 @@ export type MarketplaceProductRow = {
 
 export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
   const img = firstProductImageUrl(p.imagesUrl);
+  const { sale, original } = productPriceDisplay(
+    Number(p.price ?? 0),
+    p.discountPrice != null && p.discountPrice !== ""
+      ? Number(p.discountPrice)
+      : null,
+  );
   return (
     <Link
       href={`/product/${p.id}`}
@@ -40,7 +48,16 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
           {p.name ?? "Listing"}
         </p>
         <p className="text-[15px] font-bold text-[var(--prel-primary)]">
-          {formatMoney(p.price)}
+          {original != null ? (
+            <>
+              <span className="mr-2 text-[13px] font-semibold text-prel-secondary-label line-through">
+                {formatMoney(original)}
+              </span>
+              {formatMoney(sale)}
+            </>
+          ) : (
+            formatMoney(sale)
+          )}
         </p>
         {p.seller?.username ? (
           <p className="text-[12px] text-prel-secondary-label">

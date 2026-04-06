@@ -106,7 +106,7 @@ function SearchInner() {
             <Link
               key={label}
               href={href}
-              className={`rounded-full px-3.5 py-2 text-[13px] font-semibold shadow-ios ring-1 transition ${
+              className={`inline-flex min-h-[44px] items-center rounded-full px-3.5 py-2 text-[13px] font-semibold shadow-ios ring-1 transition [-webkit-tap-highlight-color:transparent] active:opacity-90 sm:px-4 ${
                 on
                   ? "bg-[var(--prel-primary)] text-white ring-[var(--prel-primary)]"
                   : "bg-white text-prel-label ring-prel-glass-border hover:bg-prel-bg-grouped"
@@ -139,7 +139,7 @@ function SearchInner() {
         </p>
       ) : null}
 
-      <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
         {rows.map((p) => (
           <MarketplaceProductCard key={p.id} p={p} />
         ))}

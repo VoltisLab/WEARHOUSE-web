@@ -21,9 +21,13 @@ function bearerFromStorage(): string {
   return token ? `Bearer ${token}` : "";
 }
 
+/**
+ * Same-origin `/api/graphql` avoids browser CORS; Next rewrites proxy to
+ * `GRAPHQL_PROXY_TARGET` (see `next.config.ts`). Override with
+ * `NEXT_PUBLIC_GRAPHQL_URI` only if the API allows your origin.
+ */
 const GRAPHQL_URI =
-  process.env.NEXT_PUBLIC_GRAPHQL_URI ||
-  "https://prelura.voltislabs.uk/graphql/";
+  process.env.NEXT_PUBLIC_GRAPHQL_URI?.trim() || "/api/graphql";
 
 const GRAPHQL_WS_URI = process.env.NEXT_PUBLIC_GRAPHQL_WS_URI?.trim() ?? "";
 

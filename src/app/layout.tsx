@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ApolloProviderWrapper } from "@/lib/ApolloProviderWrapper";
 import { AuthProvider } from "@/contexts/AuthContext";
@@ -10,6 +10,12 @@ export const metadata: Metadata = {
     template: "%s · WEARHOUSE",
   },
   description: "WEARHOUSE marketplace preview and staff console (web)",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

@@ -215,7 +215,7 @@ function IOSStaffShellReady({ children }: { children: React.ReactNode }) {
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto px-4 pb-24 pt-4 md:px-8 md:pb-8">
+        <main className="flex-1 overflow-auto px-3 pb-24 pt-4 sm:px-5 md:px-8 md:pb-8">
           {children}
         </main>
       </div>
@@ -265,7 +265,7 @@ function IOSStaffShellFallback({ children }: { children: React.ReactNode }) {
           <div className="h-8 w-40 animate-pulse rounded-lg bg-prel-glass md:h-9 md:w-48" />
         </header>
 
-        <main className="flex-1 overflow-auto px-4 pb-24 pt-4 md:px-8 md:pb-8">
+        <main className="flex-1 overflow-auto px-3 pb-24 pt-4 sm:px-5 md:px-8 md:pb-8">
           {children}
         </main>
       </div>

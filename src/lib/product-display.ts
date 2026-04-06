@@ -1,20 +1,39 @@
-/** Maps backend condition enums to consumer-facing copy (Item.swift). */
+/** Generic backend enum / snake_case → readable words (e.g. `CASUAL` → `Casual`). */
+export function humanizeEnumLabel(raw: string | null | undefined): string {
+  const s = (raw ?? "").trim();
+  if (!s) return "—";
+  return s
+    .split(/[\s_]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
+
+/** Normalise backend enum / accidental spaces → UPPER_SNAKE for matching. */
+function normalizeConditionKey(raw: string): string {
+  return raw.trim().toUpperCase().replace(/\s+/g, "_");
+}
+
+/**
+ * Maps backend condition enums to sentence-style copy (never raw `GOOD_CONDITION`).
+ * Unknown values become title-style words, not screaming snake_case.
+ */
 export function formatProductCondition(condition: string | null | undefined): string {
   const raw = (condition ?? "").trim();
   if (!raw) return "—";
-  switch (raw.toUpperCase()) {
+  switch (normalizeConditionKey(raw)) {
     case "BRAND_NEW_WITH_TAGS":
-      return "Brand New With Tags";
+      return "Brand new with tags";
     case "BRAND_NEW_WITHOUT_TAGS":
-      return "Brand new Without Tags";
+      return "Brand new without tags";
     case "EXCELLENT_CONDITION":
-      return "Excellent Condition";
+      return "Excellent condition";
     case "GOOD_CONDITION":
-      return "Good Condition";
+      return "Good condition";
     case "HEAVILY_USED":
-      return "Heavily Used";
+      return "Heavily used";
     default:
-      return raw;
+      return humanizeEnumLabel(raw);
   }
 }
 
