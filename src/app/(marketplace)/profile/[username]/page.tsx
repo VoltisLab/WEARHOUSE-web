@@ -7,7 +7,6 @@ import { useMemo, useState } from "react";
 import {
   Bookmark,
   LayoutDashboard,
-  LogOut,
   MessageCircle,
   Package,
   Pencil,
@@ -39,7 +38,7 @@ export default function MarketplacePublicProfilePage() {
   const params = useParams();
   const router = useRouter();
   const rawUsername = decodeURIComponent(String(params.username ?? ""));
-  const { userToken, logoutUser } = useAuth();
+  const { userToken } = useAuth();
 
   const { data: meData } = useQuery(VIEW_ME, {
     skip: !mounted || !userToken,
@@ -189,17 +188,6 @@ export default function MarketplacePublicProfilePage() {
                     Staff
                   </Link>
                 ) : null}
-                <button
-                  type="button"
-                  onClick={() => {
-                    logoutUser();
-                    router.replace("/");
-                  }}
-                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-error shadow-ios"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Sign out
-                </button>
               </div>
             ) : (
               <div className="mt-4 flex flex-wrap items-center justify-center gap-3 md:justify-start">
@@ -277,7 +265,11 @@ export default function MarketplacePublicProfilePage() {
       ) : (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
           {rows.map((p) => (
-            <MarketplaceProductCard key={p.id} p={p} />
+            <MarketplaceProductCard
+              key={p.id}
+              p={p}
+              hideSellerUsername={isOwnProfile}
+            />
           ))}
         </div>
       )}

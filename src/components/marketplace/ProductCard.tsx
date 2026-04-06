@@ -15,10 +15,18 @@ export type MarketplaceProductRow = {
   discountPrice?: number | string | null;
   imagesUrl?: unknown;
   seller?: { username?: string | null } | null;
+  brand?: { id?: number | null; name?: string | null } | null;
   category?: { name?: string | null } | null;
 };
 
-export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
+export function MarketplaceProductCard({
+  p,
+  hideSellerUsername = false,
+}: {
+  p: MarketplaceProductRow;
+  /** Hide @seller on own shop / profile (redundant for the viewer). */
+  hideSellerUsername?: boolean;
+}) {
   const img = firstProductImageUrl(p.imagesUrl);
   const { sale, original } = productPriceDisplay(
     Number(p.price ?? 0),
@@ -49,6 +57,11 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
         ) : null}
       </div>
       <div className="space-y-1 p-3">
+        {p.brand?.name?.trim() ? (
+          <p className="line-clamp-1 text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
+            {p.brand.name.trim()}
+          </p>
+        ) : null}
         <p className="line-clamp-2 text-[14px] font-semibold leading-snug text-prel-label">
           {p.name ?? "Listing"}
         </p>
@@ -64,7 +77,7 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
             formatMoney(sale)
           )}
         </p>
-        {p.seller?.username ? (
+        {!hideSellerUsername && p.seller?.username ? (
           <p className="text-[12px] text-prel-secondary-label">
             @{p.seller.username}
           </p>

@@ -36,6 +36,10 @@ export const MARKETPLACE_FEED = gql`
       seller {
         username
       }
+      brand {
+        id
+        name
+      }
       category {
         id
         name

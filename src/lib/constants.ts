@@ -1,5 +1,5 @@
 export const PUBLIC_WEB_BASE =
-  process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? "https://prelura.uk";
+  process.env.NEXT_PUBLIC_PUBLIC_WEB_URL ?? "https://mywearhouse.com";
 
 export const GRAPHQL_URI =
   process.env.NEXT_PUBLIC_GRAPHQL_URI ??

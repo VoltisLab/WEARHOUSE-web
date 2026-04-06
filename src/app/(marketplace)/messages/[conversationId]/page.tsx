@@ -4,6 +4,7 @@ import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Headphones } from "lucide-react";
 import { CONVERSATION_BY_ID } from "@/graphql/queries/chat";
 import { CONVERSATION_MESSAGES, VIEW_ME } from "@/graphql/queries/admin";
 import { SEND_MESSAGE } from "@/graphql/mutations/chat";
@@ -18,6 +19,27 @@ import {
   type ChatWsInbound,
 } from "@/hooks/useChatRoomSocket";
 import { isSupportSystemUsername } from "@/lib/chat-message-parse";
+
+function peerInitials(conv: {
+  recipient?: {
+    displayName?: string | null;
+    username?: string | null;
+  } | null;
+} | null): string {
+  const dn = conv?.recipient?.displayName?.trim();
+  if (dn) {
+    const parts = dn.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      const a = parts[0][0];
+      const b = parts[1][0];
+      if (a && b) return (a + b).toUpperCase();
+    }
+    return dn.slice(0, 2).toUpperCase();
+  }
+  const u = conv?.recipient?.username?.trim().replace(/^@/, "");
+  if (u) return u.slice(0, 2).toUpperCase();
+  return "?";
+}
 
 export default function MarketplaceChatThreadPage() {
   const params = useParams();
@@ -155,13 +177,29 @@ export default function MarketplaceChatThreadPage() {
           >
             ← Inbox
           </Link>
-          <div className="relative mt-0.5 h-11 w-11 shrink-0 overflow-hidden rounded-full bg-prel-glass ring-1 ring-prel-glass-border">
-            <SafeImage
-              src={peerThumb}
-              alt=""
-              className="h-full w-full object-cover"
-            />
-          </div>
+          {conv?.isSystemConversation ? (
+            <div
+              className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--prel-primary)] to-violet-600 text-white shadow-ios ring-1 ring-black/5"
+              aria-hidden
+            >
+              <Headphones className="h-5 w-5" strokeWidth={1.65} />
+            </div>
+          ) : peerThumb.trim() ? (
+            <div className="relative mt-0.5 h-11 w-11 shrink-0 overflow-hidden rounded-full ring-1 ring-black/8">
+              <SafeImage
+                src={peerThumb}
+                alt=""
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              className="mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 text-[13px] font-bold tracking-tight text-zinc-600 ring-1 ring-black/6"
+              aria-hidden
+            >
+              {peerInitials(conv ?? null)}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold leading-snug text-prel-label">
               {sub}
@@ -289,19 +327,31 @@ export default function MarketplaceChatThreadPage() {
           const avatarSrc = !isOwn
             ? (senderObj?.thumbnailUrl || peerThumb || "")
             : "";
+          const remoteInitials =
+            senderObj?.username?.trim().replace(/^@/, "").slice(0, 2).toUpperCase() ||
+            peerInitials(conv ?? null);
           return (
             <div
               key={String(m.id)}
               className={`flex gap-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
             >
               {!isOwn ? (
-                <div className="mt-0.5 h-9 w-9 shrink-0 self-end overflow-hidden rounded-full bg-prel-glass ring-1 ring-prel-glass-border">
-                  <SafeImage
-                    src={avatarSrc}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                avatarSrc.trim() ? (
+                  <div className="mt-0.5 h-9 w-9 shrink-0 self-end overflow-hidden rounded-full ring-1 ring-black/8">
+                    <SafeImage
+                      src={avatarSrc}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div
+                    className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center self-end rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 text-[11px] font-bold text-zinc-600 ring-1 ring-black/6"
+                    aria-hidden
+                  >
+                    {remoteInitials || "?"}
+                  </div>
+                )
               ) : (
                 <div className="w-9 shrink-0 self-end" aria-hidden />
               )}

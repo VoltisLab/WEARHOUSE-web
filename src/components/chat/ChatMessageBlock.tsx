@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   BadgeCheck,
   Gavel,
+  Headphones,
   Package,
   Shield,
   ShoppingBag,
@@ -367,8 +368,11 @@ export function ChatMessageBlock({
   if (isSystem) {
     return (
       <div className="flex flex-col items-center py-2">
-        <div className="max-w-[95%] rounded-[14px] bg-prel-metric-users/12 px-4 py-3 text-center ring-1 ring-prel-metric-users/25">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-prel-metric-users">
+        <div className="max-w-[95%] rounded-[14px] bg-gradient-to-b from-violet-500/10 to-prel-metric-users/12 px-4 py-3 text-center ring-1 ring-violet-500/20">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-[var(--prel-primary)] to-violet-600 text-white shadow-ios ring-1 ring-black/5">
+            <Headphones className="h-6 w-6" strokeWidth={1.65} aria-hidden />
+          </div>
+          <p className="mt-2 text-[11px] font-semibold uppercase tracking-wide text-prel-metric-users">
             Support / system
           </p>
           <p className="mt-1 text-[13px] text-prel-tertiary-label">

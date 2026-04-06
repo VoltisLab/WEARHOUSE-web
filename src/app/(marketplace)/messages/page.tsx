@@ -4,9 +4,8 @@ import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { MessageCircle } from "lucide-react";
+import { Headphones, MessageCircle, RefreshCw } from "lucide-react";
 import { CONVERSATIONS_INBOX } from "@/graphql/queries/chat";
-import { GlassCard } from "@/components/ui/GlassCard";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { formatRelativeShort } from "@/lib/format";
 import { useAuth } from "@/contexts/AuthContext";
@@ -39,6 +38,59 @@ function threadBadge(c: ConvRow) {
   return "Chat";
 }
 
+function initialsForThread(c: ConvRow): string {
+  const dn = c.recipient?.displayName?.trim();
+  if (dn) {
+    const parts = dn.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      const a = parts[0][0];
+      const b = parts[1][0];
+      if (a && b) return (a + b).toUpperCase();
+    }
+    return dn.slice(0, 2).toUpperCase();
+  }
+  const u = c.recipient?.username?.trim().replace(/^@/, "");
+  if (u) return u.slice(0, 2).toUpperCase();
+  return "?";
+}
+
+function ThreadAvatar({ c }: { c: ConvRow }) {
+  const thumb = c.recipient?.thumbnailUrl?.trim();
+
+  if (c.isSystemConversation) {
+    return (
+      <div
+        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[var(--prel-primary)] to-violet-600 text-white shadow-ios ring-1 ring-black/5"
+        aria-hidden
+      >
+        <Headphones className="h-7 w-7" strokeWidth={1.65} />
+      </div>
+    );
+  }
+
+  if (thumb) {
+    return (
+      <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full ring-1 ring-black/8">
+        <SafeImage
+          src={thumb}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  const initials = initialsForThread(c);
+  return (
+    <div
+      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-zinc-100 to-zinc-200 text-[15px] font-bold tracking-tight text-zinc-600 ring-1 ring-black/6"
+      aria-hidden
+    >
+      {initials}
+    </div>
+  );
+}
+
 export default function MarketplaceMessagesInboxPage() {
   const router = useRouter();
   const { userToken, ready } = useAuth();
@@ -68,17 +120,22 @@ export default function MarketplaceMessagesInboxPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4 pb-24">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="text-[14px] text-prel-secondary-label">
-          Live inbox updates over WebSocket. Open a thread to chat in real time.
-        </p>
+    <div className="mx-auto max-w-2xl space-y-5 pb-24">
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-[22px] font-bold tracking-tight text-prel-label">
+          Messages
+        </h1>
         <button
           type="button"
           onClick={() => refetch()}
-          className="text-[14px] font-semibold text-[var(--prel-primary)]"
+          disabled={loading}
+          className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-prel-secondary-label transition-colors hover:bg-black/5 hover:text-prel-label disabled:opacity-40 [-webkit-tap-highlight-color:transparent]"
+          aria-label="Refresh conversations"
         >
-          Refresh
+          <RefreshCw
+            className={`h-5 w-5 ${loading ? "animate-spin" : ""}`}
+            strokeWidth={2}
+          />
         </button>
       </div>
 
@@ -90,79 +147,82 @@ export default function MarketplaceMessagesInboxPage() {
       )}
 
       {!loading && rows.length === 0 && !error && (
-        <GlassCard>
-          <div className="flex flex-col items-center gap-3 py-8 text-center">
-            <MessageCircle
-              className="h-12 w-12 text-prel-tertiary-label"
-              strokeWidth={1.5}
-            />
-            <p className="text-[16px] font-semibold text-prel-label">
+        <div className="overflow-hidden rounded-2xl bg-white py-10 text-center shadow-ios ring-1 ring-black/[0.06]">
+          <div className="mx-auto flex max-w-sm flex-col items-center gap-3 px-6">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[var(--prel-primary)]/10 text-[var(--prel-primary)]">
+              <MessageCircle className="h-8 w-8" strokeWidth={1.5} />
+            </div>
+            <p className="text-[17px] font-semibold text-prel-label">
               No conversations yet
             </p>
-            <p className="max-w-sm text-[14px] text-prel-secondary-label">
+            <p className="text-[14px] leading-relaxed text-prel-secondary-label">
               Start a chat from a seller&apos;s profile, or open threads from
               the app.
             </p>
           </div>
-        </GlassCard>
+        </div>
       )}
 
-      <ul className="flex flex-col gap-3">
-        {rows.map((c) => {
-          const id = String(c.id);
-          const name =
-            c.recipient?.displayName?.trim() ||
-            (c.recipient?.username ? `@${c.recipient.username}` : "Thread");
-          const preview = c.lastMessage?.text?.trim() || "No preview";
-          const when = c.lastMessage?.createdAt || c.lastModified;
-          const unread = (c.unreadMessagesCount ?? 0) > 0;
+      {rows.length > 0 ? (
+        <ul className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-black/[0.06]">
+          {rows.map((c, i) => {
+            const id = String(c.id);
+            const name =
+              c.recipient?.displayName?.trim() ||
+              (c.recipient?.username ? `@${c.recipient.username}` : "Thread");
+            const preview = c.lastMessage?.text?.trim() || "No preview";
+            const when = c.lastMessage?.createdAt || c.lastModified;
+            const unread = (c.unreadMessagesCount ?? 0) > 0;
+            const isLast = i === rows.length - 1;
 
-          return (
-            <li key={id}>
-              <Link href={`/messages/${id}`}>
-                <GlassCard className="block transition-opacity hover:opacity-95">
-                  <div className="flex gap-3">
-                    <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-full bg-prel-glass ring-1 ring-prel-glass-border">
-                      <SafeImage
-                        src={c.recipient?.thumbnailUrl ?? ""}
-                        alt=""
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <p
-                          className={`truncate text-[16px] font-semibold text-prel-label ${unread ? "" : "font-medium"}`}
-                        >
-                          {name}
-                        </p>
-                        {when ? (
-                          <span className="shrink-0 text-[12px] text-prel-tertiary-label">
-                            {formatRelativeShort(when)}
-                          </span>
-                        ) : null}
-                      </div>
-                      <div className="mt-1 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-[var(--prel-primary)]/15 px-2 py-0.5 text-[10px] font-bold uppercase text-[var(--prel-primary)]">
-                          {threadBadge(c)}
-                        </span>
-                        {unread ? (
-                          <span className="text-[11px] font-semibold text-[var(--prel-primary)]">
-                            {c.unreadMessagesCount} new
-                          </span>
-                        ) : null}
-                      </div>
-                      <p className="mt-1 line-clamp-2 text-[14px] text-prel-secondary-label">
-                        {preview}
+            return (
+              <li key={id} className={isLast ? "" : "border-b border-black/[0.06]"}>
+                <Link
+                  href={`/messages/${id}`}
+                  className="flex gap-3.5 px-4 py-3.5 transition-colors [-webkit-tap-highlight-color:transparent] hover:bg-zinc-50/90 active:bg-zinc-100/80"
+                >
+                  <ThreadAvatar c={c} />
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p
+                        className={`min-w-0 truncate text-[16px] leading-tight text-prel-label ${unread ? "font-semibold" : "font-medium"}`}
+                      >
+                        {name}
                       </p>
+                      {when ? (
+                        <span className="shrink-0 text-[12px] tabular-nums text-prel-tertiary-label">
+                          {formatRelativeShort(when)}
+                        </span>
+                      ) : null}
                     </div>
+                    <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span
+                        className={`inline-flex rounded-md px-1.5 py-px text-[10px] font-bold uppercase tracking-wide ${
+                          c.isSystemConversation
+                            ? "bg-violet-500/12 text-violet-700"
+                            : "bg-zinc-500/10 text-zinc-600"
+                        }`}
+                      >
+                        {threadBadge(c)}
+                      </span>
+                      {unread ? (
+                        <span className="text-[11px] font-semibold text-[var(--prel-primary)]">
+                          {c.unreadMessagesCount} new
+                        </span>
+                      ) : null}
+                    </div>
+                    <p
+                      className={`mt-1 line-clamp-2 text-[14px] leading-snug ${unread ? "text-prel-label/85" : "text-prel-secondary-label"}`}
+                    >
+                      {preview}
+                    </p>
                   </div>
-                </GlassCard>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      ) : null}
     </div>
   );
 }

@@ -11,15 +11,7 @@ import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import { onError } from "@apollo/client/link/error";
 import { createClient } from "graphql-ws";
 
-import { STAFF_TOKEN_KEY, USER_TOKEN_KEY } from "@/lib/auth-tokens";
-
-function bearerFromStorage(): string {
-  if (typeof window === "undefined") return "";
-  const staff = localStorage.getItem(STAFF_TOKEN_KEY);
-  const user = localStorage.getItem(USER_TOKEN_KEY);
-  const token = staff || user;
-  return token ? `Bearer ${token}` : "";
-}
+import { graphqlBearerAuthorizationHeader } from "@/lib/auth-tokens";
 
 /**
  * Same-origin `/api/graphql` avoids browser CORS; Next rewrites proxy to
@@ -36,7 +28,7 @@ const httpLink = new HttpLink({ uri: GRAPHQL_URI });
 const authLink = new ApolloLink((operation, forward) => {
   operation.setContext({
     headers: {
-      authorization: bearerFromStorage(),
+      authorization: graphqlBearerAuthorizationHeader(),
     },
   });
   return forward(operation);
@@ -57,7 +49,7 @@ function makeWsLink(): ApolloLink | null {
     createClient({
       url: GRAPHQL_WS_URI,
       connectionParams: () => {
-        const auth = bearerFromStorage();
+        const auth = graphqlBearerAuthorizationHeader();
         return auth ? { Authorization: auth } : {};
       },
       lazy: true,

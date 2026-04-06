@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { CREATE_CHAT, CREATE_OFFER, CREATE_ORDER } from "@/graphql/mutations/marketplace";
 import { VIEW_ME } from "@/graphql/queries/admin";
 import { useAuth } from "@/contexts/AuthContext";
@@ -12,22 +12,48 @@ import { formatMoney } from "@/lib/format";
 type Props = {
   productId: number;
   price: number;
+  /** Sale price shown in checkout summary (after discount if any). */
+  salePrice: number;
+  compareAtPrice?: number | null;
+  productName: string;
+  listingCode?: string | null;
   status: string | null | undefined;
   sellerUsername: string | null | undefined;
+  sellerDisplayName?: string | null;
 };
 
 export function ProductPurchaseSection({
   productId,
   price,
+  salePrice,
+  compareAtPrice,
+  productName,
+  listingCode,
   status,
   sellerUsername,
+  sellerDisplayName,
 }: Props) {
   const router = useRouter();
   const { userToken, ready } = useAuth();
   const { data: meData } = useQuery(VIEW_ME, {
     skip: !ready || !userToken,
   });
-  const meUsername = meData?.viewMe?.username?.trim() ?? "";
+  const me = meData?.viewMe;
+  const meUsername = me?.username?.trim() ?? "";
+  const buyerSummary = useMemo(() => {
+    if (!me) return null;
+    const dn = me.displayName?.trim();
+    const fn = me.firstName?.trim() ?? "";
+    const ln = me.lastName?.trim() ?? "";
+    const full = [fn, ln].filter(Boolean).join(" ").trim();
+    const primary = dn || full || (meUsername ? `@${meUsername}` : "");
+    return {
+      primary,
+      username: meUsername,
+      email: me.email?.trim() ?? "",
+      verified: !!me.isVerified,
+    };
+  }, [me, meUsername]);
   const isOwner =
     !!sellerUsername &&
     !!meUsername &&
@@ -43,7 +69,6 @@ export function ProductPurchaseSection({
   const [err, setErr] = useState<string | null>(null);
 
   const [offerPrice, setOfferPrice] = useState(String(price));
-  const [offerMessage, setOfferMessage] = useState("");
 
   const [addrLine, setAddrLine] = useState("");
   const [city, setCity] = useState("");
@@ -97,7 +122,7 @@ export function ProductPurchaseSection({
         variables: {
           productIds: [productId],
           offerPrice: p,
-          message: offerMessage.trim() || null,
+          message: null,
         },
         errorPolicy: "all",
       });
@@ -296,17 +321,6 @@ export function ProductPurchaseSection({
                   className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-[12px] font-medium text-prel-secondary-label">
-                  Message (optional)
-                </label>
-                <textarea
-                  value={offerMessage}
-                  onChange={(e) => setOfferMessage(e.target.value)}
-                  rows={3}
-                  className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
-                />
-              </div>
               <div className="flex gap-2 pt-2">
                 <button
                   type="button"
@@ -340,10 +354,89 @@ export function ProductPurchaseSection({
               Buy now
             </h2>
             <p className="mt-1 text-[13px] text-prel-secondary-label">
-              We will create an order with Royal Mail home delivery. Complete
-              payment in the app after placing the order.
+              Review your order and delivery details. Payment is completed in
+              the mobile app after you place the order.
             </p>
-            <form onSubmit={onBuy} className="mt-4 space-y-3">
+
+            <div className="mt-4 space-y-3 rounded-xl bg-prel-bg-grouped px-3 py-3 ring-1 ring-prel-separator">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
+                Item
+              </p>
+              <p className="text-[15px] font-semibold leading-snug text-prel-label">
+                {productName}
+              </p>
+              {listingCode?.trim() ? (
+                <p className="text-[12px] text-prel-secondary-label">
+                  Listing <span className="font-mono">{listingCode.trim()}</span>
+                </p>
+              ) : null}
+              <div className="flex flex-wrap items-baseline justify-between gap-2 border-t border-prel-separator pt-2">
+                <span className="text-[13px] text-prel-secondary-label">Price</span>
+                <span className="text-[17px] font-bold text-[var(--prel-primary)]">
+                  {formatMoney(salePrice)}
+                </span>
+              </div>
+              {compareAtPrice != null ? (
+                <p className="text-[12px] text-prel-secondary-label line-through">
+                  Was {formatMoney(compareAtPrice)}
+                </p>
+              ) : null}
+              <p className="text-[12px] text-prel-secondary-label">
+                Seller:{" "}
+                <span className="font-medium text-prel-label">
+                  {sellerDisplayName?.trim() ||
+                    (sellerUsername ? `@${sellerUsername}` : "—")}
+                </span>
+              </p>
+            </div>
+
+            {buyerSummary ? (
+              <div className="rounded-xl bg-prel-bg-grouped px-3 py-3 ring-1 ring-prel-separator">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
+                  Buyer (your account)
+                </p>
+                <p className="mt-1 text-[15px] font-semibold text-prel-label">
+                  {buyerSummary.primary}
+                </p>
+                {buyerSummary.username ? (
+                  <p className="text-[13px] text-prel-secondary-label">
+                    @{buyerSummary.username}
+                    {buyerSummary.verified ? (
+                      <span className="ml-2 text-[11px] font-bold text-[var(--prel-primary)]">
+                        Verified
+                      </span>
+                    ) : null}
+                  </p>
+                ) : null}
+                {buyerSummary.email ? (
+                  <p className="mt-0.5 text-[13px] text-prel-secondary-label">
+                    {buyerSummary.email}
+                  </p>
+                ) : null}
+                <p className="mt-2 text-[12px] leading-relaxed text-prel-tertiary-label">
+                  The order is tied to this signed-in account. The seller sees
+                  your delivery address and this profile when fulfilling the
+                  sale.
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-xl bg-prel-bg-grouped px-3 py-3 ring-1 ring-prel-separator">
+                <p className="text-[13px] text-prel-secondary-label">
+                  Loading your account…
+                </p>
+              </div>
+            )}
+
+            <div className="rounded-xl border border-dashed border-prel-separator bg-white/60 px-3 py-2 text-[12px] text-prel-secondary-label">
+              <span className="font-semibold text-prel-label">Shipping: </span>
+              Royal Mail · Home delivery · Buyer protection on · £0.00 shipping
+              (web checkout)
+            </div>
+
+            <form onSubmit={onBuy} className="space-y-3">
+              <p className="text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
+                Delivery address
+              </p>
               <div>
                 <label className="mb-1 block text-[12px] font-medium text-prel-secondary-label">
                   Address line

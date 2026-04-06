@@ -196,20 +196,41 @@ export default function ConsolePage() {
       const t0 = performance.now();
       try {
         const res = await withTimeout(
-          fetch(PUBLIC_WEB_BASE, { method: "HEAD", mode: "cors" }),
+          fetch("/api/probe/web", { method: "GET", cache: "no-store" }),
           PROBE_MS,
           "Public web",
         );
+        if (!res.ok) {
+          throw new Error(`Probe route HTTP ${res.status}`);
+        }
+        const j = (await res.json()) as {
+          ok?: boolean;
+          status?: number;
+          ms?: number;
+          hostname?: string;
+          error?: string;
+        };
         const ms = Math.round(performance.now() - t0);
-        const code = res.status;
-        const up = (code >= 200 && code < 400) || code === 405;
+        const host =
+          j.hostname ||
+          (() => {
+            try {
+              return new URL(PUBLIC_WEB_BASE).hostname;
+            } catch {
+              return "website";
+            }
+          })();
+        const up = j.ok === true;
         return {
           id: "web",
           name: "Public web",
           up,
           detail: up
-            ? `${new URL(PUBLIC_WEB_BASE).host} · ${ms} ms (HTTP ${code})`
-            : `HTTP ${code}`,
+            ? `${host} · ${j.ms ?? ms} ms (HTTP ${j.status ?? "—"})`
+            : j.error ||
+              (j.status != null && j.status > 0
+                ? `HTTP ${j.status}`
+                : "Unreachable"),
           ms,
         };
       } catch (e) {
@@ -217,10 +238,7 @@ export default function ConsolePage() {
           id: "web",
           name: "Public web",
           up: false,
-          detail:
-            e instanceof Error
-              ? e.message
-              : "Network / CORS (expected from localhost)",
+          detail: errMsg(e),
           ms: 0,
         };
       }

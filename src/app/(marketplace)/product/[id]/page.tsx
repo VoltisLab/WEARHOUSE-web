@@ -78,15 +78,28 @@ export default function MarketplaceProductPage() {
       : null,
   );
 
-  const metaRows: { label: string; value: string }[] = [];
+  const metaRows: {
+    label: string;
+    value: string;
+    href?: string;
+  }[] = [];
   if (p.category?.name?.trim())
     metaRows.push({ label: "Category", value: p.category.name.trim() });
   if (p.size?.name?.trim()) {
     const sz = sizeDisplayValue(p.size.name);
     if (sz && sz !== "—") metaRows.push({ label: "Size", value: sz });
   }
-  if (p.brand?.name?.trim())
-    metaRows.push({ label: "Brand", value: p.brand.name.trim() });
+  if (p.brand?.name?.trim()) {
+    const bid = p.brand?.id;
+    metaRows.push({
+      label: "Brand",
+      value: p.brand.name.trim(),
+      href:
+        bid != null && !Number.isNaN(Number(bid))
+          ? `/search?brand=${encodeURIComponent(String(bid))}`
+          : undefined,
+    });
+  }
   if (p.condition) {
     const cond = formatProductCondition(String(p.condition));
     if (cond && cond !== "—") metaRows.push({ label: "Condition", value: cond });
@@ -166,13 +179,22 @@ export default function MarketplaceProductPage() {
             </div>
             {metaRows.length > 0 ? (
               <dl className="mt-1 space-y-2 rounded-xl bg-white/80 px-4 py-3 shadow-ios ring-1 ring-prel-glass-border sm:px-4 sm:py-3.5">
-                {metaRows.map(({ label, value }) => (
+                {metaRows.map(({ label, value, href }) => (
                   <div key={label} className="flex flex-col gap-0.5">
                     <dt className="text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
                       {label}
                     </dt>
                     <dd className="text-[15px] font-medium leading-snug text-prel-label">
-                      {value}
+                      {href ? (
+                        <Link
+                          href={href}
+                          className="text-[var(--prel-primary)] underline decoration-prel-separator underline-offset-2 hover:decoration-[var(--prel-primary)]"
+                        >
+                          {value}
+                        </Link>
+                      ) : (
+                        value
+                      )}
                     </dd>
                   </div>
                 ))}
@@ -183,8 +205,13 @@ export default function MarketplaceProductPage() {
           <ProductPurchaseSection
             productId={p.id}
             price={Number(p.price ?? 0)}
+            salePrice={sale}
+            compareAtPrice={original}
+            productName={p.name}
+            listingCode={p.listingCode}
             status={p.status}
             sellerUsername={p.seller?.username}
+            sellerDisplayName={p.seller?.displayName ?? null}
           />
 
           {p.description ? (

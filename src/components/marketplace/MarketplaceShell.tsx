@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { Home, MessageCircle, Search, Tag, User } from "lucide-react";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
@@ -118,7 +118,8 @@ function MarketplaceBottomNav() {
 
 /** Top-right auth actions — links to live `/login` and `/signup` (GraphQL). */
 function MarketplaceHeaderAuth() {
-  const { userToken, ready } = useAuth();
+  const { userToken, ready, logoutUser } = useAuth();
+  const router = useRouter();
 
   if (!ready) {
     return (
@@ -131,12 +132,16 @@ function MarketplaceHeaderAuth() {
 
   if (userToken) {
     return (
-      <Link
-        href="/profile"
-        className="shrink-0 rounded-full border border-prel-separator bg-white px-3 py-2 text-[13px] font-semibold text-prel-label shadow-ios transition-colors hover:border-[var(--prel-primary)]/35 sm:px-4 sm:text-[14px]"
+      <button
+        type="button"
+        onClick={() => {
+          logoutUser();
+          router.replace("/");
+        }}
+        className="shrink-0 rounded-full border border-prel-separator bg-white px-3 py-2 text-[13px] font-semibold text-prel-error shadow-ios transition-colors hover:border-prel-error/35 hover:bg-prel-error/5 sm:px-4 sm:text-[14px]"
       >
-        Profile
-      </Link>
+        Log out
+      </button>
     );
   }
 

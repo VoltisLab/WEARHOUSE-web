@@ -329,9 +329,14 @@ export const USER_SHOP_PRODUCTS = gql`
       listingCode
       status
       price
+      discountPrice
       imagesUrl
       seller {
         username
+      }
+      brand {
+        id
+        name
       }
       category {
         id
