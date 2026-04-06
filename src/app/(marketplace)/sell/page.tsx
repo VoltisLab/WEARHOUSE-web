@@ -1,13 +1,14 @@
 "use client";
 
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { CREATE_PRODUCT } from "@/graphql/mutations/marketplace";
-import { MARKETPLACE_CATEGORIES } from "@/graphql/queries/marketplace";
 import { useAuth } from "@/contexts/AuthContext";
 import { BRAND_NAME } from "@/lib/branding";
+import { CategoryCascadePicker } from "@/components/marketplace/CategoryCascadePicker";
+import { uploadProductImages } from "@/lib/upload-product-images";
 
 const CONDITIONS = [
   "BRAND_NEW_WITH_TAGS",
@@ -37,18 +38,10 @@ export default function MarketplaceSellPage() {
   const [categoryId, setCategoryId] = useState("");
   const [sizeId, setSizeId] = useState("");
   const [imageLines, setImageLines] = useState("");
+  const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [condition, setCondition] = useState<string>(CONDITIONS[2]);
   const [style, setStyle] = useState<string>(STYLES_SAMPLE[0]);
   const [err, setErr] = useState<string | null>(null);
-  const [parentCat, setParentCat] = useState<number | null>(null);
-
-  const { data: roots } = useQuery(MARKETPLACE_CATEGORIES, {
-    variables: {},
-  });
-  const { data: children } = useQuery(MARKETPLACE_CATEGORIES, {
-    variables: { parentId: parentCat as number },
-    skip: parentCat == null,
-  });
 
   const [createProduct, { loading }] = useMutation(CREATE_PRODUCT);
 
@@ -56,7 +49,25 @@ export default function MarketplaceSellPage() {
     if (ready && !userToken) router.replace("/login");
   }, [ready, userToken, router]);
 
-  const imagesUrl = useMemo(() => {
+  const onFilesPicked = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const list = e.target.files;
+    if (!list?.length) return;
+    setPhotoFiles((prev) => {
+      const next = [...prev];
+      for (let i = 0; i < list.length; i++) {
+        const f = list[i];
+        if (f && f.type.startsWith("image/")) next.push(f);
+      }
+      return next.slice(0, 12);
+    });
+    e.target.value = "";
+  }, []);
+
+  const removePhoto = useCallback((idx: number) => {
+    setPhotoFiles((prev) => prev.filter((_, i) => i !== idx));
+  }, []);
+
+  const urlImages = useMemo(() => {
     const lines = imageLines
       .split(/\r?\n/)
       .map((s) => s.trim())
@@ -71,11 +82,11 @@ export default function MarketplaceSellPage() {
     const p = parseFloat(price);
     const cat = parseInt(categoryId, 10);
     if (!name.trim() || !description.trim() || Number.isNaN(p) || Number.isNaN(cat)) {
-      setErr("Name, description, valid price, and category are required.");
+      setErr("Name, description, valid price, and a leaf category are required.");
       return;
     }
-    if (imagesUrl.length === 0) {
-      setErr("Add at least one image URL (one per line). Same URL is used for full image and thumbnail.");
+    if (photoFiles.length === 0 && urlImages.length === 0) {
+      setErr("Add at least one photo (upload) or image URL.");
       return;
     }
     const size =
@@ -84,6 +95,22 @@ export default function MarketplaceSellPage() {
       setErr("Size must be a number or empty.");
       return;
     }
+
+    let imagesUrl = [...urlImages];
+    if (photoFiles.length > 0) {
+      try {
+        const uploaded = await uploadProductImages(photoFiles, userToken);
+        imagesUrl = uploaded.concat(imagesUrl);
+      } catch (uploadErr) {
+        setErr(
+          uploadErr instanceof Error
+            ? uploadErr.message
+            : "Image upload failed. Try image URLs instead.",
+        );
+        return;
+      }
+    }
+
     try {
       const { data, errors } = await createProduct({
         variables: {
@@ -120,22 +147,13 @@ export default function MarketplaceSellPage() {
     );
   }
 
-  const rootCats = (roots?.categories ?? []) as {
-    id: number;
-    name: string;
-  }[];
-  const childCats = (children?.categories ?? []) as {
-    id: number;
-    name: string;
-  }[];
-
   return (
     <div className="mx-auto max-w-lg space-y-6 pb-24">
       <div>
         <h1 className="text-[22px] font-bold text-prel-label">Sell</h1>
         <p className="mt-1 text-[14px] text-prel-secondary-label">
-          Create a live listing on {BRAND_NAME} (same API as the app). You need
-          hosted image URLs (HTTPS). Pick a leaf category id for your item.
+          Create a live listing on {BRAND_NAME} (same API as the app). Upload
+          photos from your device or paste HTTPS image URLs.
         </p>
       </div>
 
@@ -149,58 +167,10 @@ export default function MarketplaceSellPage() {
           </p>
         )}
 
-        <div>
-          <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
-            Department (pick then choose subcategory id below)
-          </label>
-          <select
-            value={parentCat ?? ""}
-            onChange={(e) =>
-              setParentCat(e.target.value ? parseInt(e.target.value, 10) : null)
-            }
-            className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
-          >
-            <option value="">— Select —</option>
-            {rootCats.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {parentCat != null && childCats.length > 0 ? (
-          <div>
-            <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
-              Category id (leaf)
-            </label>
-            <select
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
-            >
-              <option value="">— Choose category —</option>
-              {childCats.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name} (id {c.id})
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
-          <div>
-            <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
-              Category id (numeric)
-            </label>
-            <input
-              value={categoryId}
-              onChange={(e) => setCategoryId(e.target.value)}
-              inputMode="numeric"
-              placeholder="e.g. 42"
-              className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
-            />
-          </div>
-        )}
+        <CategoryCascadePicker
+          categoryId={categoryId}
+          onCategoryIdChange={setCategoryId}
+        />
 
         <div>
           <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
@@ -287,12 +257,44 @@ export default function MarketplaceSellPage() {
 
         <div>
           <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
-            Image URLs (one per line)
+            Photos
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={onFilesPicked}
+            className="w-full text-[14px] text-prel-secondary-label file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--prel-primary)] file:px-4 file:py-2 file:text-[13px] file:font-semibold file:text-white"
+          />
+          {photoFiles.length > 0 ? (
+            <ul className="mt-2 space-y-2">
+              {photoFiles.map((f, i) => (
+                <li
+                  key={`${f.name}-${i}`}
+                  className="flex items-center justify-between gap-2 rounded-lg bg-prel-bg-grouped px-3 py-2 text-[13px]"
+                >
+                  <span className="min-w-0 truncate">{f.name}</span>
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(i)}
+                    className="shrink-0 font-semibold text-prel-error"
+                  >
+                    Remove
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+
+        <div>
+          <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
+            Extra image URLs (optional, one per line)
           </label>
           <textarea
             value={imageLines}
             onChange={(e) => setImageLines(e.target.value)}
-            rows={4}
+            rows={3}
             placeholder={"https://cdn.example.com/photo1.jpg\nhttps://..."}
             className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 font-mono text-[13px]"
           />

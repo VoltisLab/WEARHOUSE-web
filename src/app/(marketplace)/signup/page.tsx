@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { REGISTER } from "@/graphql/mutations/auth";
 import { useAuth } from "@/contexts/AuthContext";
-import { BRAND_NAME, BRAND_WORDMARK } from "@/lib/branding";
+import { BrandWordmark } from "@/components/branding/BrandWordmark";
+import { BRAND_NAME } from "@/lib/branding";
 
 function formatRegisterErrors(errors: unknown): string {
   if (!errors || typeof errors !== "object") return "";
@@ -112,8 +113,8 @@ export default function MarketplaceSignupPage() {
   return (
     <div className="mx-auto max-w-md space-y-6 pb-10 md:pb-12">
       <div className="space-y-4 rounded-2xl bg-white p-6 shadow-ios ring-1 ring-prel-glass-border md:p-8">
-        <h1 className="text-center text-[22px] font-bold text-prel-label">
-          {BRAND_WORDMARK}
+        <h1 className="text-center text-[22px] text-prel-label">
+          <BrandWordmark className="text-[22px] text-prel-label" />
         </h1>
         <p className="text-center text-[15px] text-prel-secondary-label">
           Create your {BRAND_NAME} account

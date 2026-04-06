@@ -267,6 +267,7 @@ export const CONVERSATION_MESSAGES = gql`
       itemType
       sender {
         username
+        thumbnailUrl
       }
     }
   }

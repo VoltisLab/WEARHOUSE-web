@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { SimpleDocPage } from "@/components/marketing/SimpleDocPage";
+import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 import { BRAND_NAME } from "@/lib/branding";
 
 export const metadata: Metadata = {
@@ -13,6 +14,10 @@ export default function MobileAppsPage() {
       title="Mobile apps"
       lead={`The full ${BRAND_NAME} experience — listings, chat, checkout, and notifications — lives in our native apps.`}
     >
+      <div className="not-prose flex flex-wrap gap-4">
+        <AppStoreBadges />
+      </div>
+
       <h2>iOS</h2>
       <p>
         Search the App Store for <strong>{BRAND_NAME}</strong> or use your

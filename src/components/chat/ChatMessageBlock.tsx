@@ -336,9 +336,12 @@ function StructuredBody({
 export function ChatMessageBlock({
   message,
   variant = "staff",
+  threadAvatars = false,
 }: {
   message: Record<string, unknown>;
   variant?: ChatMessageVariant;
+  /** When true (marketplace thread with avatars outside), hide @username row. */
+  threadAvatars?: boolean;
 }) {
   const sender =
     (message.sender as { username?: string } | null)?.username ??
@@ -383,18 +386,27 @@ export function ChatMessageBlock({
     );
   }
 
+  const showInlineSender =
+    !threadAvatars || variant !== "marketplace";
+
   return (
     <div
       className={`rounded-[12px] p-3 ring-1 ring-prel-glass-border ${
         isItem ? "bg-prel-primary/6" : "bg-prel-card"
       }`}
     >
-      <div className="flex justify-between gap-2 text-[12px] text-prel-tertiary-label">
-        <span className="font-semibold text-[var(--prel-primary)]">
-          @{sender ?? "—"}
-        </span>
-        <span>{formatDateTime(createdAt)}</span>
-      </div>
+      {showInlineSender ? (
+        <div className="flex justify-between gap-2 text-[12px] text-prel-tertiary-label">
+          <span className="font-semibold text-[var(--prel-primary)]">
+            @{sender ?? "—"}
+          </span>
+          <span>{formatDateTime(createdAt)}</span>
+        </div>
+      ) : (
+        <div className="flex justify-end text-[11px] text-prel-tertiary-label">
+          <span>{formatDateTime(createdAt)}</span>
+        </div>
+      )}
 
       {isItem && itemId != null && (
         <div className="mt-2 flex items-center gap-2 rounded-lg bg-prel-glass/80 px-2 py-1.5 text-[13px]">

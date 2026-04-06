@@ -18,6 +18,52 @@ export const CREATE_CHAT = gql`
   }
 `;
 
+export const CREATE_OFFER = gql`
+  mutation CreateOffer(
+    $productIds: [Int]!
+    $offerPrice: Float!
+    $message: String
+  ) {
+    createOffer(
+      productIds: $productIds
+      offerPrice: $offerPrice
+      message: $message
+    ) {
+      success
+      message
+      data {
+        conversationId
+      }
+    }
+  }
+`;
+
+export const CREATE_ORDER = gql`
+  mutation CreateOrder(
+    $productId: Int
+    $productIds: [Int]
+    $shippingFee: Float
+    $buyerProtection: Boolean
+    $deliveryDetails: DeliveryDetailsInput!
+  ) {
+    createOrder(
+      productId: $productId
+      productIds: $productIds
+      shippingFee: $shippingFee
+      buyerProtection: $buyerProtection
+      deliveryDetails: $deliveryDetails
+    ) {
+      success
+      order {
+        id
+        publicId
+        status
+        priceTotal
+      }
+    }
+  }
+`;
+
 export const CREATE_PRODUCT = gql`
   mutation CreateProduct(
     $name: String!

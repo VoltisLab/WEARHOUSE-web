@@ -36,15 +36,19 @@ export const CONVERSATION_BY_ID = gql`
       isSystemConversation
       recipient {
         username
+        displayName
+        thumbnailUrl
       }
       order {
         id
         publicId
         user {
           username
+          thumbnailUrl
         }
         seller {
           username
+          thumbnailUrl
         }
       }
       offerHistory {

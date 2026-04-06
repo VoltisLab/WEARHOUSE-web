@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
 import { Home, MessageCircle, Search, Tag, User } from "lucide-react";
-import { BRAND_WORDMARK } from "@/lib/branding";
+import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { MarketplaceSiteFooter } from "@/components/marketplace/MarketplaceSiteFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -187,9 +187,9 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-[4.25rem] md:gap-6 md:px-8 lg:px-10">
           <Link
             href="/"
-            className="shrink-0 text-[20px] font-bold tracking-tight text-[var(--prel-primary)] md:text-[22px]"
+            className="shrink-0 leading-none tracking-tight text-[var(--prel-primary)]"
           >
-            {BRAND_WORDMARK}
+            <BrandWordmark className="text-[20px] text-[var(--prel-primary)] md:text-[22px]" />
           </Link>
 
           <div className="hidden min-w-0 flex-1 justify-center md:flex">

@@ -14,8 +14,8 @@ import {
   sizeDisplayValue,
 } from "@/lib/product-display";
 import { normalizeProductImageUrls } from "@/lib/product-images";
-import { publicItemUrl, publicWebHostname } from "@/lib/constants";
 import { useClientMounted } from "@/lib/use-client-mounted";
+import { ProductPurchaseSection } from "@/components/marketplace/ProductPurchaseSection";
 
 export default function MarketplaceProductPage() {
   const mounted = useClientMounted();
@@ -180,14 +180,12 @@ export default function MarketplaceProductPage() {
             ) : null}
           </div>
 
-          <a
-            href={publicItemUrl(p.listingCode, p.id)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex min-h-[52px] w-full items-center justify-center rounded-2xl bg-[var(--prel-primary)] text-[16px] font-semibold text-white shadow-ios [-webkit-tap-highlight-color:transparent] active:opacity-95 md:max-w-md"
-          >
-            Open on {publicWebHostname()}
-          </a>
+          <ProductPurchaseSection
+            productId={p.id}
+            price={Number(p.price ?? 0)}
+            status={p.status}
+            sellerUsername={p.seller?.username}
+          />
 
           {p.description ? (
             <div className="rounded-2xl bg-white p-5 shadow-ios ring-1 ring-prel-glass-border md:p-6">

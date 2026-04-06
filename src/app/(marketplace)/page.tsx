@@ -9,6 +9,7 @@ import {
   type MarketplaceProductRow,
 } from "@/components/marketplace/ProductCard";
 import { HomeMainBanner } from "@/components/marketplace/HomeMainBanner";
+import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 import { BRAND_NAME } from "@/lib/branding";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
@@ -29,6 +30,7 @@ export default function MarketplaceHomePage() {
       pageNumber: 1,
       filters: { status: "ACTIVE" },
       search: null,
+      sort: "NEWEST",
     },
   });
   const rows = (data?.allProducts ?? []) as MarketplaceProductRow[];
@@ -37,21 +39,36 @@ export default function MarketplaceHomePage() {
     <div className="space-y-8 pb-6">
       <HomeMainBanner />
 
-      <section className="rounded-2xl border border-prel-separator bg-white p-4 shadow-ios sm:p-6 md:p-8">
-        <h2 className="text-[20px] font-bold text-prel-label md:text-[22px]">
-          Discover pre-loved fashion
-        </h2>
-        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-prel-secondary-label">
-          Browse live listings from the {BRAND_NAME} catalogue — search by
-          department or keyword.
-        </p>
-        <Link
-          href="/search"
-          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[15px] font-semibold text-white shadow-ios"
-        >
-          Browse all
-          <ArrowRight className="h-4 w-4" aria-hidden />
-        </Link>
+      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#5c1a6e] via-[#8b2199] to-[#ab28b2] p-4 text-white shadow-lg sm:p-6 md:p-8">
+        <div
+          className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl"
+          aria-hidden
+        />
+        <div
+          className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-black/10 blur-3xl"
+          aria-hidden
+        />
+        <div className="relative max-w-xl">
+          <h2 className="text-[20px] font-bold leading-tight md:text-[22px]">
+            Discover pre-loved fashion
+          </h2>
+          <p className="mt-2 text-[15px] leading-relaxed text-white/90">
+            Browse live listings from the {BRAND_NAME} catalogue — search by
+            department or keyword.
+          </p>
+          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+            <Link
+              href="/search"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[15px] font-semibold text-[#6b1f7a] shadow-md transition hover:bg-white/95"
+            >
+              Browse all
+              <ArrowRight className="h-4 w-4" aria-hidden />
+            </Link>
+            <div className="[&_img]:brightness-0 [&_img]:invert">
+              <AppStoreBadges className="opacity-95" />
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="space-y-4">

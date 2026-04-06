@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Instagram, Facebook, Twitter } from "lucide-react";
-import { BRAND_NAME, BRAND_WORDMARK } from "@/lib/branding";
+import { BrandWordmark } from "@/components/branding/BrandWordmark";
+import { BRAND_NAME } from "@/lib/branding";
 import { SITE_FOOTER_COLUMNS } from "@/lib/site-footer-nav";
 import { staffPath } from "@/lib/staff-nav";
 import { VoltislabsCopyright } from "@/components/marketplace/VoltislabsCopyright";
+import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 
 const social = [
   { href: "https://www.instagram.com", label: "Instagram", Icon: Instagram },
@@ -18,9 +20,10 @@ export function MarketplaceSiteFooter() {
     <footer className="mt-auto bg-zinc-900 text-zinc-300">
       <div className="mx-auto max-w-7xl px-4 py-12 pb-[calc(3rem+5.25rem+env(safe-area-inset-bottom))] md:px-8 md:pb-14 lg:px-10 lg:pb-12">
         <div className="mb-10 border-b border-zinc-700 pb-10">
-          <p className="text-[22px] font-bold tracking-tight text-white">
-            {BRAND_WORDMARK}
-          </p>
+          <BrandWordmark
+            as="div"
+            className="text-[22px] leading-tight tracking-tight text-white"
+          />
           <p className="mt-2 max-w-md text-[14px] leading-relaxed text-zinc-400">
             Second-hand fashion marketplace — buy and sell with confidence on{" "}
             {BRAND_NAME}.
@@ -49,7 +52,22 @@ export function MarketplaceSiteFooter() {
           ))}
         </div>
 
-        <div className="mt-12 flex flex-wrap gap-3 border-t border-zinc-700 pt-10">
+        <div className="mt-12 border-t border-zinc-700 pt-10">
+          <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">
+            Get the app
+          </p>
+          <div className="mt-4 [&_img]:brightness-0 [&_img]:invert">
+            <AppStoreBadges />
+          </div>
+          <Link
+            href="/app"
+            className="mt-3 inline-block text-[14px] font-semibold text-zinc-400 hover:text-white"
+          >
+            About our apps →
+          </Link>
+        </div>
+
+        <div className="mt-10 flex flex-wrap gap-3 border-t border-zinc-700 pt-10">
           {social.map(({ href, label, Icon }) => (
             <a
               key={label}

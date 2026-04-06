@@ -4,9 +4,8 @@ import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { MessageSquare } from "lucide-react";
 import { CONVERSATION_BY_ID } from "@/graphql/queries/chat";
-import { CONVERSATION_MESSAGES } from "@/graphql/queries/admin";
+import { CONVERSATION_MESSAGES, VIEW_ME } from "@/graphql/queries/admin";
 import { SEND_MESSAGE } from "@/graphql/mutations/chat";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -18,6 +17,7 @@ import {
   useChatRoomSocket,
   type ChatWsInbound,
 } from "@/hooks/useChatRoomSocket";
+import { isSupportSystemUsername } from "@/lib/chat-message-parse";
 
 export default function MarketplaceChatThreadPage() {
   const params = useParams();
@@ -34,6 +34,9 @@ export default function MarketplaceChatThreadPage() {
   const { data: meta, loading: metaLoad } = useQuery(CONVERSATION_BY_ID, {
     variables: { id: conversationId },
     skip: !userToken || !conversationId,
+  });
+  const { data: meData } = useQuery(VIEW_ME, {
+    skip: !userToken,
   });
   const {
     data: msgsData,
@@ -105,11 +108,19 @@ export default function MarketplaceChatThreadPage() {
   }
 
   const conv = meta?.conversationById;
+  const meUsername =
+    meData?.viewMe?.username?.trim().toLowerCase() ?? "";
+  const peerThumb = conv?.recipient?.thumbnailUrl ?? "";
+  const peerDisplay =
+    conv?.recipient?.displayName?.trim() ||
+    (conv?.recipient?.username
+      ? `@${conv.recipient.username}`
+      : null);
   const sub =
     conv?.order?.user?.username && conv?.order?.seller?.username
       ? `@${conv.order.user.username} ↔ @${conv.order.seller.username}`
-      : conv?.recipient?.username
-        ? `Thread · @${conv.recipient.username}`
+      : peerDisplay
+        ? `Thread · ${peerDisplay}`
         : `Conversation #${conversationId}`;
 
   const offerHistory = (conv?.offerHistory ?? []) as Array<{
@@ -144,10 +155,13 @@ export default function MarketplaceChatThreadPage() {
           >
             ← Inbox
           </Link>
-          <MessageSquare
-            className="mt-0.5 h-5 w-5 shrink-0 text-[var(--prel-primary)]"
-            aria-hidden
-          />
+          <div className="relative mt-0.5 h-11 w-11 shrink-0 overflow-hidden rounded-full bg-prel-glass ring-1 ring-prel-glass-border">
+            <SafeImage
+              src={peerThumb}
+              alt=""
+              className="h-full w-full object-cover"
+            />
+          </div>
           <div className="min-w-0 flex-1">
             <p className="text-[15px] font-semibold leading-snug text-prel-label">
               {sub}
@@ -245,13 +259,68 @@ export default function MarketplaceChatThreadPage() {
       )}
 
       <div className="space-y-3">
-        {messages.map((m) => (
-          <ChatMessageBlock
-            key={String(m.id)}
-            message={m}
-            variant="marketplace"
-          />
-        ))}
+        {messages.map((m) => {
+          const senderObj = m.sender as
+            | { username?: string | null; thumbnailUrl?: string | null }
+            | null
+            | undefined;
+          const senderUn = senderObj?.username?.trim().toLowerCase() ?? "";
+          const sys = isSupportSystemUsername(senderObj?.username ?? null);
+          if (sys) {
+            return (
+              <ChatMessageBlock
+                key={String(m.id)}
+                message={m}
+                variant="marketplace"
+              />
+            );
+          }
+          if (!meUsername) {
+            return (
+              <ChatMessageBlock
+                key={String(m.id)}
+                message={m}
+                variant="marketplace"
+              />
+            );
+          }
+          const isOwn =
+            meUsername.length > 0 && senderUn === meUsername;
+          const avatarSrc = !isOwn
+            ? (senderObj?.thumbnailUrl || peerThumb || "")
+            : "";
+          return (
+            <div
+              key={String(m.id)}
+              className={`flex gap-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+            >
+              {!isOwn ? (
+                <div className="mt-0.5 h-9 w-9 shrink-0 self-end overflow-hidden rounded-full bg-prel-glass ring-1 ring-prel-glass-border">
+                  <SafeImage
+                    src={avatarSrc}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-9 shrink-0 self-end" aria-hidden />
+              )}
+              <div
+                className={`min-w-0 flex-1 ${isOwn ? "flex justify-end" : ""}`}
+              >
+                <div
+                  className={`w-full max-w-[min(85%,520px)] ${isOwn ? "ml-auto" : ""}`}
+                >
+                  <ChatMessageBlock
+                    message={m}
+                    variant="marketplace"
+                    threadAvatars
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <form

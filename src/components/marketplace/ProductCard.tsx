@@ -37,6 +37,11 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
           alt=""
           className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
         />
+        {/* Bottom vignette — Discover-style legibility + depth (matches home banner purple) */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-[#1f0a24]/75 via-[#3d1450]/25 to-transparent"
+          aria-hidden
+        />
         {p.status === "SOLD" ? (
           <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
             Sold

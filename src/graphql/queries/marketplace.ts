@@ -17,12 +17,14 @@ export const MARKETPLACE_FEED = gql`
     $pageNumber: Int!
     $filters: ProductFiltersInput
     $search: String
+    $sort: SortEnum
   ) {
     allProducts(
       pageCount: $pageCount
       pageNumber: $pageNumber
       filters: $filters
       search: $search
+      sort: $sort
     ) {
       id
       name
@@ -38,6 +40,15 @@ export const MARKETPLACE_FEED = gql`
         id
         name
       }
+    }
+  }
+`;
+
+export const POPULAR_BRANDS = gql`
+  query PopularBrands($top: Int!) {
+    popularBrands(top: $top) {
+      id
+      name
     }
   }
 `;

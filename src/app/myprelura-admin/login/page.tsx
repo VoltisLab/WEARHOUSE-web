@@ -7,7 +7,7 @@ import { ADMIN_LOGIN } from "@/graphql/mutations/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { IOSCard } from "@/components/ui/IOSCard";
 import { IOSButton } from "@/components/ui/IOSButton";
-import { BRAND_WORDMARK } from "@/lib/branding";
+import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { staffPath } from "@/lib/staff-nav";
 
 export default function StaffLoginPage() {
@@ -53,8 +53,8 @@ export default function StaffLoginPage() {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-prel-grouped p-4">
       <IOSCard className="w-full max-w-[400px] p-6">
-        <h2 className="mb-1 text-center text-xl font-semibold text-prel-label">
-          {BRAND_WORDMARK}
+        <h2 className="mb-1 text-center text-xl text-prel-label">
+          <BrandWordmark className="text-xl text-prel-label" />
         </h2>
         <p className="mb-6 text-center text-[15px] text-prel-secondary-label">
           Staff sign in

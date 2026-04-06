@@ -22,7 +22,7 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
-import { BRAND_WORDMARK } from "@/lib/branding";
+import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import {
   LIVE_OPS,
   MOBILE_TABS,
@@ -93,9 +93,7 @@ function IOSStaffShellReady({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh flex-col bg-prel-grouped font-ios md:flex-row md:pb-0">
       <aside className="hidden w-[280px] shrink-0 border-r border-prel-separator bg-prel-nav/95 backdrop-blur-md md:flex md:flex-col md:pt-12">
         <div className="px-4 pb-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-prel-secondary-label">
-            {BRAND_WORDMARK}
-          </p>
+          <BrandWordmark className="text-xs uppercase tracking-wide text-prel-secondary-label" />
           <p className="text-lg font-bold text-prel-label">Staff admin</p>
         </div>
 
