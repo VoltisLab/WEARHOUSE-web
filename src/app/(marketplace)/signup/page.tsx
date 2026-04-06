@@ -41,7 +41,7 @@ export default function MarketplaceSignupPage() {
   const [registerMutation, { loading }] = useMutation(REGISTER);
 
   useEffect(() => {
-    if (ready && userToken) router.replace("/account");
+    if (ready && userToken) router.replace("/profile");
   }, [ready, userToken, router]);
 
   async function onSubmit(e: React.FormEvent) {
@@ -98,7 +98,7 @@ export default function MarketplaceSignupPage() {
       const t = reg.token as string | undefined;
       if (t) {
         setUserToken(t);
-        router.replace("/account");
+        router.replace("/profile");
         return;
       }
       setInfo(

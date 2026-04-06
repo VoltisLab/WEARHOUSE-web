@@ -17,7 +17,7 @@ export default function MarketplaceLoginPage() {
   const [loginMutation, { loading }] = useMutation(LOGIN);
 
   useEffect(() => {
-    if (ready && userToken) router.replace("/account");
+    if (ready && userToken) router.replace("/profile");
   }, [ready, userToken, router]);
 
   async function onSubmit(e: React.FormEvent) {
@@ -40,7 +40,7 @@ export default function MarketplaceLoginPage() {
       const t = data?.login?.token as string | undefined;
       if (t) {
         setUserToken(t);
-        router.replace("/account");
+        router.replace("/profile");
         return;
       }
       setErr("Sign in failed. Check your username and password.");

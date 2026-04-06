@@ -4,8 +4,16 @@ import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { MessageCircle, Star } from "lucide-react";
-import { GET_USER, USER_SHOP_PRODUCTS } from "@/graphql/queries/admin";
+import {
+  Bookmark,
+  LayoutDashboard,
+  LogOut,
+  MessageCircle,
+  Package,
+  Pencil,
+  Star,
+} from "lucide-react";
+import { GET_USER, USER_SHOP_PRODUCTS, VIEW_ME } from "@/graphql/queries/admin";
 import { CREATE_CHAT } from "@/graphql/mutations/marketplace";
 import { SafeImage } from "@/components/ui/SafeImage";
 import {
@@ -15,6 +23,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 import { publicProfileUrl } from "@/lib/constants";
+import { staffPath } from "@/lib/staff-nav";
 
 const DEPT_CHIPS: { label: string; value: string | null }[] = [
   { label: "All", value: null },
@@ -30,7 +39,15 @@ export default function MarketplacePublicProfilePage() {
   const params = useParams();
   const router = useRouter();
   const rawUsername = decodeURIComponent(String(params.username ?? ""));
-  const { userToken } = useAuth();
+  const { userToken, logoutUser } = useAuth();
+
+  const { data: meData } = useQuery(VIEW_ME, {
+    skip: !mounted || !userToken,
+  });
+  const meUsername = meData?.viewMe?.username ?? "";
+  const isOwnProfile =
+    !!userToken && !!meUsername && meUsername === rawUsername;
+  const isStaff = !!meData?.viewMe?.isStaff;
   const [shopQ, setShopQ] = useState("");
   const [dept, setDept] = useState<string | null>(null);
   const pageSize = 80;
@@ -127,25 +144,84 @@ export default function MarketplacePublicProfilePage() {
                 {u.bio}
               </p>
             ) : null}
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-3 md:justify-start">
-              <a
-                href={publicProfileUrl(rawUsername)}
-                target="_blank"
-                rel="noreferrer"
-                className="text-[14px] font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
-              >
-                Public profile link
-              </a>
-              <button
-                type="button"
-                onClick={onMessageSeller}
-                disabled={chatLoading}
-                className="inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios disabled:opacity-50"
-              >
-                <MessageCircle className="h-4 w-4" aria-hidden />
-                Message
-              </button>
-            </div>
+            {isOwnProfile && u?.listing != null ? (
+              <p className="mt-3 text-[14px] font-medium text-prel-secondary-label">
+                <span className="font-bold text-prel-label">{u.listing}</span>{" "}
+                active listing{u.listing === 1 ? "" : "s"}
+              </p>
+            ) : null}
+            {isOwnProfile ? (
+              <div className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start">
+                <Link
+                  href="/saved"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
+                >
+                  <Bookmark className="h-4 w-4 text-[var(--prel-primary)]" />
+                  Saved
+                </Link>
+                <Link
+                  href="/messages"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
+                >
+                  <MessageCircle className="h-4 w-4 text-[var(--prel-primary)]" />
+                  Messages
+                </Link>
+                <Link
+                  href="/account/orders"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
+                >
+                  <Package className="h-4 w-4 text-[var(--prel-primary)]" />
+                  Orders
+                </Link>
+                <Link
+                  href="/sell"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full bg-[var(--prel-primary)] px-4 py-2 text-[14px] font-semibold text-white shadow-ios"
+                >
+                  <Pencil className="h-4 w-4" />
+                  Sell
+                </Link>
+                {isStaff ? (
+                  <Link
+                    href={staffPath("/dashboard")}
+                    className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
+                  >
+                    <LayoutDashboard className="h-4 w-4 text-[var(--prel-primary)]" />
+                    Staff
+                  </Link>
+                ) : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    logoutUser();
+                    router.replace("/");
+                  }}
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-error shadow-ios"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-3 md:justify-start">
+                <a
+                  href={publicProfileUrl(rawUsername)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-[14px] font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
+                >
+                  Public profile link
+                </a>
+                <button
+                  type="button"
+                  onClick={onMessageSeller}
+                  disabled={chatLoading}
+                  className="inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios disabled:opacity-50"
+                >
+                  <MessageCircle className="h-4 w-4" aria-hidden />
+                  Message
+                </button>
+              </div>
+            )}
             {u?.reviewStats && (u.reviewStats.noOfReviews ?? 0) > 0 ? (
               <p className="mt-3 text-[14px] text-prel-secondary-label">
                 {(u.reviewStats.rating ?? 0).toFixed(1)} ★ ·{" "}

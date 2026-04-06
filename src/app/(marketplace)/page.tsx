@@ -8,6 +8,7 @@ import {
   MarketplaceProductCard,
   type MarketplaceProductRow,
 } from "@/components/marketplace/ProductCard";
+import { HomeMainBanner } from "@/components/marketplace/HomeMainBanner";
 import { BRAND_NAME } from "@/lib/branding";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
@@ -34,18 +35,19 @@ export default function MarketplaceHomePage() {
 
   return (
     <div className="space-y-8 pb-6">
-      <section className="rounded-2xl bg-gradient-to-br from-[#ab28b2]/14 via-white to-prel-bg-grouped p-4 shadow-ios ring-1 ring-[var(--prel-primary)]/18 sm:p-6 md:p-8 lg:p-10">
-        <h1 className="text-[24px] font-bold leading-tight tracking-tight text-prel-label sm:text-[26px] md:text-3xl lg:text-4xl">
+      <HomeMainBanner />
+
+      <section className="rounded-2xl border border-prel-separator bg-white p-4 shadow-ios sm:p-6 md:p-8">
+        <h2 className="text-[20px] font-bold text-prel-label md:text-[22px]">
           Discover pre-loved fashion
-        </h1>
-        <p className="mt-3 max-w-xl text-[15px] leading-relaxed text-prel-secondary-label md:text-[16px]">
-          Browse live listings from the {BRAND_NAME} catalogue. Buying, selling,
-          and account tools stay in the mobile app — staff use the console
-          separately.
+        </h2>
+        <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-prel-secondary-label">
+          Browse live listings from the {BRAND_NAME} catalogue — search by
+          department or keyword.
         </p>
         <Link
           href="/search"
-          className="mt-5 inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[15px] font-semibold text-white shadow-ios"
+          className="mt-4 inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[15px] font-semibold text-white shadow-ios"
         >
           Browse all
           <ArrowRight className="h-4 w-4" aria-hidden />

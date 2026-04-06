@@ -4,10 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Suspense } from "react";
 import { Home, MessageCircle, Search, Tag, User } from "lucide-react";
-import { BRAND_NAME, BRAND_WORDMARK } from "@/lib/branding";
-import { PUBLIC_WEB_BASE, publicWebHostname } from "@/lib/constants";
-import { staffPath } from "@/lib/staff-nav";
-import { VoltislabsCopyright } from "@/components/marketplace/VoltislabsCopyright";
+import { BRAND_WORDMARK } from "@/lib/branding";
+import { MarketplaceSiteFooter } from "@/components/marketplace/MarketplaceSiteFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
 const tabs: {
@@ -19,7 +17,7 @@ const tabs: {
   { href: "/search", label: "Discover", icon: Search },
   { href: "/sell", label: "Sell", icon: Tag },
   { href: "/messages", label: "Messages", icon: MessageCircle },
-  { href: "/account", label: "Profile", icon: User },
+  { href: "/profile", label: "Profile", icon: User },
 ];
 
 function tabActive(pathname: string, href: string) {
@@ -31,6 +29,13 @@ function tabActive(pathname: string, href: string) {
     );
   if (href === "/messages")
     return pathname === "/messages" || pathname.startsWith("/messages/");
+  if (href === "/profile")
+    return (
+      pathname === "/profile" ||
+      pathname.startsWith("/profile/") ||
+      pathname === "/account" ||
+      pathname.startsWith("/account/")
+    );
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
@@ -127,10 +132,10 @@ function MarketplaceHeaderAuth() {
   if (userToken) {
     return (
       <Link
-        href="/account"
+        href="/profile"
         className="shrink-0 rounded-full border border-prel-separator bg-white px-3 py-2 text-[13px] font-semibold text-prel-label shadow-ios transition-colors hover:border-[var(--prel-primary)]/35 sm:px-4 sm:text-[14px]"
       >
-        Account
+        Profile
       </Link>
     );
   }
@@ -176,9 +181,6 @@ function MarketplaceBottomNavFallback() {
 }
 
 export function MarketplaceShell({ children }: { children: React.ReactNode }) {
-  const staffLoginHref = staffPath("/login");
-  const webHost = publicWebHostname();
-
   return (
     <div className="flex min-h-dvh flex-col bg-prel-bg-grouped text-prel-label">
       <header className="sticky top-0 z-40 border-b border-prel-separator bg-prel-nav/95 pt-[env(safe-area-inset-top)] backdrop-blur-md md:pt-0">
@@ -212,39 +214,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
         {children}
       </main>
 
-      <footer className="mt-auto border-t border-prel-separator bg-prel-card/90">
-        <div className="mx-auto max-w-7xl px-4 py-8 pb-[calc(2rem+5.5rem+env(safe-area-inset-bottom))] md:px-8 md:py-10 md:pb-10 lg:px-10">
-          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
-            <div>
-              <p className="text-[15px] font-semibold text-prel-label">
-                {BRAND_NAME} marketplace
-              </p>
-              <p className="mt-1 max-w-md text-[14px] leading-relaxed text-prel-secondary-label">
-                Browse live listings as a guest. Sign in for account features;
-                buy, sell, and manage your shop in the {BRAND_NAME} app.
-              </p>
-            </div>
-            <a
-              href={PUBLIC_WEB_BASE}
-              className="inline-flex shrink-0 items-center justify-center rounded-full border border-prel-separator bg-white px-5 py-2.5 text-[14px] font-semibold text-prel-label shadow-ios transition-colors hover:border-[var(--prel-primary)]/35"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open {webHost}
-            </a>
-          </div>
-
-          <div className="mt-8 flex flex-col items-center gap-4 border-t border-prel-separator pt-6 md:flex-row md:justify-between">
-            <Link
-              href={staffLoginHref}
-              className="text-[13px] font-medium text-prel-secondary-label underline-offset-2 hover:text-prel-label hover:underline"
-            >
-              Staff sign in
-            </Link>
-            <VoltislabsCopyright className="text-[13px] text-prel-secondary-label" />
-          </div>
-        </div>
-      </footer>
+      <MarketplaceSiteFooter />
 
       <Suspense fallback={<MarketplaceBottomNavFallback />}>
         <MarketplaceBottomNav />

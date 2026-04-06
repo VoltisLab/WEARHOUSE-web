@@ -6,8 +6,31 @@ export const VIEW_ME = gql`
       id
       username
       email
+      firstName
+      lastName
+      displayName
+      bio
+      isVerified
+      isVacationMode
+      listing
+      dateJoined
+      lastLogin
+      lastSeen
+      thumbnailUrl
+      profilePictureUrl
+      noOfFollowers
+      noOfFollowing
+      credit
+      userType
       isStaff
       isSuperuser
+      location {
+        locationName
+      }
+      reviewStats {
+        noOfReviews
+        rating
+      }
     }
   }
 `;

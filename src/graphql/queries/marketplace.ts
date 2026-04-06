@@ -42,6 +42,33 @@ export const MARKETPLACE_FEED = gql`
   }
 `;
 
+/** Buyer/seller order history for the logged-in user (`@login_required`). */
+export const USER_ORDERS = gql`
+  query UserOrders($pageCount: Int!, $pageNumber: Int!) {
+    userOrders(pageCount: $pageCount, pageNumber: $pageNumber) {
+      id
+      publicId
+      status
+      createdAt
+      updatedAt
+      priceTotal
+      user {
+        username
+      }
+      seller {
+        username
+        displayName
+      }
+      lineItems {
+        productName
+        priceAtPurchase
+        productImagesUrl
+      }
+    }
+    userOrdersTotalNumber
+  }
+`;
+
 export const MARKETPLACE_PRODUCT = gql`
   query MarketplaceProduct($id: Int!) {
     product(id: $id) {
