@@ -8,6 +8,7 @@ import { BRAND_NAME, BRAND_WORDMARK } from "@/lib/branding";
 import { PUBLIC_WEB_BASE, publicWebHostname } from "@/lib/constants";
 import { staffPath } from "@/lib/staff-nav";
 import { VoltislabsCopyright } from "@/components/marketplace/VoltislabsCopyright";
+import { useAuth } from "@/contexts/AuthContext";
 
 const tabs: {
   href: string;
@@ -110,6 +111,48 @@ function MarketplaceBottomNav() {
   );
 }
 
+/** Top-right auth actions — links to live `/login` and `/signup` (GraphQL). */
+function MarketplaceHeaderAuth() {
+  const { userToken, ready } = useAuth();
+
+  if (!ready) {
+    return (
+      <div className="flex items-center gap-1.5 sm:gap-2" aria-hidden>
+        <div className="h-9 w-[4.25rem] animate-pulse rounded-full bg-prel-glass" />
+        <div className="h-9 w-[4.5rem] animate-pulse rounded-full bg-prel-glass" />
+      </div>
+    );
+  }
+
+  if (userToken) {
+    return (
+      <Link
+        href="/account"
+        className="shrink-0 rounded-full border border-prel-separator bg-white px-3 py-2 text-[13px] font-semibold text-prel-label shadow-ios transition-colors hover:border-[var(--prel-primary)]/35 sm:px-4 sm:text-[14px]"
+      >
+        Account
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+      <Link
+        href="/login"
+        className="rounded-full px-3 py-2 text-[13px] font-semibold text-prel-label transition-colors hover:bg-prel-glass sm:px-4 sm:text-[14px]"
+      >
+        Log in
+      </Link>
+      <Link
+        href="/signup"
+        className="rounded-full bg-[var(--prel-primary)] px-3 py-2 text-[13px] font-semibold text-white shadow-ios transition-opacity hover:opacity-95 sm:px-4 sm:text-[14px]"
+      >
+        Sign up
+      </Link>
+    </div>
+  );
+}
+
 function MarketplaceBottomNavFallback() {
   return (
     <nav
@@ -153,12 +196,15 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
             </Suspense>
           </div>
 
-          <Link
-            href="/search"
-            className="ml-auto shrink-0 rounded-full bg-[var(--prel-primary)]/12 px-4 py-2 text-[14px] font-semibold text-[var(--prel-primary)] transition-colors hover:bg-[var(--prel-primary)]/18 md:ml-0 md:px-5 md:py-2.5"
-          >
-            Search
-          </Link>
+          <div className="ml-auto flex shrink-0 items-center gap-2 md:ml-0 md:gap-3">
+            <MarketplaceHeaderAuth />
+            <Link
+              href="/search"
+              className="rounded-full bg-[var(--prel-primary)]/12 px-3 py-2 text-[13px] font-semibold text-[var(--prel-primary)] transition-colors hover:bg-[var(--prel-primary)]/18 sm:px-4 sm:text-[14px] md:px-5 md:py-2.5"
+            >
+              Search
+            </Link>
+          </div>
         </div>
       </header>
 

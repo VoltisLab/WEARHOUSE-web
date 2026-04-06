@@ -14,6 +14,38 @@ export const LOGIN = gql`
   }
 `;
 
+/** Consumer registration — `NewRegister` / graphql-auth fields from backend settings. */
+export const REGISTER = gql`
+  mutation Register(
+    $email: String!
+    $username: String!
+    $first_name: String!
+    $last_name: String!
+    $password1: String!
+    $password2: String!
+    $user_type: String
+  ) {
+    register(
+      email: $email
+      username: $username
+      first_name: $first_name
+      last_name: $last_name
+      password1: $password1
+      password2: $password2
+      user_type: $user_type
+    ) {
+      success
+      errors
+      token
+      refreshToken
+      user {
+        id
+        username
+      }
+    }
+  }
+`;
+
 /** Staff login — matches consumer `adminLogin` API. */
 export const ADMIN_LOGIN = gql`
   mutation AdminLogin($username: String!, $password: String!) {

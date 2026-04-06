@@ -59,12 +59,20 @@ export default function MarketplaceAccountPage() {
               Sign in with your {BRAND_NAME} username and password to use web
               features tied to your account.
             </p>
-            <Link
-              href="/login"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-6 text-[15px] font-semibold text-white shadow-ios"
-            >
-              Sign in
-            </Link>
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/login"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-6 text-[15px] font-semibold text-white shadow-ios"
+              >
+                Sign in
+              </Link>
+              <Link
+                href="/signup"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-prel-separator bg-white px-6 text-[15px] font-semibold text-prel-label shadow-ios"
+              >
+                Sign up
+              </Link>
+            </div>
           </>
         )}
       </div>

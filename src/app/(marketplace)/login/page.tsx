@@ -96,6 +96,12 @@ export default function MarketplaceLoginPage() {
           </button>
         </form>
         <p className="text-center text-[14px] text-prel-secondary-label">
+          New to {BRAND_NAME}?{" "}
+          <Link href="/signup" className="font-semibold text-[var(--prel-primary)]">
+            Sign up
+          </Link>
+        </p>
+        <p className="text-center text-[14px] text-prel-secondary-label">
           <Link href="/" className="font-semibold text-[var(--prel-primary)]">
             ← Back to home
           </Link>
