@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+/* WEARHOUSE staff / consumer theme — primary #AB28B2, dark canvas #0C0C0C, sheet #1C1C1C */
+:root {
+  --prel-primary: #ab28b2;
+  --prel-metric-users: #5ac8fa;
+  --prel-metric-new: #34c759;
+  --prel-metric-views: #ff9500;
+  --prel-metric-views-today: #ff2d55;
+  --prel-metric-health: #ab28b2;
+
+  --prel-bg: #ffffff;
+  --prel-bg-grouped: #f2f2f7;
+  --prel-card: #ffffff;
+  --prel-nav: #ffffff;
+  --prel-modal: #ffffff;
+  --prel-label: #000000;
+  --prel-secondary-label: rgba(60, 60, 67, 0.6);
+  --prel-tertiary-label: rgba(60, 60, 67, 0.3);
+  --prel-separator: rgba(60, 60, 67, 0.29);
+  --prel-glass-bg: rgba(0, 0, 0, 0.06);
+  --prel-glass-border: rgba(0, 0, 0, 0.12);
+  --prel-error: #ff3b30;
+}
+
+.dark {
+  --prel-bg: #0c0c0c;
+  --prel-bg-grouped: #0c0c0c;
+  --prel-card: #1c1c1c;
+  --prel-nav: #0c0c0c;
+  --prel-modal: #1c1c1c;
+  --prel-label: #ffffff;
+  --prel-secondary-label: rgba(235, 235, 245, 0.6);
+  --prel-tertiary-label: rgba(235, 235, 245, 0.3);
+  --prel-separator: rgba(84, 84, 88, 0.65);
+  --prel-glass-bg: rgba(255, 255, 255, 0.1);
+  --prel-glass-border: rgba(255, 255, 255, 0.2);
+  --prel-error: #ff453a;
+}
+
+@theme inline {
+  --color-prel-primary: var(--prel-primary);
+  --color-prel-bg: var(--prel-bg);
+  --color-prel-grouped: var(--prel-bg-grouped);
+  --color-prel-card: var(--prel-card);
+  --color-prel-nav: var(--prel-nav);
+  --color-prel-modal: var(--prel-modal);
+  --color-prel-label: var(--prel-label);
+  --color-prel-secondary-label: var(--prel-secondary-label);
+  --color-prel-tertiary-label: var(--prel-tertiary-label);
+  --color-prel-separator: var(--prel-separator);
+  --color-prel-glass: var(--prel-glass-bg);
+  --color-prel-glass-border: var(--prel-glass-border);
+  --color-prel-error: var(--prel-error);
+  --color-prel-metric-users: var(--prel-metric-users);
+  --color-prel-metric-new: var(--prel-metric-new);
+  --color-prel-metric-views: var(--prel-metric-views);
+  --color-prel-metric-views-today: var(--prel-metric-views-today);
+  --color-prel-metric-health: var(--prel-metric-health);
+
+  /* Legacy aliases — design tokens */
+  --color-ios-blue: var(--prel-primary);
+  --color-ios-grouped: var(--prel-bg-grouped);
+  --color-ios-secondary: var(--prel-card);
+  --color-ios-label: var(--prel-label);
+  --color-ios-secondary-label: var(--prel-secondary-label);
+  --color-ios-separator: var(--prel-separator);
+
+  --radius-ios-lg: 12px;
+  --radius-ios-glass: 10.8px;
+  --shadow-ios: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--prel-bg-grouped);
+  color: var(--prel-label);
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+}
+
+.font-ios {
+  font-family:
+    -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display",
+    "Segoe UI", system-ui, sans-serif;
+}
+
+.shadow-ios {
+  box-shadow: var(--shadow-ios);
+}
+
+.dark .shadow-ios {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+.rounded-ios-lg {
+  border-radius: 12px;
+}
+
+.rounded-ios-glass {
+  border-radius: 10.8px;
+}
+
+/* Glass card — Theme.Glass + Colors.glass* */
+.glass-card {
+  background: var(--prel-glass-bg);
+  border: 1px solid var(--prel-glass-border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* Explicit primary actions — Tailwind theme tokens can fail to apply on native <button> in some builds. */
+button.prel-btn-primary,
+a.prel-btn-primary {
+  background-color: var(--prel-primary);
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+button.prel-btn-primary:disabled {
+  opacity: 0.4;
+}
+
+button.prel-btn-secondary,
+a.prel-btn-secondary {
+  background-color: var(--prel-glass-bg);
+  color: var(--prel-primary);
+  border: 1px solid var(--prel-glass-border);
+}
+
+button.prel-btn-ghost,
+a.prel-btn-ghost {
+  background: transparent;
+  color: var(--prel-primary);
+  border: 1px solid transparent;
+}
+
+button.prel-btn-danger,
+a.prel-btn-danger {
+  background-color: var(--prel-error);
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+.prel-text-accent {
+  color: var(--prel-primary);
+}
+
+.prel-chip-active {
+  background-color: color-mix(in srgb, var(--prel-primary) 32%, transparent);
+  box-shadow: 0 0 0 1px var(--prel-primary);
+}
+
+.prel-hashtag-chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 9999px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--prel-primary);
+  background-color: color-mix(in srgb, var(--prel-primary) 18%, transparent);
+}
+
+.prel-discount-badge {
+  background-color: #8d100f;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.prel-sold-badge {
+  background-color: var(--prel-primary);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
