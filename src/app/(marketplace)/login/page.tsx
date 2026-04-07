@@ -15,7 +15,6 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const nextRaw = searchParams.get("next");
   const nextSafe = safeReturnPath(nextRaw);
-  const afterLogin = nextSafe ?? "/profile";
   const signupHref = nextSafe
     ? `/signup?next=${encodeURIComponent(nextSafe)}`
     : "/signup";
@@ -27,8 +26,8 @@ function LoginForm() {
   const [loginMutation, { loading }] = useMutation(LOGIN);
 
   useEffect(() => {
-    if (ready && userToken) router.replace(afterLogin);
-  }, [ready, userToken, router, afterLogin]);
+    if (ready && userToken) router.push("/");
+  }, [ready, userToken, router]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,7 +49,7 @@ function LoginForm() {
       const t = data?.login?.token as string | undefined;
       if (t) {
         setUserToken(t);
-        router.replace(afterLogin);
+        router.push("/");
         return;
       }
       setErr("Sign in failed. Check your username and password.");
