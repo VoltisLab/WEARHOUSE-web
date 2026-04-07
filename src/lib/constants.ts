@@ -14,15 +14,29 @@ export const MARKETPLACE_HOME_HERO_IMAGE_URL =
   "/marketplace/hero-banner.png";
 
 /**
+ * Optional 3-up hero collage (defaults to `MARKETPLACE_HOME_HERO_IMAGE_URL`).
+ * Set `NEXT_PUBLIC_HOME_HERO_COLLAGE_LEFT_URL`, `_CENTER_URL`, `_RIGHT_URL` for distinct photos.
+ */
+export const MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL =
+  process.env.NEXT_PUBLIC_HOME_HERO_COLLAGE_LEFT_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+export const MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL =
+  process.env.NEXT_PUBLIC_HOME_HERO_COLLAGE_CENTER_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+export const MARKETPLACE_HOME_HERO_COLLAGE_RIGHT_URL =
+  process.env.NEXT_PUBLIC_HOME_HERO_COLLAGE_RIGHT_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+
+/**
  * Discover feed promotional banners (image + text overlay).
  * Each can be overridden; otherwise reuses the home hero asset.
  */
 export const DISCOVER_BANNER_TRY_CART_IMAGE_URL =
   process.env.NEXT_PUBLIC_DISCOVER_TRY_CART_IMAGE_URL?.trim() ||
-  MARKETPLACE_HOME_HERO_IMAGE_URL;
+  "/marketplace/discover-try-cart-banner.png";
 export const DISCOVER_BANNER_STYLE_IMAGE_URL =
   process.env.NEXT_PUBLIC_DISCOVER_STYLE_IMAGE_URL?.trim() ||
-  MARKETPLACE_HOME_HERO_IMAGE_URL;
+  "/marketplace/discover-shop-by-style-banner.png";
 export const DISCOVER_BANNER_LOOKBOOKS_IMAGE_URL =
   process.env.NEXT_PUBLIC_DISCOVER_LOOKBOOKS_IMAGE_URL?.trim() ||
   MARKETPLACE_HOME_HERO_IMAGE_URL;

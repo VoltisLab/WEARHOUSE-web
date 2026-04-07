@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
+import { MarketplaceHomeDepopHeader } from "@/components/marketplace/MarketplaceHomeDepopHeader";
 import { MarketplaceSiteFooter } from "@/components/marketplace/MarketplaceSiteFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -181,32 +182,53 @@ function HeaderSearchLink() {
   );
 }
 
+function DefaultMarketplaceHeader() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white pt-[env(safe-area-inset-top)] shadow-sm md:pt-0">
+      <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-14 md:gap-4 md:px-6 lg:px-8">
+        <Link
+          href="/"
+          className="shrink-0 text-[var(--prel-primary)] leading-none tracking-tight"
+        >
+          <BrandWordmark className="text-[18px] md:text-[20px]" />
+        </Link>
+
+        <div className="hidden min-w-0 flex-1 justify-center md:flex">
+          <Suspense fallback={<MarketplaceDesktopNavFallback />}>
+            <MarketplaceDesktopNav />
+          </Suspense>
+        </div>
+
+        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
+          <MarketplaceHeaderAuth />
+          <HeaderSearchLink />
+        </div>
+      </div>
+    </header>
+  );
+}
+
 export function MarketplaceShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isMarketplaceHome = pathname === "/" || pathname === "";
+
   return (
     <div className="flex min-h-dvh flex-col overflow-x-hidden bg-[#fafafa] text-neutral-900">
-      <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white pt-[env(safe-area-inset-top)] shadow-sm md:pt-0">
-        <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-14 md:gap-4 md:px-6 lg:px-8">
-          <Link
-            href="/"
-            className="shrink-0 text-[var(--prel-primary)] leading-none tracking-tight"
-          >
-            <BrandWordmark className="text-[18px] md:text-[20px]" />
-          </Link>
-
-          <div className="hidden min-w-0 flex-1 justify-center md:flex">
-            <Suspense fallback={<MarketplaceDesktopNavFallback />}>
-              <MarketplaceDesktopNav />
-            </Suspense>
-          </div>
-
-          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
-            <MarketplaceHeaderAuth />
-            <HeaderSearchLink />
-          </div>
+      {isMarketplaceHome ? (
+        <div className="sticky top-0 z-[100]">
+          <MarketplaceHomeDepopHeader />
         </div>
-      </header>
+      ) : (
+        <DefaultMarketplaceHeader />
+      )}
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-3 pb-24 pt-4 sm:max-w-2xl sm:px-5 sm:pt-5 md:max-w-7xl md:px-6 md:pt-6 lg:px-8 lg:pb-8">
+      <main
+        className={`mx-auto w-full flex-1 pb-24 lg:pb-8 ${
+          isMarketplaceHome
+            ? "relative z-0 max-w-none px-0 pt-0"
+            : "max-w-lg px-3 pt-4 sm:max-w-2xl sm:px-5 sm:pt-5 md:max-w-7xl md:px-6 md:pt-6 lg:px-8"
+        }`}
+      >
         {children}
       </main>
 

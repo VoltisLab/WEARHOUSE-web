@@ -31,10 +31,6 @@ const RAIL_WIDTH = "w-[10.5rem] shrink-0 sm:w-44";
 /** Matches Swift `DiscoverView` `shopByStyle` default exploration. */
 const SHOP_BY_STYLE_PARAM = "CASUAL";
 
-function divider() {
-  return <div className="h-px bg-prel-separator" />;
-}
-
 /** Full-width or tile promo: photo fills the card with a dark gradient overlay + copy. */
 function DiscoverBannerCard({
   href,
@@ -61,8 +57,8 @@ function DiscoverBannerCard({
       <div
         className={
           variant === "wide"
-            ? "relative isolate min-h-[150px] w-full sm:min-h-[168px]"
-            : "relative isolate min-h-[215px] w-full"
+            ? "relative isolate min-h-[220px] w-full sm:min-h-[260px]"
+            : "relative isolate min-h-[270px] w-full sm:min-h-[300px]"
         }
       >
         <SafeImage
@@ -510,37 +506,37 @@ export function DiscoverFeed() {
           />
 
           <section className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border">
-            <div className="flex items-center gap-2 px-4 pb-2 pt-3.5">
-              <LayoutGrid
-                className="h-[18px] w-[18px] text-[var(--prel-primary)]"
-                strokeWidth={2.25}
-              />
-              <h2 className="text-[16px] font-bold text-[var(--prel-primary)]">
-                Shop categories
-              </h2>
+            <div className="divide-y divide-black/[0.06]">
+              <div className="flex items-center gap-2 px-4 pb-2.5 pt-3.5">
+                <LayoutGrid
+                  className="h-[18px] w-[18px] text-[var(--prel-primary)]"
+                  strokeWidth={2.25}
+                />
+                <h2 className="text-[16px] font-bold text-[var(--prel-primary)]">
+                  Shop categories
+                </h2>
+              </div>
+              <Link
+                href="/search?dept=WOMEN"
+                className="flex items-center justify-between px-4 py-3.5 text-[15px] text-prel-label [-webkit-tap-highlight-color:transparent] hover:bg-prel-bg-grouped/80"
+              >
+                Women
+                <ChevronRight
+                  className="h-4 w-4 text-prel-tertiary-label"
+                  strokeWidth={2}
+                />
+              </Link>
+              <Link
+                href="/search?dept=MEN"
+                className="flex items-center justify-between px-4 py-3.5 text-[15px] text-prel-label [-webkit-tap-highlight-color:transparent] hover:bg-prel-bg-grouped/80"
+              >
+                Men
+                <ChevronRight
+                  className="h-4 w-4 text-prel-tertiary-label"
+                  strokeWidth={2}
+                />
+              </Link>
             </div>
-            {divider()}
-            <Link
-              href="/search?dept=WOMEN"
-              className="flex items-center justify-between px-4 py-3.5 text-[15px] text-prel-label [-webkit-tap-highlight-color:transparent] hover:bg-prel-bg-grouped/80"
-            >
-              Women
-              <ChevronRight
-                className="h-4 w-4 text-prel-tertiary-label"
-                strokeWidth={2}
-              />
-            </Link>
-            {divider()}
-            <Link
-              href="/search?dept=MEN"
-              className="flex items-center justify-between px-4 py-3.5 text-[15px] text-prel-label [-webkit-tap-highlight-color:transparent] hover:bg-prel-bg-grouped/80"
-            >
-              Men
-              <ChevronRight
-                className="h-4 w-4 text-prel-tertiary-label"
-                strokeWidth={2}
-              />
-            </Link>
           </section>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
@@ -549,7 +545,7 @@ export function DiscoverFeed() {
               imageUrl={DISCOVER_BANNER_STYLE_IMAGE_URL}
               title="Shop by style"
               variant="tile"
-              imageObjectClass="object-cover object-[center_25%]"
+              imageObjectClass="object-cover object-[center_40%]"
             />
             <DiscoverBannerCard
               href="/app"

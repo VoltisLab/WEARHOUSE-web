@@ -9,8 +9,12 @@ import {
   MarketplaceProductCard,
   type MarketplaceProductRow,
 } from "@/components/marketplace/ProductCard";
-import { HomeMainBanner } from "@/components/marketplace/HomeMainBanner";
-import { BRAND_NAME } from "@/lib/branding";
+import { HomeDepopHero } from "@/components/marketplace/HomeDepopHero";
+import { HomePopularThisWeek } from "@/components/marketplace/HomePopularThisWeek";
+import { HomePromoCarousel } from "@/components/marketplace/HomePromoCarousel";
+import { HomeShopByPrice } from "@/components/marketplace/HomeShopByPrice";
+import { HomeShopByStyleGrid } from "@/components/marketplace/HomeShopByStyleGrid";
+import { HomeSellExperience } from "@/components/marketplace/HomeSellExperience";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
@@ -78,6 +82,7 @@ export default function MarketplaceHomePage() {
   const [sort, setSort] = useState<"NEWEST" | "PRICE_ASC" | "PRICE_DESC">("NEWEST");
   const [draftSearch, setDraftSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null);
+  const [homeMode, setHomeMode] = useState<"buy" | "sell">("buy");
 
   const filters = useMemo(() => parentCategoryFilter(category), [category]);
   const search = appliedSearch?.trim() ? appliedSearch.trim() : null;
@@ -105,14 +110,14 @@ export default function MarketplaceHomePage() {
   );
 
   const { data: latestData, error: latestError } = useQuery(MARKETPLACE_FEED, {
-    skip: !mounted || !isLoggedIn,
+    skip: !mounted || !isLoggedIn || homeMode !== "buy",
     variables: latestVars,
   });
 
   const { data, error, fetchMore, networkStatus } = useQuery(
     MARKETPLACE_FEED,
     {
-      skip: !mounted,
+      skip: !mounted || homeMode !== "buy",
       variables: feedVars,
       notifyOnNetworkStatusChange: true,
     },
@@ -156,7 +161,7 @@ export default function MarketplaceHomePage() {
   useEffect(() => {
     pageRef.current = 1;
     setHasMore(true);
-  }, [filters, search, sort, isLoggedIn]);
+  }, [filters, search, sort, isLoggedIn, homeMode]);
 
   useEffect(() => {
     if (!mounted || loadingInitial) return;
@@ -251,42 +256,55 @@ export default function MarketplaceHomePage() {
 
   return (
     <div className="pb-6">
-      {/* Full-bleed hero: cancel `main` horizontal padding + top padding */}
-      <div className="relative left-1/2 mb-8 w-screen max-w-[100vw] -translate-x-1/2 -mt-4 sm:-mt-5 md:-mt-6 md:mb-10">
-        <HomeMainBanner />
-      </div>
+      <HomeDepopHero mode={homeMode} onModeChange={setHomeMode} />
 
-      <div className="space-y-8">
+      {homeMode === "buy" ? (
+        <>
+          <HomePromoCarousel />
+          <HomeShopByStyleGrid />
+          <HomePopularThisWeek />
+          <HomeShopByPrice />
+        </>
+      ) : null}
+
+      {homeMode === "sell" ? (
+        <div className="mx-auto max-w-7xl px-3 pt-6 sm:px-5 md:px-6 lg:px-8">
+          <HomeSellExperience />
+        </div>
+      ) : null}
+
+      {homeMode === "buy" ? (
+      <div className="mx-auto max-w-7xl space-y-10 px-3 pb-6 pt-6 sm:px-5 sm:pt-8 md:px-6 lg:px-8">
       <form
         onSubmit={onSearchSubmit}
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
       >
         <div className="relative min-w-0 flex-1">
           <Search
-            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-prel-tertiary-label"
+            className="pointer-events-none absolute left-4 top-1/2 h-[1.125rem] w-[1.125rem] -translate-y-1/2 text-neutral-400"
             aria-hidden
           />
           <input
             type="search"
             value={draftSearch}
             onChange={(e) => setDraftSearch(e.target.value)}
-            placeholder="Search listings…"
-            className="h-12 w-full rounded-2xl border border-prel-separator bg-white pl-10 pr-4 text-[15px] text-prel-label shadow-ios ring-1 ring-prel-glass-border placeholder:text-prel-tertiary-label focus:border-[var(--prel-primary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--prel-primary)]/20"
+            placeholder="Filter listings on this page…"
+            className="h-12 w-full rounded-full border border-neutral-200 bg-white pl-11 pr-4 text-[15px] text-neutral-900 shadow-sm placeholder:text-neutral-400 focus:border-neutral-300 focus:outline-none focus:ring-2 focus:ring-[var(--prel-primary)]/25"
             enterKeyHint="search"
           />
         </div>
         <div className="flex shrink-0 gap-2">
           <button
             type="submit"
-            className="h-12 rounded-2xl bg-[var(--prel-primary)] px-5 text-[15px] font-semibold text-white shadow-ios transition hover:brightness-110"
+            className="h-12 rounded-full bg-black px-6 text-[14px] font-bold text-white transition hover:bg-neutral-800"
           >
-            Search
+            Apply
           </button>
           {appliedSearch ? (
             <button
               type="button"
               onClick={clearSearch}
-              className="h-12 rounded-2xl border border-prel-separator bg-white px-4 text-[14px] font-semibold text-prel-label shadow-ios"
+              className="h-12 rounded-full border border-neutral-200 bg-white px-4 text-[14px] font-bold text-neutral-800"
             >
               Clear
             </button>
@@ -295,19 +313,19 @@ export default function MarketplaceHomePage() {
       </form>
 
       <section className="space-y-3">
-        <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-prel-secondary-label">
-          Category
-        </p>
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:px-0">
+        <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-neutral-500">
+          Filter feed by category
+        </h3>
+        <div className="-mx-1 flex flex-wrap gap-2">
           {CATEGORY_CHIPS.map(({ label, value }) => (
             <button
               key={value}
               type="button"
               onClick={() => setCategory(value)}
-              className={`shrink-0 rounded-full px-4 py-2.5 text-[14px] font-semibold shadow-ios ring-1 transition md:px-5 ${
+              className={`rounded-full px-4 py-2.5 text-[14px] font-bold transition ring-1 ${
                 category === value
-                  ? "bg-[var(--prel-primary)] text-white ring-[var(--prel-primary)]"
-                  : "bg-white text-prel-label ring-prel-glass-border hover:bg-prel-bg-grouped"
+                  ? "bg-black text-white ring-black"
+                  : "bg-white text-neutral-800 ring-black/[0.08] hover:bg-neutral-50"
               }`}
             >
               {label}
@@ -317,19 +335,19 @@ export default function MarketplaceHomePage() {
       </section>
 
       <section className="space-y-3">
-        <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-prel-secondary-label">
-          Sort all listings
-        </p>
+        <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-neutral-500">
+          Sort
+        </h3>
         <div className="flex flex-wrap gap-2">
           {SORT_OPTIONS.map(({ label, value }) => (
             <button
               key={value}
               type="button"
               onClick={() => setSort(value)}
-              className={`rounded-full px-4 py-2 text-[13px] font-semibold ring-1 transition ${
+              className={`rounded-full px-4 py-2 text-[13px] font-bold ring-1 transition ${
                 sort === value
-                  ? "bg-prel-label text-white ring-prel-label"
-                  : "bg-white text-prel-label ring-prel-glass-border hover:bg-prel-bg-grouped"
+                  ? "bg-black text-white ring-black"
+                  : "bg-white text-neutral-800 ring-black/[0.08] hover:bg-neutral-50"
               }`}
             >
               {label}
@@ -346,7 +364,7 @@ export default function MarketplaceHomePage() {
 
       <section className="space-y-4">
         <div className="flex items-end justify-between gap-3">
-          <h2 className="text-[20px] font-bold text-prel-label">
+          <h2 className="text-[1.5rem] font-black tracking-tight text-neutral-900 sm:text-[1.65rem]">
             Latest arrivals
           </h2>
           <span className="text-[12px] text-prel-tertiary-label">
@@ -386,28 +404,22 @@ export default function MarketplaceHomePage() {
 
       <section className="space-y-5">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[20px] font-bold text-prel-label">
+          <h2 className="text-[1.5rem] font-black tracking-tight text-neutral-900 sm:text-[1.65rem]">
             All listings
           </h2>
-          <p className="text-[13px] text-prel-tertiary-label">
+          <p className="text-[13px] font-medium text-neutral-500">
             {isLoggedIn ? (
-              <>
-                Scroll to load more — same{" "}
-                <code className="rounded bg-prel-bg-grouped px-1 py-0.5 text-[11px]">
-                  allProducts
-                </code>{" "}
-                paging as the app ({HOME_PAGE_SIZE} per page).
-              </>
+              <>Scroll down to load more.</>
             ) : (
               <>
                 Showing up to {GUEST_HOME_CAP} listings.{" "}
                 <Link
                   href="/login"
-                  className="font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
+                  className="font-bold text-[var(--prel-primary)] underline-offset-2 hover:underline"
                 >
                   Sign in
                 </Link>{" "}
-                to load the full feed.
+                for the full feed.
               </>
             )}
           </p>
@@ -496,6 +508,7 @@ export default function MarketplaceHomePage() {
         ) : null}
       </section>
       </div>
+      ) : null}
     </div>
   );
 }
