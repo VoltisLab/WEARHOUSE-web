@@ -3,32 +3,16 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import {
-  Home,
-  LayoutGrid,
-  MessageCircle,
-  Plus,
-  Search,
-  User,
-} from "lucide-react";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { MarketplaceSiteFooter } from "@/components/marketplace/MarketplaceSiteFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
-type TabDef = { href: string; label: string; icon: typeof Home };
+type TabDef = { href: string; label: string };
 
-const TAB_HOME: TabDef = { href: "/", label: "Home", icon: Home };
-const TAB_DISCOVER: TabDef = {
-  href: "/search",
-  label: "Discover",
-  icon: LayoutGrid,
-};
-const TAB_INBOX: TabDef = {
-  href: "/messages",
-  label: "Inbox",
-  icon: MessageCircle,
-};
-const TAB_YOU: TabDef = { href: "/profile", label: "You", icon: User };
+const TAB_HOME: TabDef = { href: "/", label: "Home" };
+const TAB_DISCOVER: TabDef = { href: "/search", label: "Discover" };
+const TAB_INBOX: TabDef = { href: "/messages", label: "Inbox" };
+const TAB_YOU: TabDef = { href: "/profile", label: "You" };
 
 function tabActive(pathname: string, href: string) {
   if (href === "/")
@@ -61,24 +45,19 @@ function NavTab({
   compact?: boolean;
 }) {
   const on = tabActive(pathname, tab.href);
-  const Icon = tab.icon;
   const inactive = "text-neutral-500";
   const active = "text-[var(--prel-primary)]";
   return (
     <Link
       href={tab.href}
-      className={`flex flex-col items-center justify-end gap-0.5 ${
-        compact ? "min-w-0 flex-1 py-1" : "px-3 py-2"
+      className={`flex items-center justify-center ${
+        compact ? "min-w-0 flex-1 py-2.5" : "px-3 py-2"
       }`}
     >
-      <Icon
-        className={`${compact ? "h-6 w-6" : "h-5 w-5"} ${on ? active : inactive}`}
-        strokeWidth={on ? 2.25 : 2}
-      />
       <span
-        className={`max-w-[4.5rem] truncate text-center ${
-          compact ? "text-[10px] leading-tight" : "text-[13px]"
-        } font-medium ${on ? active : inactive}`}
+        className={`truncate text-center font-semibold ${
+          compact ? "text-[11px] leading-tight" : "text-[14px]"
+        } ${on ? active : inactive}`}
       >
         {tab.label}
       </span>
@@ -91,16 +70,15 @@ function MarketplaceDesktopNav() {
 
   return (
     <nav
-      className="hidden items-center justify-center gap-1 md:flex"
+      className="hidden items-center justify-center gap-0.5 md:flex"
       aria-label="Main"
     >
       <NavTab tab={TAB_HOME} pathname={pathname} />
       <NavTab tab={TAB_DISCOVER} pathname={pathname} />
       <Link
         href="/sell"
-        className="mx-2 flex h-11 min-w-[5.5rem] items-center justify-center gap-1.5 rounded-full bg-[var(--prel-primary)] px-5 text-[14px] font-bold text-white shadow-md transition hover:brightness-105"
+        className="mx-2 flex h-11 min-w-[5.5rem] items-center justify-center rounded-full bg-[var(--prel-primary)] px-5 text-[14px] font-bold text-white shadow-md transition hover:brightness-105"
       >
-        <Plus className="h-5 w-5" strokeWidth={2.5} />
         Sell
       </Link>
       <NavTab tab={TAB_INBOX} pathname={pathname} />
@@ -123,23 +101,16 @@ function MarketplaceBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden"
       aria-label="Primary"
     >
-      <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-1">
+      <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-0.5 pt-1">
         <NavTab tab={TAB_HOME} pathname={pathname} compact />
         <NavTab tab={TAB_DISCOVER} pathname={pathname} compact />
-        <div className="flex flex-col items-center justify-start pb-0.5">
+        <div className="flex flex-col items-center justify-start pb-1">
           <Link
             href="/sell"
-            className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full bg-[var(--prel-primary)] text-white shadow-lg ring-4 ring-white transition hover:brightness-105"
-            aria-label="Sell"
-          >
-            <Plus className="h-7 w-7" strokeWidth={2.5} />
-          </Link>
-          <span
-            className="-mt-2 text-[10px] font-medium text-neutral-500"
-            aria-hidden
+            className="flex h-12 min-w-[3.25rem] -translate-y-2 items-center justify-center rounded-full bg-[var(--prel-primary)] px-3 text-[11px] font-bold leading-tight text-white shadow-lg ring-4 ring-white transition hover:brightness-105"
           >
             Sell
-          </span>
+          </Link>
         </div>
         <NavTab tab={TAB_INBOX} pathname={pathname} compact />
         <NavTab tab={TAB_YOU} pathname={pathname} compact />
@@ -225,10 +196,9 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
             <MarketplaceHeaderAuth />
             <Link
               href="/search"
-              className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-100 md:h-11 md:w-11"
-              aria-label="Search discover"
+              className="shrink-0 rounded-full px-3 py-2 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-100 sm:px-4 sm:text-[14px]"
             >
-              <Search className="h-5 w-5" strokeWidth={2} />
+              Search
             </Link>
           </div>
         </div>
