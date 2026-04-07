@@ -56,7 +56,7 @@ export function MarketplaceSiteFooter() {
           <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-zinc-500">
             Get the app
           </p>
-          <div className="mt-4 [&_img]:brightness-0 [&_img]:invert">
+          <div className="mt-4">
             <AppStoreBadges />
           </div>
           <Link

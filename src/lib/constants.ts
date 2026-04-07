@@ -54,8 +54,6 @@ export const IOS_APP_STORE_URL =
 export const ANDROID_PLAY_STORE_URL =
   process.env.NEXT_PUBLIC_ANDROID_APP_URL?.trim() || "";
 
-/** Badge image sources (decorative; links use env URLs above). */
-export const APP_STORE_BADGE_IMG =
-  "https://upload.wikimedia.org/wikipedia/commons/3/3c/Download_on_the_App_Store_Badge.svg";
-export const GOOGLE_PLAY_BADGE_IMG =
-  "https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg";
+/** Badge assets (Vinted-style; links use env URLs or /app fallback). */
+export const APP_STORE_BADGE_IMG = "/badges/app-store.svg";
+export const GOOGLE_PLAY_BADGE_IMG = "/badges/google-play.svg";
