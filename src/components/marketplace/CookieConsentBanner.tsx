@@ -5,8 +5,6 @@ import { useState } from "react";
 import { useCookieConsent } from "@/contexts/CookieConsentContext";
 import { CookiePreferencesForm } from "@/components/marketplace/CookiePreferencesForm";
 
-const TEAL = "#09B1BA";
-
 /**
  * Fixed consent bar above the mobile bottom nav; floating card on large screens.
  */
@@ -40,8 +38,7 @@ export function CookieConsentBanner() {
             improve the product and measure marketing. See our{" "}
             <Link
               href="/cookie-policy"
-              className="font-semibold underline-offset-2 hover:underline"
-              style={{ color: TEAL }}
+              className="font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
             >
               Cookie Policy
             </Link>
@@ -71,8 +68,7 @@ export function CookieConsentBanner() {
               <button
                 type="button"
                 onClick={() => acceptAll()}
-                className="order-1 rounded-full px-4 py-2.5 text-[13px] font-bold text-white shadow-sm transition hover:brightness-105 sm:order-3 sm:px-6"
-                style={{ backgroundColor: TEAL }}
+                className="order-1 rounded-full bg-[var(--prel-primary)] px-4 py-2.5 text-[13px] font-bold text-white shadow-sm transition hover:brightness-105 sm:order-3 sm:px-6"
               >
                 Accept all
               </button>

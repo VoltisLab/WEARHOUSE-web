@@ -42,6 +42,7 @@ type BrowseHrefCtx = {
   sale: string | null;
   maxPrice: string | null;
   recent: string | null;
+  featured: string | null;
 };
 
 function buildBrowseHref(opts: BrowseHrefCtx): string {
@@ -57,6 +58,7 @@ function buildBrowseHref(opts: BrowseHrefCtx): string {
   if (opts.maxPrice != null && opts.maxPrice !== "")
     p.set("maxPrice", opts.maxPrice);
   if (opts.recent === "1") p.set("recent", "1");
+  if (opts.featured === "1") p.set("featured", "1");
   const s = p.toString();
   return s ? `/search?${s}` : "/search";
 }
@@ -72,7 +74,9 @@ function useIsDiscoverHome(): boolean {
   const sale = searchParams.get("sale");
   const maxPrice = searchParams.get("maxPrice");
   const recent = searchParams.get("recent");
+  const featured = searchParams.get("featured");
   if (browse === "1") return false;
+  if (featured === "1") return false;
   if (q.length > 0) return false;
   if (brand.length > 0) return false;
   if (style.length > 0) return false;
@@ -98,6 +102,7 @@ function DiscoverBrowseInner() {
   const saleParam = searchParams.get("sale");
   const maxPriceParam = searchParams.get("maxPrice");
   const recentParam = searchParams.get("recent");
+  const featuredParam = searchParams.get("featured");
 
   const isRecentMode = recentParam === "1";
 
@@ -121,6 +126,7 @@ function DiscoverBrowseInner() {
     maxPriceParam,
     recentParam,
     browseParam,
+    featuredParam,
   ]);
 
   const brandId = useMemo(() => {
@@ -136,6 +142,7 @@ function DiscoverBrowseInner() {
       style?: string;
       discountPrice?: boolean;
       maxPrice?: number;
+      isFeatured?: boolean;
     } = {
       status: "ACTIVE",
     };
@@ -155,8 +162,11 @@ function DiscoverBrowseInner() {
       const n = parseFloat(maxPriceParam);
       if (!Number.isNaN(n)) f.maxPrice = n;
     }
+    if (featuredParam === "1") {
+      f.isFeatured = true;
+    }
     return f;
-  }, [deptParam, brandId, styleParam, saleParam, maxPriceParam]);
+  }, [deptParam, brandId, styleParam, saleParam, maxPriceParam, featuredParam]);
 
   const search = qParam.length > 0 ? qParam : null;
   const sort =
@@ -174,6 +184,7 @@ function DiscoverBrowseInner() {
     sale: saleParam === "1" ? "1" : null,
     maxPrice: maxPriceParam,
     recent: recentParam === "1" ? "1" : null,
+    featured: featuredParam === "1" ? "1" : null,
   };
 
   const { data: brandsData } = useQuery(POPULAR_BRANDS, {
@@ -231,6 +242,7 @@ function DiscoverBrowseInner() {
 
   const browseTitle = useMemo(() => {
     if (isRecentMode) return "Recently viewed";
+    if (featuredParam === "1") return "Featured";
     if (saleParam === "1") return "On sale";
     if (maxPriceParam === "15") return "Shop bargains";
     if (styleParam) return "Shop by style";
@@ -239,6 +251,7 @@ function DiscoverBrowseInner() {
     return "Browse";
   }, [
     isRecentMode,
+    featuredParam,
     saleParam,
     maxPriceParam,
     styleParam,
@@ -339,6 +352,9 @@ function DiscoverBrowseInner() {
         ) : null}
         {recentParam === "1" ? (
           <input type="hidden" name="recent" value="1" />
+        ) : null}
+        {featuredParam === "1" ? (
+          <input type="hidden" name="featured" value="1" />
         ) : null}
         <label className="sr-only" htmlFor="mq">
           Search listings

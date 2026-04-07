@@ -15,15 +15,12 @@ import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { MarketplaceSiteFooter } from "@/components/marketplace/MarketplaceSiteFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
-/** Vinted-style accent for nav chrome (active tab, sell FAB). */
-const VINTED_TEAL = "#09B1BA";
-
 type TabDef = { href: string; label: string; icon: typeof Home };
 
 const TAB_HOME: TabDef = { href: "/", label: "Home", icon: Home };
-const TAB_CATALOGUE: TabDef = {
+const TAB_DISCOVER: TabDef = {
   href: "/search",
-  label: "Catalogue",
+  label: "Discover",
   icon: LayoutGrid,
 };
 const TAB_INBOX: TabDef = {
@@ -65,6 +62,8 @@ function NavTab({
 }) {
   const on = tabActive(pathname, tab.href);
   const Icon = tab.icon;
+  const inactive = "text-neutral-500";
+  const active = "text-[var(--prel-primary)]";
   return (
     <Link
       href={tab.href}
@@ -73,15 +72,13 @@ function NavTab({
       }`}
     >
       <Icon
-        className={compact ? "h-6 w-6" : "h-5 w-5"}
+        className={`${compact ? "h-6 w-6" : "h-5 w-5"} ${on ? active : inactive}`}
         strokeWidth={on ? 2.25 : 2}
-        style={{ color: on ? VINTED_TEAL : "#737373" }}
       />
       <span
         className={`max-w-[4.5rem] truncate text-center ${
           compact ? "text-[10px] leading-tight" : "text-[13px]"
-        } font-medium`}
-        style={{ color: on ? VINTED_TEAL : "#737373" }}
+        } font-medium ${on ? active : inactive}`}
       >
         {tab.label}
       </span>
@@ -98,11 +95,10 @@ function MarketplaceDesktopNav() {
       aria-label="Main"
     >
       <NavTab tab={TAB_HOME} pathname={pathname} />
-      <NavTab tab={TAB_CATALOGUE} pathname={pathname} />
+      <NavTab tab={TAB_DISCOVER} pathname={pathname} />
       <Link
         href="/sell"
-        className="mx-2 flex h-11 min-w-[5.5rem] items-center justify-center gap-1.5 rounded-full px-5 text-[14px] font-bold text-white shadow-md transition hover:brightness-105"
-        style={{ backgroundColor: VINTED_TEAL }}
+        className="mx-2 flex h-11 min-w-[5.5rem] items-center justify-center gap-1.5 rounded-full bg-[var(--prel-primary)] px-5 text-[14px] font-bold text-white shadow-md transition hover:brightness-105"
       >
         <Plus className="h-5 w-5" strokeWidth={2.5} />
         Sell
@@ -119,7 +115,6 @@ function MarketplaceDesktopNavFallback() {
   );
 }
 
-/** Vinted-style mobile bottom bar: white strip, teal active, raised sell button. */
 function MarketplaceBottomNav() {
   const pathname = usePathname();
 
@@ -130,12 +125,11 @@ function MarketplaceBottomNav() {
     >
       <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-1">
         <NavTab tab={TAB_HOME} pathname={pathname} compact />
-        <NavTab tab={TAB_CATALOGUE} pathname={pathname} compact />
+        <NavTab tab={TAB_DISCOVER} pathname={pathname} compact />
         <div className="flex flex-col items-center justify-start pb-0.5">
           <Link
             href="/sell"
-            className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full text-white shadow-lg ring-4 ring-white transition hover:brightness-105"
-            style={{ backgroundColor: VINTED_TEAL }}
+            className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full bg-[var(--prel-primary)] text-white shadow-lg ring-4 ring-white transition hover:brightness-105"
             aria-label="Sell"
           >
             <Plus className="h-7 w-7" strokeWidth={2.5} />
@@ -192,8 +186,7 @@ function MarketplaceHeaderAuth() {
       </Link>
       <Link
         href="/signup"
-        className="rounded-full px-3 py-2 text-[13px] font-semibold text-white shadow-sm transition hover:brightness-105 sm:px-4 sm:text-[14px]"
-        style={{ backgroundColor: VINTED_TEAL }}
+        className="rounded-full bg-[var(--prel-primary)] px-3 py-2 text-[13px] font-semibold text-white shadow-sm transition hover:brightness-105 sm:px-4 sm:text-[14px]"
       >
         Sign up
       </Link>
@@ -217,8 +210,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
         <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-14 md:gap-4 md:px-6 lg:px-8">
           <Link
             href="/"
-            className="shrink-0 leading-none tracking-tight"
-            style={{ color: VINTED_TEAL }}
+            className="shrink-0 text-[var(--prel-primary)] leading-none tracking-tight"
           >
             <BrandWordmark className="text-[18px] md:text-[20px]" />
           </Link>
@@ -234,7 +226,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
             <Link
               href="/search"
               className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-100 md:h-11 md:w-11"
-              aria-label="Search catalogue"
+              aria-label="Search discover"
             >
               <Search className="h-5 w-5" strokeWidth={2} />
             </Link>

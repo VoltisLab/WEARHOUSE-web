@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useCookieConsent } from "@/contexts/CookieConsentContext";
 import type { CookieConsentPrefs } from "@/lib/cookie-consent-storage";
 
-const TEAL = "#09B1BA";
-
 function ToggleRow({
   id,
   label,
@@ -40,8 +38,7 @@ function ToggleRow({
         onClick={() => !disabled && onChange(!checked)}
         className={`relative mt-0.5 h-7 w-12 shrink-0 rounded-full transition-colors ${
           disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
-        } ${checked ? "" : "bg-neutral-200"}`}
-        style={checked ? { backgroundColor: TEAL } : undefined}
+        } ${checked ? "bg-[var(--prel-primary)]" : "bg-neutral-200"}`}
       >
         <span
           className={`absolute top-0.5 h-6 w-6 rounded-full bg-white shadow transition-transform ${
@@ -109,8 +106,7 @@ export function CookiePreferencesForm({ onSaved, className = "" }: Props) {
           savePrefs(draft);
           onSaved?.();
         }}
-        className="mt-2 w-full rounded-full py-3 text-[14px] font-bold text-white shadow-sm transition hover:brightness-105 disabled:opacity-50"
-        style={{ backgroundColor: TEAL }}
+        className="mt-2 w-full rounded-full bg-[var(--prel-primary)] py-3 text-[14px] font-bold text-white shadow-sm transition hover:brightness-105 disabled:opacity-50"
       >
         Save preferences
       </button>

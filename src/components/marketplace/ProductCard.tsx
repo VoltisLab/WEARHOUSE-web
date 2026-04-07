@@ -28,6 +28,7 @@ export type MarketplaceProductRow = {
   category?: { name?: string | null } | null;
   likes?: number | null;
   userLiked?: boolean | null;
+  isFeatured?: boolean | null;
 };
 
 export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
@@ -46,6 +47,11 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
   return (
     <article className="group overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border transition hover:ring-[var(--prel-primary)]/40">
       <div className="relative aspect-[3/4] overflow-hidden bg-prel-bg-grouped">
+        {p.isFeatured ? (
+          <span className="absolute left-2 top-2 z-[5] rounded-md bg-[var(--prel-primary)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white shadow-sm">
+            Featured
+          </span>
+        ) : null}
         <Link href={href} className="relative block h-full w-full">
           <SafeImage
             src={img}

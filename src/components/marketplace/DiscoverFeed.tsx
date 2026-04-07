@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { safeReturnPath } from "@/lib/safe-return-path";
 import { ChevronRight, LayoutGrid, Heart, RefreshCw } from "lucide-react";
 import {
   MARKETPLACE_FEED,
@@ -40,6 +41,13 @@ function ProductRailSection({
   seeAllHref: string;
   rows: MarketplaceProductRow[];
 }) {
+  const { userToken, ready } = useAuth();
+  const seeAllResolvedHref = useMemo(() => {
+    if (!ready || userToken) return seeAllHref;
+    const next = safeReturnPath(seeAllHref) ?? "/search";
+    return `/login?next=${encodeURIComponent(next)}`;
+  }, [ready, userToken, seeAllHref]);
+
   if (rows.length === 0) return null;
   return (
     <section className="space-y-3">
@@ -53,7 +61,7 @@ function ProductRailSection({
           ) : null}
         </div>
         <Link
-          href={seeAllHref}
+          href={seeAllResolvedHref}
           className="shrink-0 text-[14px] font-semibold text-[var(--prel-primary)]"
         >
           See all
@@ -101,6 +109,20 @@ export function DiscoverFeed() {
       },
     });
 
+  const { data: featuredData, refetch: refetchFeatured } = useQuery(
+    MARKETPLACE_FEED,
+    {
+      skip: !mounted,
+      variables: {
+        pageCount: 24,
+        pageNumber: 1,
+        search: null as string | null,
+        sort: "NEWEST" as const,
+        filters: { status: "ACTIVE", isFeatured: true },
+      },
+    },
+  );
+
   const { data: onSaleData, refetch: refetchOnSale } = useQuery(
     MARKETPLACE_FEED,
     {
@@ -147,6 +169,11 @@ export function DiscoverFeed() {
     [mainRows],
   );
 
+  const featuredRows = useMemo(() => {
+    const raw = (featuredData?.allProducts ?? []) as MarketplaceProductRow[];
+    return raw.filter((p) => p.status !== "SOLD" && p.isFeatured === true);
+  }, [featuredData?.allProducts]);
+
   const recentRows = (recentData?.recentlyViewedProducts ??
     []) as MarketplaceProductRow[];
   const recentSorted = useMemo(() => {
@@ -157,6 +184,7 @@ export function DiscoverFeed() {
   const sectionModel = useMemo(() => {
     const used = new Set<number>();
     for (const p of recentSorted) used.add(p.id);
+    for (const p of featuredRows) used.add(p.id);
 
     const brandsYouLove: MarketplaceProductRow[] = [];
     const seenBrands = new Set<string>();
@@ -249,6 +277,7 @@ export function DiscoverFeed() {
   }, [
     activeMain,
     recentSorted,
+    featuredRows,
     recData,
     bargainsData,
     onSaleData,
@@ -263,6 +292,7 @@ export function DiscoverFeed() {
   async function onRefreshAll() {
     await Promise.all([
       refetchMain(),
+      refetchFeatured(),
       refetchOnSale(),
       refetchBargains(),
       refetchRec(),
@@ -379,6 +409,13 @@ export function DiscoverFeed() {
               ) : null}
             </div>
           ) : null}
+
+          <ProductRailSection
+            title="Featured"
+            subtitle="Hand-picked highlights from the catalogue"
+            seeAllHref="/search?browse=1&featured=1"
+            rows={featuredRows}
+          />
 
           <Link
             href="/search?browse=1"

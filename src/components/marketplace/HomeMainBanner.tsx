@@ -2,11 +2,9 @@ import Link from "next/link";
 import { BRAND_NAME } from "@/lib/branding";
 import { MARKETPLACE_HOME_HERO_IMAGE_URL } from "@/lib/constants";
 
-const VINTED_TEAL = "#09B1BA";
-
 /**
  * Full-width hero (parent should break out of `main` horizontal padding).
- * Vinted-style: edge-to-edge photo, white CTA card, teal primary action.
+ * Edge-to-edge photo, white CTA card, brand primary actions.
  */
 export function HomeMainBanner() {
   const src = MARKETPLACE_HOME_HERO_IMAGE_URL;
@@ -39,15 +37,13 @@ export function HomeMainBanner() {
           <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/sell"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full px-7 text-[16px] font-bold text-white shadow-md transition hover:brightness-105"
-              style={{ backgroundColor: VINTED_TEAL }}
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-7 text-[16px] font-bold text-white shadow-md transition hover:brightness-105"
             >
               Sell now
             </Link>
             <Link
               href="/how-it-works"
-              className="inline-flex min-h-[44px] items-center justify-center text-[15px] font-semibold transition hover:opacity-80"
-              style={{ color: VINTED_TEAL }}
+              className="inline-flex min-h-[44px] items-center justify-center text-[15px] font-semibold text-[var(--prel-primary)] transition hover:opacity-80"
             >
               Learn how it works
             </Link>

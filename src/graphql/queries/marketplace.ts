@@ -36,6 +36,7 @@ export const MARKETPLACE_FEED = gql`
       imagesUrl
       likes
       userLiked
+      isFeatured
       seller {
         username
         displayName
@@ -67,6 +68,7 @@ export const RECENTLY_VIEWED_PRODUCTS = gql`
       imagesUrl
       likes
       userLiked
+      isFeatured
       seller {
         username
         displayName
