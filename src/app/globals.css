@@ -109,6 +109,50 @@ body {
   border-radius: 10.8px;
 }
 
+/**
+ * Marketplace home hero — layered sheen (radial blooms + lilac-pearl base).
+ * Reads softer than a single diagonal grey↔primary mix.
+ */
+.home-depop-hero-bg {
+  background:
+    radial-gradient(
+      ellipse 110% 90% at 92% -8%,
+      color-mix(in srgb, var(--prel-primary) 22%, #fefcff) 0%,
+      transparent 56%
+    ),
+    radial-gradient(
+      ellipse 75% 55% at -5% 108%,
+      color-mix(in srgb, var(--prel-primary) 11%, #faf8fc) 0%,
+      transparent 50%
+    ),
+    linear-gradient(
+      168deg,
+      #fffefc 0%,
+      #fcf9fd 28%,
+      #f4f0f9 58%,
+      #ebe4f2 100%
+    );
+  border-bottom: 1px solid color-mix(in srgb, var(--prel-primary) 10%, #e2dce8);
+}
+
+.dark .home-depop-hero-bg {
+  background:
+    radial-gradient(ellipse 100% 80% at 90% 0%, color-mix(in srgb, var(--prel-primary) 35%, #1a1520) 0%, transparent 55%),
+    linear-gradient(168deg, #141018 0%, #0f0d12 100%);
+  border-bottom-color: color-mix(in srgb, var(--prel-primary) 25%, #2a2430);
+}
+
+/* Sell tab “Ready when you are” — same pearl/lilac language, scaled for a card */
+.home-sell-cta-panel {
+  background:
+    radial-gradient(ellipse 90% 70% at 100% 0%, color-mix(in srgb, var(--prel-primary) 14%, #fefcff) 0%, transparent 52%),
+    linear-gradient(165deg, #fffdfe 0%, #f8f4fb 55%, #f0eaf6 100%);
+}
+
+.dark .home-sell-cta-panel {
+  background: linear-gradient(165deg, #1c1822 0%, #16131a 100%);
+}
+
 /* Glass card — Theme.Glass + Colors.glass* */
 .glass-card {
   background: var(--prel-glass-bg);

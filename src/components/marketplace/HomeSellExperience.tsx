@@ -85,7 +85,7 @@ export function HomeSellExperience() {
         </ul>
       </section>
 
-      <section className="rounded-3xl bg-gradient-to-br from-white via-neutral-50 to-[color-mix(in_srgb,var(--prel-primary)_7%,#f4f4f6)] px-5 py-8 shadow-ios ring-1 ring-black/[0.07] sm:px-8">
+      <section className="home-sell-cta-panel rounded-3xl px-5 py-8 shadow-ios ring-1 ring-black/[0.06] sm:px-8">
         <h3 className="text-[18px] font-black text-neutral-900">
           Ready when you are
         </h3>

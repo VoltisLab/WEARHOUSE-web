@@ -1,27 +1,75 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import { BRAND_NAME } from "@/lib/branding";
 import {
   MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
   MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL,
   MARKETPLACE_HOME_HERO_COLLAGE_RIGHT_URL,
-  MARKETPLACE_HOME_HERO_IMAGE_URL,
+  MARKETPLACE_HOME_HERO_SELL_COLLAGE_CENTER_URL,
+  MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL,
+  MARKETPLACE_HOME_HERO_SELL_COLLAGE_RIGHT_URL,
 } from "@/lib/constants";
-import { HomeBuySellSwitch } from "@/components/marketplace/HomeBuySellSwitch";
 
 type HomeHeroMode = "buy" | "sell";
+
+const HERO_ROTATE_MS = 10_000;
 
 const collageShadow =
   "shadow-[0_10px_40px_rgba(0,0,0,0.09),0_2px_8px_rgba(0,0,0,0.04)]";
 
-/**
- * Hero wash: three stops only — white → cool neutral → whisper of brand at the
- * trailing corner (avoids the busy multi-stop color-mix sweep).
- */
-const heroBannerClass =
-  "border-b border-neutral-200/80 bg-[linear-gradient(152deg,#ffffff_0%,#f6f7f8_52%,color-mix(in_srgb,var(--prel-primary)_10%,#ececef)_100%)]";
+const frameBase = `rounded-xl object-cover ${collageShadow} ring-1 ring-black/[0.06]`;
 
 /**
- * Home hero: soft gradient banner, copy left, collage right, pill primary CTAs.
+ * Shared 3-card layout for buy + sell: wide back plane, left + right forward cards
+ * (different from the old “tall center stack” so reads as a new composition).
+ */
+const COLLAGE_LAYOUT = {
+  /** Recedes — anchor layer */
+  center: `absolute left-[18%] top-[20%] z-[1] h-[54%] w-[58%] rotate-[2deg] object-center ${frameBase}`,
+  /** Mid depth, left rail */
+  left: `absolute left-[-1%] top-[8%] z-[5] h-[58%] w-[42%] -rotate-[11deg] object-left ${frameBase}`,
+  /** Front — tallest, right */
+  right: `absolute right-[-2%] top-[4%] z-[10] h-[64%] w-[44%] rotate-[12deg] object-right ${frameBase}`,
+} as const;
+
+function HeroCollageTriptych({
+  leftSrc,
+  centerSrc,
+  rightSrc,
+}: {
+  leftSrc: string;
+  centerSrc: string;
+  rightSrc: string;
+}) {
+  return (
+    <div
+      className="relative h-full w-full max-w-[21rem] sm:max-w-[26rem] md:max-w-[30rem]"
+      aria-hidden
+    >
+      {/* eslint-disable-next-line @next/next/no-img-element -- hero may be external URL from env */}
+      <img src={leftSrc} alt="" className={COLLAGE_LAYOUT.left} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={centerSrc} alt="" className={COLLAGE_LAYOUT.center} />
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={rightSrc} alt="" className={COLLAGE_LAYOUT.right} />
+    </div>
+  );
+}
+
+function panelClass(active: boolean) {
+  return [
+    "[grid-area:stack] col-start-1 row-start-1 min-w-0 transition-opacity duration-700 ease-in-out motion-reduce:transition-none",
+    active
+      ? "z-10 opacity-100"
+      : "pointer-events-none z-0 opacity-0",
+  ].join(" ");
+}
+
+/**
+ * Home hero: soft gradient banner, copy left, shared 3-up collage right (buy vs sell assets).
+ * Alternates buy/sell on a timer with crossfade and dot controls (keeps parent `homeMode` in sync).
  */
 export function HomeDepopHero({
   mode,
@@ -30,27 +78,31 @@ export function HomeDepopHero({
   mode: HomeHeroMode;
   onModeChange: (m: HomeHeroMode) => void;
 }) {
-  const src = MARKETPLACE_HOME_HERO_IMAGE_URL;
-  const collageL = MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL;
-  const collageC = MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL;
-  const collageR = MARKETPLACE_HOME_HERO_COLLAGE_RIGHT_URL;
-  const isBuy = mode === "buy";
+  const buyCollage = {
+    left: MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL,
+    center: MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
+    right: MARKETPLACE_HOME_HERO_COLLAGE_RIGHT_URL,
+  };
+
+  const sellCollage = {
+    left: MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL,
+    center: MARKETPLACE_HOME_HERO_SELL_COLLAGE_CENTER_URL,
+    right: MARKETPLACE_HOME_HERO_SELL_COLLAGE_RIGHT_URL,
+  };
+
+  useEffect(() => {
+    const id = window.setInterval(() => {
+      onModeChange(mode === "buy" ? "sell" : "buy");
+    }, HERO_ROTATE_MS);
+    return () => window.clearInterval(id);
+  }, [mode, onModeChange]);
 
   return (
-    <section className={`relative isolate w-full overflow-hidden ${heroBannerClass}`}>
+    <section className="home-depop-hero-bg relative isolate w-full overflow-hidden">
       <div className="mx-auto grid max-w-7xl gap-12 px-5 py-12 sm:gap-14 sm:px-8 sm:py-14 md:gap-16 md:px-10 md:py-16 lg:grid-cols-2 lg:items-center lg:gap-20 lg:py-[4.5rem]">
         <div className="min-w-0">
-          <div className="mb-7 flex justify-start sm:mb-9">
-            <HomeBuySellSwitch
-              mode={mode}
-              onModeChange={onModeChange}
-              variant="panel"
-              align="start"
-            />
-          </div>
-
-          {isBuy ? (
-            <>
+          <div className="grid [grid-template-areas:'stack']">
+            <div className={panelClass(mode === "buy")}>
               <h1 className="text-[2.25rem] font-black leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
                 <span className="block">Buy preloved.</span>
                 <span className="mt-1 block sm:mt-1.5">Wear it your way</span>
@@ -67,10 +119,10 @@ export function HomeDepopHero({
                   Discover
                 </Link>
               </div>
-            </>
-          ) : (
-            <>
-              <h1 className="text-[2.25rem] font-black leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl md:text-[3.25rem]">
+            </div>
+
+            <div className={panelClass(mode === "sell")}>
+              <h1 className="text-[2.25rem] font-black leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
                 <span className="block">Sell smarter.</span>
                 <span className="mt-1 block text-neutral-800 sm:mt-1.5">
                   On {BRAND_NAME}.
@@ -94,45 +146,69 @@ export function HomeDepopHero({
                   How it works
                 </Link>
               </div>
-            </>
-          )}
+            </div>
+          </div>
+
+          <div
+            className="mt-8 flex gap-2.5 sm:mt-9"
+            role="tablist"
+            aria-label="Hero focus"
+          >
+            {(["buy", "sell"] as const).map((m) => {
+              const selected = mode === m;
+              return (
+                <button
+                  key={m}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  aria-label={m === "buy" ? "Buying" : "Selling"}
+                  onClick={() => onModeChange(m)}
+                  className={[
+                    "h-2 w-2 rounded-full transition-colors duration-300",
+                    selected
+                      ? "bg-neutral-900"
+                      : "bg-neutral-300 hover:bg-neutral-400",
+                  ].join(" ")}
+                />
+              );
+            })}
+          </div>
         </div>
 
         <div className="relative mx-auto flex h-[min(56vw,24rem)] w-full max-w-md items-center justify-center sm:h-[min(50vw,28rem)] md:max-w-none md:justify-end lg:h-[min(38vw,30rem)] xl:h-[34rem]">
-          {isBuy ? (
+          <div className="grid h-full w-full [grid-template-areas:'stack'] place-items-center md:place-items-end">
             <div
-              className="relative h-full w-full max-w-[21rem] sm:max-w-[26rem] md:max-w-[30rem]"
-              aria-hidden
+              className={[
+                "[grid-area:stack] col-start-1 row-start-1 flex h-full w-full items-center justify-center md:justify-end",
+                "transition-opacity duration-700 ease-in-out motion-reduce:transition-none",
+                mode === "buy"
+                  ? "z-10 opacity-100"
+                  : "pointer-events-none z-0 opacity-0",
+              ].join(" ")}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element -- hero may be external URL from env */}
-              <img
-                src={collageL}
-                alt=""
-                className={`absolute left-[2%] top-[10%] h-[58%] w-[42%] rotate-[-9deg] rounded-xl object-cover object-bottom ${collageShadow} ring-1 ring-black/[0.06]`}
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={collageC}
-                alt=""
-                className={`absolute left-[26%] top-[0%] z-10 h-[64%] w-[46%] rotate-[2deg] rounded-xl object-cover object-top ${collageShadow} ring-1 ring-black/[0.06]`}
-              />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={collageR}
-                alt=""
-                className={`absolute right-[0%] top-[16%] z-[5] h-[58%] w-[42%] rotate-[11deg] rounded-xl object-cover object-center ${collageShadow} ring-1 ring-black/[0.06]`}
+              <HeroCollageTriptych
+                leftSrc={buyCollage.left}
+                centerSrc={buyCollage.center}
+                rightSrc={buyCollage.right}
               />
             </div>
-          ) : (
-            <div className="relative h-full w-full max-w-[20rem] opacity-90 sm:max-w-[24rem]">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={src}
-                alt=""
-                className="absolute inset-[5%] h-[90%] w-[70%] rounded-2xl object-cover object-center shadow-lg ring-1 ring-black/10"
+            <div
+              className={[
+                "[grid-area:stack] col-start-1 row-start-1 flex h-full w-full items-center justify-center md:justify-end",
+                "transition-opacity duration-700 ease-in-out motion-reduce:transition-none",
+                mode === "sell"
+                  ? "z-10 opacity-100"
+                  : "pointer-events-none z-0 opacity-0",
+              ].join(" ")}
+            >
+              <HeroCollageTriptych
+                leftSrc={sellCollage.left}
+                centerSrc={sellCollage.center}
+                rightSrc={sellCollage.right}
               />
             </div>
-          )}
+          </div>
         </div>
       </div>
     </section>

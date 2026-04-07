@@ -41,6 +41,20 @@ export const DISCOVER_BANNER_LOOKBOOKS_IMAGE_URL =
   process.env.NEXT_PUBLIC_DISCOVER_LOOKBOOKS_IMAGE_URL?.trim() ||
   MARKETPLACE_HOME_HERO_IMAGE_URL;
 
+/**
+ * Hero “Selling” tab 3-up collage — same frame layout as buy; override per slot with
+ * `NEXT_PUBLIC_HOME_HERO_SELL_COLLAGE_LEFT_URL`, `_CENTER_URL`, `_RIGHT_URL`.
+ */
+export const MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL =
+  process.env.NEXT_PUBLIC_HOME_HERO_SELL_COLLAGE_LEFT_URL?.trim() ||
+  DISCOVER_BANNER_TRY_CART_IMAGE_URL;
+export const MARKETPLACE_HOME_HERO_SELL_COLLAGE_CENTER_URL =
+  process.env.NEXT_PUBLIC_HOME_HERO_SELL_COLLAGE_CENTER_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+export const MARKETPLACE_HOME_HERO_SELL_COLLAGE_RIGHT_URL =
+  process.env.NEXT_PUBLIC_HOME_HERO_SELL_COLLAGE_RIGHT_URL?.trim() ||
+  DISCOVER_BANNER_STYLE_IMAGE_URL;
+
 /** Hostname for link labels (still uses `PUBLIC_WEB_BASE` href). */
 export function publicWebHostname(): string {
   try {
