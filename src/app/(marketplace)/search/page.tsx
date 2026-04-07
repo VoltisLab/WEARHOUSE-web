@@ -7,11 +7,14 @@ import { useSearchParams } from "next/navigation";
 import {
   MARKETPLACE_FEED,
   POPULAR_BRANDS,
+  RECENTLY_VIEWED_PRODUCTS,
 } from "@/graphql/queries/marketplace";
 import {
   MarketplaceProductCard,
   type MarketplaceProductRow,
 } from "@/components/marketplace/ProductCard";
+import { DiscoverFeed } from "@/components/marketplace/DiscoverFeed";
+import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
 const DEPT_CHIPS: { label: string; value: string | null }[] = [
@@ -29,28 +32,74 @@ const SORT_OPTIONS: { label: string; value: string }[] = [
   { label: "Price ↓", value: "PRICE_DESC" },
 ];
 
-function buildSearchHref(opts: {
-  q?: string;
-  dept?: string | null;
-  sort?: string;
-  brand?: string | null;
-}): string {
+type BrowseHrefCtx = {
+  browse: string | null;
+  q: string;
+  dept: string | null;
+  sort: string;
+  brand: string | null;
+  style: string | null;
+  sale: string | null;
+  maxPrice: string | null;
+  recent: string | null;
+};
+
+function buildBrowseHref(opts: BrowseHrefCtx): string {
   const p = new URLSearchParams();
+  const browse = opts.browse ?? null;
+  if (browse === "1") p.set("browse", "1");
   if (opts.q?.trim()) p.set("q", opts.q.trim());
   if (opts.dept && opts.dept !== "ALL") p.set("dept", opts.dept);
   if (opts.sort && opts.sort !== "NEWEST") p.set("sort", opts.sort);
   if (opts.brand?.trim()) p.set("brand", opts.brand.trim());
+  if (opts.style?.trim()) p.set("style", opts.style.trim());
+  if (opts.sale === "1") p.set("sale", "1");
+  if (opts.maxPrice != null && opts.maxPrice !== "")
+    p.set("maxPrice", opts.maxPrice);
+  if (opts.recent === "1") p.set("recent", "1");
   const s = p.toString();
   return s ? `/search?${s}` : "/search";
 }
 
-function SearchInner() {
+function useIsDiscoverHome(): boolean {
+  const searchParams = useSearchParams();
+  const q = searchParams.get("q")?.trim() ?? "";
+  const brand = searchParams.get("brand")?.trim() ?? "";
+  const dept = searchParams.get("dept");
+  const sort = searchParams.get("sort")?.trim() ?? "NEWEST";
+  const style = searchParams.get("style")?.trim() ?? "";
+  const browse = searchParams.get("browse");
+  const sale = searchParams.get("sale");
+  const maxPrice = searchParams.get("maxPrice");
+  const recent = searchParams.get("recent");
+  if (browse === "1") return false;
+  if (q.length > 0) return false;
+  if (brand.length > 0) return false;
+  if (style.length > 0) return false;
+  if (sale === "1") return false;
+  if (maxPrice != null && maxPrice !== "") return false;
+  if (recent === "1") return false;
+  if (dept != null && dept !== "" && dept !== "ALL") return false;
+  if (sort !== "NEWEST") return false;
+  return true;
+}
+
+function DiscoverBrowseInner() {
   const mounted = useClientMounted();
   const searchParams = useSearchParams();
+  const { userToken } = useAuth();
+
+  const browseParam = searchParams.get("browse");
   const deptParam = searchParams.get("dept");
   const qParam = searchParams.get("q")?.trim() ?? "";
   const sortParam = searchParams.get("sort")?.trim() ?? "NEWEST";
   const brandParam = searchParams.get("brand")?.trim() ?? "";
+  const styleParam = searchParams.get("style")?.trim() ?? "";
+  const saleParam = searchParams.get("sale");
+  const maxPriceParam = searchParams.get("maxPrice");
+  const recentParam = searchParams.get("recent");
+
+  const isRecentMode = recentParam === "1";
 
   const [localQ, setLocalQ] = useState(qParam);
   const [page, setPage] = useState(1);
@@ -62,7 +111,17 @@ function SearchInner() {
 
   useEffect(() => {
     setPage(1);
-  }, [deptParam, qParam, sortParam, brandParam]);
+  }, [
+    deptParam,
+    qParam,
+    sortParam,
+    brandParam,
+    styleParam,
+    saleParam,
+    maxPriceParam,
+    recentParam,
+    browseParam,
+  ]);
 
   const brandId = useMemo(() => {
     const n = parseInt(brandParam, 10);
@@ -74,6 +133,9 @@ function SearchInner() {
       status: string;
       parentCategory?: string;
       brand?: number;
+      style?: string;
+      discountPrice?: boolean;
+      maxPrice?: number;
     } = {
       status: "ACTIVE",
     };
@@ -83,14 +145,36 @@ function SearchInner() {
     if (brandId != null) {
       f.brand = brandId;
     }
+    if (styleParam) {
+      f.style = styleParam;
+    }
+    if (saleParam === "1") {
+      f.discountPrice = true;
+    }
+    if (maxPriceParam != null && maxPriceParam !== "") {
+      const n = parseFloat(maxPriceParam);
+      if (!Number.isNaN(n)) f.maxPrice = n;
+    }
     return f;
-  }, [deptParam, brandId]);
+  }, [deptParam, brandId, styleParam, saleParam, maxPriceParam]);
 
   const search = qParam.length > 0 ? qParam : null;
   const sort =
     sortParam === "PRICE_ASC" || sortParam === "PRICE_DESC"
       ? sortParam
       : "NEWEST";
+
+  const ctxBase: BrowseHrefCtx = {
+    browse: browseParam === "1" ? "1" : null,
+    q: qParam,
+    dept: deptParam,
+    sort: sortParam,
+    brand: brandParam || null,
+    style: styleParam || null,
+    sale: saleParam === "1" ? "1" : null,
+    maxPrice: maxPriceParam,
+    recent: recentParam === "1" ? "1" : null,
+  };
 
   const { data: brandsData } = useQuery(POPULAR_BRANDS, {
     variables: { top: 16 },
@@ -101,8 +185,13 @@ function SearchInner() {
     name: string;
   }[];
 
-  const { data, loading, error, refetch } = useQuery(MARKETPLACE_FEED, {
-    skip: !mounted,
+  const {
+    data: feedData,
+    loading: feedLoading,
+    error: feedError,
+    refetch: refetchFeed,
+  } = useQuery(MARKETPLACE_FEED, {
+    skip: !mounted || isRecentMode,
     variables: {
       pageCount: pageSize,
       pageNumber: page,
@@ -112,22 +201,88 @@ function SearchInner() {
     },
   });
 
-  const rows = (data?.allProducts ?? []) as MarketplaceProductRow[];
+  const {
+    data: recentData,
+    loading: recentLoading,
+    error: recentError,
+    refetch: refetchRecent,
+  } = useQuery(RECENTLY_VIEWED_PRODUCTS, {
+    skip: !mounted || !isRecentMode || !userToken,
+    fetchPolicy: "network-only",
+    errorPolicy: "all",
+  });
 
-  const baseHrefOpts = {
-    q: qParam,
-    dept: deptParam,
-    sort: sortParam,
-    brand: brandParam || null,
-  };
+  const allRecentRows = (recentData?.recentlyViewedProducts ??
+    []) as MarketplaceProductRow[];
+  const recentVisible = useMemo(
+    () => allRecentRows.filter((p) => p.status !== "SOLD"),
+    [allRecentRows],
+  );
+  const recentPageRows = useMemo(() => {
+    const start = (page - 1) * pageSize;
+    return recentVisible.slice(start, start + pageSize);
+  }, [recentVisible, page, pageSize]);
+
+  const feedRows = (feedData?.allProducts ?? []) as MarketplaceProductRow[];
+  const rows = isRecentMode ? recentPageRows : feedRows;
+  const loading = isRecentMode ? recentLoading : feedLoading;
+  const error = isRecentMode ? recentError : feedError;
+  const refetch = isRecentMode ? refetchRecent : refetchFeed;
+
+  const browseTitle = useMemo(() => {
+    if (isRecentMode) return "Recently viewed";
+    if (saleParam === "1") return "On sale";
+    if (maxPriceParam === "15") return "Shop bargains";
+    if (styleParam) return "Shop by style";
+    if (browseParam === "1" && !deptParam && !qParam && !brandParam)
+      return "Shop all";
+    return "Browse";
+  }, [
+    isRecentMode,
+    saleParam,
+    maxPriceParam,
+    styleParam,
+    browseParam,
+    deptParam,
+    qParam,
+    brandParam,
+  ]);
+
+  if (isRecentMode && !userToken) {
+    return (
+      <div className="space-y-4 pb-10">
+        <Link
+          href="/search"
+          className="text-[14px] font-semibold text-[var(--prel-primary)]"
+        >
+          ← Discover
+        </Link>
+        <p className="text-[15px] text-prel-secondary-label">
+          Sign in to see items you&apos;ve recently viewed.
+        </p>
+        <Link
+          href="/login"
+          className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-6 text-[15px] font-semibold text-white shadow-ios"
+        >
+          Sign in
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 pb-8">
+      <Link
+        href="/search"
+        className="inline-block text-[14px] font-semibold text-[var(--prel-primary)]"
+      >
+        ← Discover
+      </Link>
+
       <div>
-        <h1 className="text-[22px] font-bold text-prel-label">Discover</h1>
+        <h1 className="text-[22px] font-bold text-prel-label">{browseTitle}</h1>
         <p className="mt-1 text-[14px] text-prel-secondary-label">
-          Browse live listings — filter by department, brand, sort order, or
-          keyword.
+          Filters apply server-side. Open any card for the full listing.
         </p>
       </div>
 
@@ -140,8 +295,8 @@ function SearchInner() {
             {popularBrands.map((b) => {
               const on =
                 brandParam === String(b.id) || brandParam === `${b.id}`;
-              const href = buildSearchHref({
-                ...baseHrefOpts,
+              const href = buildBrowseHref({
+                ...ctxBase,
                 brand: on ? null : String(b.id),
               });
               return (
@@ -163,14 +318,27 @@ function SearchInner() {
       ) : null}
 
       <form className="space-y-3" action="/search" method="get">
-        {deptParam ? (
-          <input type="hidden" name="dept" value={deptParam} />
+        {browseParam === "1" ? (
+          <input type="hidden" name="browse" value="1" />
         ) : null}
+        {deptParam ? <input type="hidden" name="dept" value={deptParam} /> : null}
         {sort !== "NEWEST" ? (
           <input type="hidden" name="sort" value={sort} />
         ) : null}
         {brandParam ? (
           <input type="hidden" name="brand" value={brandParam} />
+        ) : null}
+        {styleParam ? (
+          <input type="hidden" name="style" value={styleParam} />
+        ) : null}
+        {saleParam === "1" ? (
+          <input type="hidden" name="sale" value="1" />
+        ) : null}
+        {maxPriceParam ? (
+          <input type="hidden" name="maxPrice" value={maxPriceParam} />
+        ) : null}
+        {recentParam === "1" ? (
+          <input type="hidden" name="recent" value="1" />
         ) : null}
         <label className="sr-only" htmlFor="mq">
           Search listings
@@ -200,8 +368,8 @@ function SearchInner() {
         <div className="flex flex-wrap gap-2">
           {SORT_OPTIONS.map(({ label, value }) => {
             const on = sort === value;
-            const href = buildSearchHref({
-              ...baseHrefOpts,
+            const href = buildBrowseHref({
+              ...ctxBase,
               sort: value,
             });
             return (
@@ -227,7 +395,7 @@ function SearchInner() {
             Brand filter active
           </p>
           <Link
-            href={buildSearchHref({ ...baseHrefOpts, brand: null })}
+            href={buildBrowseHref({ ...ctxBase, brand: null })}
             className="text-[14px] font-semibold text-[var(--prel-primary)]"
           >
             Clear brand
@@ -237,14 +405,12 @@ function SearchInner() {
 
       <div className="flex flex-wrap gap-2">
         {DEPT_CHIPS.map(({ label, value }) => {
-          const href = buildSearchHref({
-            q: qParam,
+          const href = buildBrowseHref({
+            ...ctxBase,
             dept: value,
-            sort: sortParam,
-            brand: brandParam || null,
           });
           const on =
-            (value == null && !deptParam) ||
+            (value == null && (!deptParam || deptParam === "ALL")) ||
             (value != null && deptParam === value);
           return (
             <Link
@@ -300,7 +466,12 @@ function SearchInner() {
         </button>
         <button
           type="button"
-          disabled={rows.length < pageSize || loading}
+          disabled={
+            loading ||
+            (isRecentMode
+              ? page * pageSize >= recentVisible.length
+              : rows.length < pageSize)
+          }
           onClick={() => setPage((p) => p + 1)}
           className="rounded-full bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios ring-1 ring-prel-glass-border disabled:opacity-40"
         >
@@ -311,16 +482,24 @@ function SearchInner() {
   );
 }
 
+function SearchRouter() {
+  const discoverHome = useIsDiscoverHome();
+  if (discoverHome) {
+    return <DiscoverFeed />;
+  }
+  return <DiscoverBrowseInner />;
+}
+
 export default function MarketplaceSearchPage() {
   return (
     <Suspense
       fallback={
         <div className="pb-10 text-[15px] text-prel-secondary-label">
-          Loading search…
+          Loading…
         </div>
       }
     >
-      <SearchInner />
+      <SearchRouter />
     </Suspense>
   );
 }

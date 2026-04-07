@@ -14,7 +14,11 @@ export type MarketplaceProductRow = {
   price?: number | string | null;
   discountPrice?: number | string | null;
   imagesUrl?: unknown;
-  seller?: { username?: string | null } | null;
+  seller?: {
+    username?: string | null;
+    displayName?: string | null;
+    thumbnailUrl?: string | null;
+  } | null;
   brand?: { id?: number | null; name?: string | null } | null;
   category?: { name?: string | null } | null;
 };

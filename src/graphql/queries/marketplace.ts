@@ -35,6 +35,8 @@ export const MARKETPLACE_FEED = gql`
       imagesUrl
       seller {
         username
+        displayName
+        thumbnailUrl
       }
       brand {
         id
@@ -43,6 +45,47 @@ export const MARKETPLACE_FEED = gql`
       category {
         id
         name
+      }
+    }
+  }
+`;
+
+/** Logged-in only — same catalogue fields as `MARKETPLACE_FEED`. */
+export const RECENTLY_VIEWED_PRODUCTS = gql`
+  query RecentlyViewedProducts {
+    recentlyViewedProducts {
+      id
+      name
+      listingCode
+      status
+      price
+      discountPrice
+      imagesUrl
+      seller {
+        username
+        displayName
+        thumbnailUrl
+      }
+      brand {
+        id
+        name
+      }
+      category {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const RECOMMENDED_SELLERS = gql`
+  query RecommendedSellers($pageCount: Int!, $pageNumber: Int!) {
+    recommendedSellers(pageCount: $pageCount, pageNumber: $pageNumber) {
+      seller {
+        username
+        displayName
+        thumbnailUrl
+        profilePictureUrl
       }
     }
   }
