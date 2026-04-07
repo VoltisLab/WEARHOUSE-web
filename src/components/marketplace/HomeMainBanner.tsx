@@ -10,7 +10,7 @@ export function HomeMainBanner() {
   const src = MARKETPLACE_HOME_HERO_IMAGE_URL;
 
   return (
-    <section className="relative isolate min-h-[min(52vw,320px)] w-full overflow-hidden md:min-h-[min(42vw,420px)] lg:min-h-[440px]">
+    <section className="relative isolate min-h-[min(78vw,480px)] w-full overflow-hidden md:min-h-[min(63vw,630px)] lg:min-h-[660px]">
       {/* eslint-disable-next-line @next/next/no-img-element -- hero may be external URL from env */}
       <img
         src={src}
@@ -25,7 +25,7 @@ export function HomeMainBanner() {
         aria-hidden
       />
 
-      <div className="relative z-10 mx-auto flex min-h-[min(52vw,320px)] max-w-7xl items-stretch px-4 py-8 sm:px-5 md:min-h-[min(42vw,420px)] md:py-10 md:pl-6 md:pr-8 lg:min-h-[440px] lg:pl-8 lg:pr-10 lg:py-12">
+      <div className="relative z-10 mx-auto flex min-h-[min(78vw,480px)] max-w-7xl items-stretch px-4 py-8 sm:px-5 md:min-h-[min(63vw,630px)] md:py-10 md:pl-6 md:pr-8 lg:min-h-[660px] lg:pl-8 lg:pr-10 lg:py-12">
         <div className="w-full max-w-[min(100%,380px)] self-center rounded-2xl bg-white p-6 shadow-[0_12px_48px_rgba(0,0,0,0.14)] sm:p-7 md:max-w-[400px] md:p-8">
           <h2 className="text-[22px] font-bold leading-tight tracking-tight text-neutral-900 sm:text-[26px] md:text-[28px]">
             Ready to refresh your wardrobe?
