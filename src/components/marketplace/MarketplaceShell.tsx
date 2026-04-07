@@ -212,7 +212,7 @@ function MarketplaceBottomNavFallback() {
 
 export function MarketplaceShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-[#fafafa] text-neutral-900">
+    <div className="flex min-h-dvh flex-col overflow-x-hidden bg-[#fafafa] text-neutral-900">
       <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white pt-[env(safe-area-inset-top)] shadow-sm md:pt-0">
         <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-14 md:gap-4 md:px-6 lg:px-8">
           <Link

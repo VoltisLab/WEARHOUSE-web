@@ -3,14 +3,13 @@
 import { NetworkStatus, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import { MARKETPLACE_FEED } from "@/graphql/queries/marketplace";
 import {
   MarketplaceProductCard,
   type MarketplaceProductRow,
 } from "@/components/marketplace/ProductCard";
 import { HomeMainBanner } from "@/components/marketplace/HomeMainBanner";
-import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 import { BRAND_NAME } from "@/lib/branding";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
@@ -251,41 +250,13 @@ export default function MarketplaceHomePage() {
   const showInitialSkeleton = (!mounted || loadingInitial) && !data;
 
   return (
-    <div className="space-y-8 pb-6">
-      <HomeMainBanner />
+    <div className="pb-6">
+      {/* Full-bleed hero: cancel `main` horizontal padding + top padding */}
+      <div className="relative left-1/2 mb-8 w-screen max-w-[100vw] -translate-x-1/2 -mt-4 sm:-mt-5 md:-mt-6 md:mb-10">
+        <HomeMainBanner />
+      </div>
 
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#5c1a6e] via-[#8b2199] to-[#ab28b2] p-4 text-white shadow-lg sm:p-6 md:p-8">
-        <div
-          className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/10 blur-2xl"
-          aria-hidden
-        />
-        <div
-          className="pointer-events-none absolute -bottom-16 left-1/3 h-48 w-48 rounded-full bg-black/10 blur-3xl"
-          aria-hidden
-        />
-        <div className="relative max-w-xl">
-          <h2 className="text-[20px] font-bold leading-tight md:text-[22px]">
-            Discover pre-loved fashion
-          </h2>
-          <p className="mt-2 text-[15px] leading-relaxed text-white/90">
-            Browse live listings from the {BRAND_NAME} catalogue. Sign in for the
-            full catalogue; guests see a sample of {GUEST_HOME_CAP} items per visit.
-          </p>
-          <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
-            <Link
-              href="/search"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[15px] font-semibold text-[#6b1f7a] shadow-md transition hover:bg-white/95"
-            >
-              Advanced search
-              <ArrowRight className="h-4 w-4" aria-hidden />
-            </Link>
-            <div className="[&_img]:brightness-0 [&_img]:invert">
-              <AppStoreBadges className="opacity-95" />
-            </div>
-          </div>
-        </div>
-      </section>
-
+      <div className="space-y-8">
       <form
         onSubmit={onSearchSubmit}
         className="flex flex-col gap-3 sm:flex-row sm:items-center"
@@ -524,6 +495,7 @@ export default function MarketplaceHomePage() {
           </div>
         ) : null}
       </section>
+      </div>
     </div>
   );
 }

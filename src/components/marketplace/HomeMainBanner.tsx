@@ -1,61 +1,53 @@
 import Link from "next/link";
-import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { BRAND_NAME } from "@/lib/branding";
 import { MARKETPLACE_HOME_HERO_IMAGE_URL } from "@/lib/constants";
 
+const VINTED_TEAL = "#09B1BA";
+
 /**
- * Full-bleed hero: background photo fills the banner; gradients keep copy readable
- * while leaving the subjects visible on the right (see `MARKETPLACE_HOME_HERO_IMAGE_URL`).
+ * Full-width hero (parent should break out of `main` horizontal padding).
+ * Vinted-style: edge-to-edge photo, white CTA card, teal primary action.
  */
 export function HomeMainBanner() {
   const src = MARKETPLACE_HOME_HERO_IMAGE_URL;
 
   return (
-    <section className="relative isolate min-h-[min(72vw,440px)] overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/10 md:min-h-[400px] lg:min-h-[440px]">
-      {/* Background — fills entire banner */}
+    <section className="relative isolate min-h-[min(52vw,320px)] w-full overflow-hidden md:min-h-[min(42vw,420px)] lg:min-h-[440px]">
       {/* eslint-disable-next-line @next/next/no-img-element -- hero may be external URL from env */}
       <img
         src={src}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-[55%_center] sm:object-[50%_center]"
+        className="absolute inset-0 h-full w-full object-cover object-[52%_center] sm:object-[48%_center]"
         fetchPriority="high"
         decoding="async"
       />
 
-      {/* Readability: strong wash on the left (headline + CTAs), lighter on the right (faces) */}
       <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-r from-[#12051a]/95 from-0% via-[#2a0f32]/78 via-[42%] to-transparent to-[72%]"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-black/25 md:to-black/15"
-        aria-hidden
-      />
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-br from-[#6b1f7a]/25 via-transparent to-transparent"
+        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/10"
         aria-hidden
       />
 
-      <div className="relative z-10 flex min-h-[min(72vw,440px)] items-center px-5 py-10 md:min-h-[400px] md:px-10 md:py-12 lg:min-h-[440px] lg:px-14 lg:py-14">
-        <div className="max-w-xl text-white [text-shadow:0_2px_28px_rgba(0,0,0,0.55)]">
-          <BrandWordmark className="text-[13px] uppercase tracking-[0.12em] text-white/95" />
-          <h2 className="mt-2 text-[28px] font-bold leading-[1.15] tracking-tight sm:text-[34px] md:text-[40px]">
+      <div className="relative z-10 mx-auto flex min-h-[min(52vw,320px)] max-w-7xl items-stretch px-4 py-8 sm:px-5 md:min-h-[min(42vw,420px)] md:py-10 md:pl-6 md:pr-8 lg:min-h-[440px] lg:pl-8 lg:pr-10 lg:py-12">
+        <div className="w-full max-w-[min(100%,380px)] self-center rounded-2xl bg-white p-6 shadow-[0_12px_48px_rgba(0,0,0,0.14)] sm:p-7 md:max-w-[400px] md:p-8">
+          <h2 className="text-[22px] font-bold leading-tight tracking-tight text-neutral-900 sm:text-[26px] md:text-[28px]">
             Ready to refresh your wardrobe?
           </h2>
-          <p className="mt-4 max-w-lg text-[16px] leading-relaxed text-white/95 md:text-[17px]">
+          <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 md:text-[16px]">
             Sell pieces you no longer wear and find pre-loved fashion at great
             prices — all in one community on {BRAND_NAME}.
           </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className="mt-6 flex flex-col gap-3">
             <Link
               href="/sell"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-white px-7 text-[16px] font-semibold text-[#6b1f7a] shadow-lg shadow-black/25 transition hover:bg-white/95 [text-shadow:none]"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full px-7 text-[16px] font-bold text-white shadow-md transition hover:brightness-105"
+              style={{ backgroundColor: VINTED_TEAL }}
             >
               Sell now
             </Link>
             <Link
               href="/how-it-works"
-              className="inline-flex min-h-[48px] items-center justify-center rounded-full border-2 border-white/95 bg-white/10 px-7 text-[16px] font-semibold text-white backdrop-blur-[2px] transition hover:bg-white/20 [text-shadow:none]"
+              className="inline-flex min-h-[44px] items-center justify-center text-[15px] font-semibold transition hover:opacity-80"
+              style={{ color: VINTED_TEAL }}
             >
               Learn how it works
             </Link>
