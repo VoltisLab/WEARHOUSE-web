@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { ProductLikeButton } from "@/components/marketplace/ProductLikeButton";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { formatMoney } from "@/lib/format";
 import {
@@ -25,16 +26,12 @@ export type MarketplaceProductRow = {
   } | null;
   brand?: { id?: number | null; name?: string | null } | null;
   category?: { name?: string | null } | null;
+  likes?: number | null;
+  userLiked?: boolean | null;
 };
 
-export function MarketplaceProductCard({
-  p,
-  hideSellerUsername = false,
-}: {
-  p: MarketplaceProductRow;
-  /** Hide @seller on own shop / profile (redundant for the viewer). */
-  hideSellerUsername?: boolean;
-}) {
+export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
+  const href = `/product/${p.id}`;
   const img = firstProductImageUrl(p.imagesUrl);
   const conditionLabel = formatProductCondition(p.condition);
   const { sale, original } = productPriceDisplay(
@@ -43,29 +40,31 @@ export function MarketplaceProductCard({
       ? Number(p.discountPrice)
       : null,
   );
+  const likeCount = Math.max(0, Math.floor(Number(p.likes ?? 0)));
+  const liked = p.userLiked === true;
+
   return (
-    <Link
-      href={`/product/${p.id}`}
-      className="group block overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border transition hover:ring-[var(--prel-primary)]/40"
-    >
+    <article className="group overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border transition hover:ring-[var(--prel-primary)]/40">
       <div className="relative aspect-[3/4] overflow-hidden bg-prel-bg-grouped">
-        <SafeImage
-          src={img}
-          alt=""
-          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-        />
-        {/* Bottom vignette — Discover-style legibility + depth (matches home banner purple) */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-[#1f0a24]/75 via-[#3d1450]/25 to-transparent"
-          aria-hidden
-        />
-        {p.status === "SOLD" ? (
-          <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
-            Sold
-          </span>
-        ) : null}
+        <Link href={href} className="relative block h-full w-full">
+          <SafeImage
+            src={img}
+            alt=""
+            className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          />
+          <div
+            className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-gradient-to-t from-[#1f0a24]/75 via-[#3d1450]/25 to-transparent"
+            aria-hidden
+          />
+          {p.status === "SOLD" ? (
+            <span className="absolute left-2 top-2 rounded-full bg-black/55 px-2 py-0.5 text-[10px] font-bold uppercase text-white">
+              Sold
+            </span>
+          ) : null}
+        </Link>
+        <ProductLikeButton productId={p.id} likes={likeCount} userLiked={liked} />
       </div>
-      <div className="space-y-1 p-3">
+      <Link href={href} className="block space-y-1 p-3">
         {p.brand?.name?.trim() ? (
           <p className="line-clamp-1 text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
             {p.brand.name.trim()}
@@ -91,12 +90,7 @@ export function MarketplaceProductCard({
             formatMoney(sale)
           )}
         </p>
-        {!hideSellerUsername && p.seller?.username ? (
-          <p className="text-[12px] text-prel-secondary-label">
-            @{p.seller.username}
-          </p>
-        ) : null}
-      </div>
-    </Link>
+      </Link>
+    </article>
   );
 }

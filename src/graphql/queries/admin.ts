@@ -332,6 +332,8 @@ export const USER_SHOP_PRODUCTS = gql`
       discountPrice
       condition
       imagesUrl
+      likes
+      userLiked
       seller {
         username
       }

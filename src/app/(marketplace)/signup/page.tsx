@@ -2,12 +2,13 @@
 
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { REGISTER } from "@/graphql/mutations/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { BRAND_NAME } from "@/lib/branding";
+import { safeReturnPath } from "@/lib/safe-return-path";
 
 function formatRegisterErrors(errors: unknown): string {
   if (!errors || typeof errors !== "object") return "";
@@ -28,8 +29,16 @@ function formatRegisterErrors(errors: unknown): string {
 /** Default consumer type for web sign-up (matches `UserTypeChoices`). */
 const DEFAULT_USER_TYPE = "EVERYDAY_USER";
 
-export default function MarketplaceSignupPage() {
+function SignupForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextRaw = searchParams.get("next");
+  const nextSafe = safeReturnPath(nextRaw);
+  const afterSignup = nextSafe ?? "/profile";
+  const loginHref = nextSafe
+    ? `/login?next=${encodeURIComponent(nextSafe)}`
+    : "/login";
+
   const { userToken, ready, setUserToken } = useAuth();
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
@@ -42,8 +51,8 @@ export default function MarketplaceSignupPage() {
   const [registerMutation, { loading }] = useMutation(REGISTER);
 
   useEffect(() => {
-    if (ready && userToken) router.replace("/profile");
-  }, [ready, userToken, router]);
+    if (ready && userToken) router.replace(afterSignup);
+  }, [ready, userToken, router, afterSignup]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -99,7 +108,7 @@ export default function MarketplaceSignupPage() {
       const t = reg.token as string | undefined;
       if (t) {
         setUserToken(t);
-        router.replace("/profile");
+        router.replace(afterSignup);
         return;
       }
       setInfo(
@@ -127,7 +136,7 @@ export default function MarketplaceSignupPage() {
         {info && (
           <p className="rounded-lg bg-[var(--prel-primary)]/10 px-3 py-2 text-[13px] text-prel-label">
             {info}{" "}
-            <Link href="/login" className="font-semibold text-[var(--prel-primary)]">
+            <Link href={loginHref} className="font-semibold text-[var(--prel-primary)]">
               Sign in
             </Link>
           </p>
@@ -216,7 +225,7 @@ export default function MarketplaceSignupPage() {
         </form>
         <p className="text-center text-[14px] text-prel-secondary-label">
           Already have an account?{" "}
-          <Link href="/login" className="font-semibold text-[var(--prel-primary)]">
+          <Link href={loginHref} className="font-semibold text-[var(--prel-primary)]">
             Log in
           </Link>
         </p>
@@ -227,5 +236,21 @@ export default function MarketplaceSignupPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+function SignupFallback() {
+  return (
+    <div className="mx-auto max-w-md pb-10 pt-4 text-center text-[14px] text-prel-secondary-label md:pb-12">
+      Loading…
+    </div>
+  );
+}
+
+export default function MarketplaceSignupPage() {
+  return (
+    <Suspense fallback={<SignupFallback />}>
+      <SignupForm />
+    </Suspense>
   );
 }

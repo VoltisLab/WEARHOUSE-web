@@ -3,7 +3,12 @@ import Link from "next/link";
 import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
+import { CookiePolicyPreferencesBlock } from "@/components/marketplace/CookiePolicyPreferencesBlock";
 import { BRAND_NAME } from "@/lib/branding";
+import {
+  COOKIE_CONSENT_POLICY_VERSION,
+  COOKIE_CONSENT_STORAGE_KEY,
+} from "@/lib/cookie-consent-storage";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
@@ -20,7 +25,7 @@ export default function CookiePolicyPage() {
       title="Cookie Policy"
       subtitle="What we store in the browser, why, and how you can control it."
       updated="April 2026"
-      lead={`${BRAND_NAME} uses cookies, local storage, session tokens, and similar technologies to keep you signed in, protect against abuse, remember preferences, and — where you agree — measure campaigns. This page groups them by purpose so you can make informed choices.`}
+      lead={`${BRAND_NAME} uses cookies, local storage, session tokens, and similar technologies to keep you signed in, protect against abuse, remember preferences, and — where you agree — measure campaigns. You can accept all cookies, decline non-essential categories, or customise choices below.`}
       heroPosition="bottom"
       ctaRow={
         <>
@@ -28,7 +33,7 @@ export default function CookiePolicyPage() {
             Privacy Centre
           </Link>
           <Link href="/cookie-policy#preferences" className={btnSecondary}>
-            Preferences (anchor)
+            Cookie preferences
           </Link>
         </>
       }
@@ -69,11 +74,11 @@ export default function CookiePolicyPage() {
         </li>
       </ul>
 
-      <MarketingDetails title="Example cookie names (illustrative)">
+      <MarketingDetails title="Key storage names (web)">
         <table>
           <thead>
             <tr>
-              <th>Name (example)</th>
+              <th>Name</th>
               <th>Purpose</th>
               <th>Duration</th>
             </tr>
@@ -90,25 +95,30 @@ export default function CookiePolicyPage() {
               <td>Session</td>
             </tr>
             <tr>
-              <td>consent_v1</td>
-              <td>Stores marketing opt-in state</td>
-              <td>12 months</td>
+              <td>
+                <code className="text-[13px]">{COOKIE_CONSENT_STORAGE_KEY}</code>
+              </td>
+              <td>
+                Stores your optional-category choices (functional, analytics,
+                marketing) and policy version {COOKIE_CONSENT_POLICY_VERSION}
+              </td>
+              <td>12 months (rolling on update)</td>
             </tr>
           </tbody>
         </table>
-        <p className="mt-3 text-[13px] text-prel-tertiary-label">
-          Replace with your real table exported from the consent management
-          platform.
-        </p>
       </MarketingDetails>
 
-      <h2 id="preferences">Your choices</h2>
+      <h2 id="preferences" className="scroll-mt-28">
+        Your cookie choices
+      </h2>
       <p>
-        Where required, we show a consent banner or settings modal with granular
-        toggles. You can also block categories in the browser; blocking strictly
-        necessary cookies may break login or checkout. App users manage
-        tracking permissions via OS dialogs (ATT on iOS, etc.).
+        Use the controls below to turn optional categories on or off. Strictly
+        necessary storage stays active so the marketplace can function safely. You
+        can also clear your choices to see the banner again. Blocking cookies in
+        your browser may affect sign-in or checkout. In our mobile apps, tracking
+        permissions are managed through the operating system where applicable.
       </p>
+      <CookiePolicyPreferencesBlock />
 
       <table>
         <thead>
@@ -119,8 +129,8 @@ export default function CookiePolicyPage() {
         </thead>
         <tbody>
           <tr>
-            <td>{BRAND_NAME} cookie settings</td>
-            <td>Non-essential web tags we operate</td>
+            <td>{BRAND_NAME} cookie banner &amp; this page</td>
+            <td>Optional functional, analytics, and marketing categories</td>
           </tr>
           <tr>
             <td>Browser &quot;block third-party cookies&quot;</td>

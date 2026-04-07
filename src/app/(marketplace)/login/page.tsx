@@ -2,15 +2,24 @@
 
 import { useMutation } from "@apollo/client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { LOGIN } from "@/graphql/mutations/auth";
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { BRAND_NAME } from "@/lib/branding";
+import { safeReturnPath } from "@/lib/safe-return-path";
 
-export default function MarketplaceLoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextRaw = searchParams.get("next");
+  const nextSafe = safeReturnPath(nextRaw);
+  const afterLogin = nextSafe ?? "/profile";
+  const signupHref = nextSafe
+    ? `/signup?next=${encodeURIComponent(nextSafe)}`
+    : "/signup";
+
   const { userToken, ready, setUserToken } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -18,8 +27,8 @@ export default function MarketplaceLoginPage() {
   const [loginMutation, { loading }] = useMutation(LOGIN);
 
   useEffect(() => {
-    if (ready && userToken) router.replace("/profile");
-  }, [ready, userToken, router]);
+    if (ready && userToken) router.replace(afterLogin);
+  }, [ready, userToken, router, afterLogin]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,7 +50,7 @@ export default function MarketplaceLoginPage() {
       const t = data?.login?.token as string | undefined;
       if (t) {
         setUserToken(t);
-        router.replace("/profile");
+        router.replace(afterLogin);
         return;
       }
       setErr("Sign in failed. Check your username and password.");
@@ -98,7 +107,7 @@ export default function MarketplaceLoginPage() {
         </form>
         <p className="text-center text-[14px] text-prel-secondary-label">
           New to {BRAND_NAME}?{" "}
-          <Link href="/signup" className="font-semibold text-[var(--prel-primary)]">
+          <Link href={signupHref} className="font-semibold text-[var(--prel-primary)]">
             Sign up
           </Link>
         </p>
@@ -109,5 +118,21 @@ export default function MarketplaceLoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+function LoginFallback() {
+  return (
+    <div className="mx-auto max-w-md pb-10 pt-4 text-center text-[14px] text-prel-secondary-label md:pb-12">
+      Loading…
+    </div>
+  );
+}
+
+export default function MarketplaceLoginPage() {
+  return (
+    <Suspense fallback={<LoginFallback />}>
+      <LoginForm />
+    </Suspense>
   );
 }

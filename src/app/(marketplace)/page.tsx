@@ -12,23 +12,33 @@ import {
 import { HomeMainBanner } from "@/components/marketplace/HomeMainBanner";
 import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 import { BRAND_NAME } from "@/lib/branding";
+import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
 /** Matches Swift `HomeViewModel.pageSize` (20). */
 const HOME_PAGE_SIZE = 20;
 
-/** Latest strip: first page of newest only (Swift home does not cap this; we cap at 30 for the rail). */
+/** Logged-out home: one request, max this many products (browse more after sign-in). */
+const GUEST_HOME_CAP = 30;
+
+/** Logged-out: how many of the cap appear in the horizontal “Latest” strip; rest go in the grid below. */
+const GUEST_LATEST_STRIP = 12;
+
+/** Latest strip (signed-in): first page of newest only. */
 const LATEST_PAGE_SIZE = 30;
 
-/** Swift `HomeView` category chips → GraphQL `ProductFiltersInput.parentCategory`. */
-const CATEGORY_CHIPS: { label: string; value: "All" | "Women" | "Men" | "Kids" | "Toddlers" }[] =
-  [
-    { label: "All", value: "All" },
-    { label: "Women", value: "Women" },
-    { label: "Men", value: "Men" },
-    { label: "Kids", value: "Kids" },
-    { label: "Toddlers", value: "Toddlers" },
-  ];
+/** Category chips → GraphQL `ProductFiltersInput.parentCategory` (web search uses Girls/Boys, not combined Kids). */
+const CATEGORY_CHIPS: {
+  label: string;
+  value: "All" | "Women" | "Men" | "Girls" | "Boys" | "Toddlers";
+}[] = [
+  { label: "All", value: "All" },
+  { label: "Women", value: "Women" },
+  { label: "Men", value: "Men" },
+  { label: "Girls", value: "Girls" },
+  { label: "Boys", value: "Boys" },
+  { label: "Toddlers", value: "Toddlers" },
+];
 
 const SORT_OPTIONS: { label: string; value: "NEWEST" | "PRICE_ASC" | "PRICE_DESC" }[] = [
   { label: "Newest", value: "NEWEST" },
@@ -44,7 +54,8 @@ function parentCategoryFilter(
   const map: Record<string, string> = {
     Women: "WOMEN",
     Men: "MEN",
-    Kids: "KIDS",
+    Girls: "GIRLS",
+    Boys: "BOYS",
     Toddlers: "TODDLERS",
   };
   const gql = map[category];
@@ -58,6 +69,8 @@ function filterListed(rows: MarketplaceProductRow[]) {
 
 export default function MarketplaceHomePage() {
   const mounted = useClientMounted();
+  const { userToken, ready: authReady } = useAuth();
+  const isLoggedIn = authReady && !!userToken;
   const pageRef = useRef(1);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
   const [hasMore, setHasMore] = useState(true);
@@ -83,17 +96,17 @@ export default function MarketplaceHomePage() {
 
   const feedVars = useMemo(
     () => ({
-      pageCount: HOME_PAGE_SIZE,
+      pageCount: isLoggedIn ? HOME_PAGE_SIZE : GUEST_HOME_CAP,
       pageNumber: 1,
       filters,
       search,
       sort,
     }),
-    [filters, search, sort],
+    [filters, search, sort, isLoggedIn],
   );
 
   const { data: latestData, error: latestError } = useQuery(MARKETPLACE_FEED, {
-    skip: !mounted,
+    skip: !mounted || !isLoggedIn,
     variables: latestVars,
   });
 
@@ -109,47 +122,54 @@ export default function MarketplaceHomePage() {
   const loadingInitial = networkStatus === NetworkStatus.loading;
   const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
-  const latestRows = useMemo(
-    () => filterListed((latestData?.allProducts ?? []) as MarketplaceProductRow[]),
-    [latestData?.allProducts],
-  );
+  const mergedMain = useMemo(() => {
+    const raw = (data?.allProducts ?? []) as MarketplaceProductRow[];
+    return filterListed(raw);
+  }, [data?.allProducts]);
+
+  const latestRows = useMemo(() => {
+    if (!isLoggedIn) {
+      return mergedMain.slice(0, Math.min(GUEST_LATEST_STRIP, mergedMain.length));
+    }
+    return filterListed((latestData?.allProducts ?? []) as MarketplaceProductRow[]);
+  }, [isLoggedIn, mergedMain, latestData?.allProducts]);
 
   const latestIds = useMemo(
     () => new Set(latestRows.map((p) => p.id)),
     [latestRows],
   );
 
-  const mergedMain = useMemo(() => {
-    const raw = (data?.allProducts ?? []) as MarketplaceProductRow[];
-    return filterListed(raw);
-  }, [data?.allProducts]);
-
   /**
-   * When sort is NEWEST, hide rail IDs from the grid so the top 30 only appear in “Latest arrivals”.
-   * For other sorts, the grid order differs from the rail — do not dedupe or we would drop valid rows.
+   * Signed-in + NEWEST: hide rail IDs from the grid so the top 30 only appear in “Latest arrivals”.
+   * Guest: one capped fetch — strip is first N rows, grid is the remainder (no duplicate cards).
+   * Other sorts (signed-in): no dedupe vs rail.
    */
   const gridRows = useMemo(() => {
+    if (!isLoggedIn) {
+      return mergedMain.slice(latestRows.length);
+    }
     if (sort !== "NEWEST") return mergedMain;
     const deduped = mergedMain.filter((p) => !latestIds.has(p.id));
     if (deduped.length > 0) return deduped;
     return mergedMain;
-  }, [mergedMain, latestIds, sort]);
+  }, [isLoggedIn, mergedMain, latestRows.length, latestIds, sort]);
 
   useEffect(() => {
     pageRef.current = 1;
     setHasMore(true);
-  }, [filters, search, sort]);
+  }, [filters, search, sort, isLoggedIn]);
 
   useEffect(() => {
     if (!mounted || loadingInitial) return;
     const batch = (data?.allProducts ?? []) as MarketplaceProductRow[];
     if (pageRef.current === 1) {
-      setHasMore(batch.length >= HOME_PAGE_SIZE);
+      if (!isLoggedIn) setHasMore(false);
+      else setHasMore(batch.length >= HOME_PAGE_SIZE);
     }
-  }, [mounted, loadingInitial, data?.allProducts]);
+  }, [mounted, loadingInitial, data?.allProducts, isLoggedIn]);
 
   const loadMore = useCallback(() => {
-    if (!hasMore || loadingMore) return;
+    if (!isLoggedIn || !hasMore || loadingMore) return;
     const nextPage = pageRef.current + 1;
     fetchMore({
       variables: {
@@ -183,7 +203,7 @@ export default function MarketplaceHomePage() {
       .catch(() => {
         /* keep hasMore true so intersection observer / user can retry */
       });
-  }, [fetchMore, feedVars, hasMore, loadingMore]);
+  }, [fetchMore, feedVars, hasMore, loadingMore, isLoggedIn]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -201,6 +221,7 @@ export default function MarketplaceHomePage() {
 
   /** When sort is NEWEST and page 1 is still all inside “latest 30”, fetch more until the grid gains rows. */
   useEffect(() => {
+    if (!isLoggedIn) return;
     if (sort !== "NEWEST") return;
     if (!mounted || loadingInitial || loadingMore || !hasMore) return;
     const deduped = mergedMain.filter((p) => !latestIds.has(p.id));
@@ -214,6 +235,7 @@ export default function MarketplaceHomePage() {
     mergedMain,
     latestIds,
     loadMore,
+    isLoggedIn,
   ]);
 
   const onSearchSubmit = (e: React.FormEvent) => {
@@ -246,8 +268,8 @@ export default function MarketplaceHomePage() {
             Discover pre-loved fashion
           </h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/90">
-            Browse live listings from the {BRAND_NAME} catalogue — same feed as
-            the iOS app (category + search + paging).
+            Browse live listings from the {BRAND_NAME} catalogue. Sign in for the
+            full catalogue; guests see a sample of {GUEST_HOME_CAP} items per visit.
           </p>
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <Link
@@ -357,10 +379,12 @@ export default function MarketplaceHomePage() {
             Latest arrivals
           </h2>
           <span className="text-[12px] text-prel-tertiary-label">
-            Newest {Math.min(LATEST_PAGE_SIZE, latestRows.length)} listings
+            {isLoggedIn
+              ? `Newest ${Math.min(LATEST_PAGE_SIZE, latestRows.length)} listings`
+              : `Preview · ${latestRows.length} of ${mergedMain.length} shown`}
           </span>
         </div>
-        {latestRows.length === 0 && !latestData && mounted ? (
+        {showInitialSkeleton ? (
           <div className="flex gap-3 overflow-x-auto pb-2">
             {[1, 2, 3, 4, 5].map((i) => (
               <div
@@ -371,11 +395,11 @@ export default function MarketplaceHomePage() {
               </div>
             ))}
           </div>
-        ) : latestRows.length === 0 ? (
+        ) : latestRows.length === 0 && mergedMain.length === 0 ? (
           <p className="text-[14px] text-prel-secondary-label">
             No listings match this filter yet.
           </p>
-        ) : (
+        ) : latestRows.length === 0 ? null : (
           <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0 [scrollbar-width:thin]">
             {latestRows.map((p) => (
               <div
@@ -395,11 +419,26 @@ export default function MarketplaceHomePage() {
             All listings
           </h2>
           <p className="text-[13px] text-prel-tertiary-label">
-            Scroll to load more — same{" "}
-            <code className="rounded bg-prel-bg-grouped px-1 py-0.5 text-[11px]">
-              allProducts
-            </code>{" "}
-            paging as the app ({HOME_PAGE_SIZE} per page).
+            {isLoggedIn ? (
+              <>
+                Scroll to load more — same{" "}
+                <code className="rounded bg-prel-bg-grouped px-1 py-0.5 text-[11px]">
+                  allProducts
+                </code>{" "}
+                paging as the app ({HOME_PAGE_SIZE} per page).
+              </>
+            ) : (
+              <>
+                Showing up to {GUEST_HOME_CAP} listings.{" "}
+                <Link
+                  href="/login"
+                  className="font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
+                >
+                  Sign in
+                </Link>{" "}
+                to load the full feed.
+              </>
+            )}
           </p>
         </div>
 
@@ -434,7 +473,33 @@ export default function MarketplaceHomePage() {
           </p>
         ) : null}
 
-        {!hasMore && gridRows.length > 0 ? (
+        {!isLoggedIn && mergedMain.length >= GUEST_HOME_CAP ? (
+          <div className="rounded-2xl border border-prel-separator bg-prel-bg-grouped/80 p-5 text-center shadow-ios ring-1 ring-prel-glass-border">
+            <p className="text-[15px] font-semibold text-prel-label">
+              Want the full marketplace?
+            </p>
+            <p className="mt-1 text-[14px] text-prel-secondary-label">
+              You&apos;ve reached the guest preview limit ({GUEST_HOME_CAP} listings).
+              Sign in to keep scrolling the full catalogue.
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-3">
+              <Link
+                href="/login"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-6 text-[15px] font-semibold text-white shadow-ios"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/signup"
+                className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-prel-separator bg-white px-6 text-[15px] font-semibold text-prel-label shadow-ios"
+              >
+                Create account
+              </Link>
+            </div>
+          </div>
+        ) : null}
+
+        {isLoggedIn && !hasMore && gridRows.length > 0 ? (
           <p className="text-center text-[13px] text-prel-tertiary-label">
             You&apos;re up to date — no more listings to load for this filter.
           </p>
@@ -446,7 +511,7 @@ export default function MarketplaceHomePage() {
           </p>
         ) : null}
 
-        {hasMore && gridRows.length > 0 ? (
+        {isLoggedIn && hasMore && gridRows.length > 0 ? (
           <div className="flex justify-center pt-2">
             <button
               type="button"

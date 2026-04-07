@@ -3,22 +3,35 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Suspense } from "react";
-import { Home, MessageCircle, Search, Tag, User } from "lucide-react";
+import {
+  Home,
+  LayoutGrid,
+  MessageCircle,
+  Plus,
+  Search,
+  User,
+} from "lucide-react";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import { MarketplaceSiteFooter } from "@/components/marketplace/MarketplaceSiteFooter";
 import { useAuth } from "@/contexts/AuthContext";
 
-const tabs: {
-  href: string;
-  label: string;
-  icon: typeof Home;
-}[] = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/search", label: "Discover", icon: Search },
-  { href: "/sell", label: "Sell", icon: Tag },
-  { href: "/messages", label: "Messages", icon: MessageCircle },
-  { href: "/profile", label: "Profile", icon: User },
-];
+/** Vinted-style accent for nav chrome (active tab, sell FAB). */
+const VINTED_TEAL = "#09B1BA";
+
+type TabDef = { href: string; label: string; icon: typeof Home };
+
+const TAB_HOME: TabDef = { href: "/", label: "Home", icon: Home };
+const TAB_CATALOGUE: TabDef = {
+  href: "/search",
+  label: "Catalogue",
+  icon: LayoutGrid,
+};
+const TAB_INBOX: TabDef = {
+  href: "/messages",
+  label: "Inbox",
+  icon: MessageCircle,
+};
+const TAB_YOU: TabDef = { href: "/profile", label: "You", icon: User };
 
 function tabActive(pathname: string, href: string) {
   if (href === "/")
@@ -34,9 +47,46 @@ function tabActive(pathname: string, href: string) {
       pathname === "/profile" ||
       pathname.startsWith("/profile/") ||
       pathname === "/account" ||
-      pathname.startsWith("/account/")
+      pathname.startsWith("/account/") ||
+      pathname === "/saved" ||
+      pathname.startsWith("/saved/")
     );
   return pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function NavTab({
+  tab,
+  pathname,
+  compact,
+}: {
+  tab: TabDef;
+  pathname: string;
+  compact?: boolean;
+}) {
+  const on = tabActive(pathname, tab.href);
+  const Icon = tab.icon;
+  return (
+    <Link
+      href={tab.href}
+      className={`flex flex-col items-center justify-end gap-0.5 ${
+        compact ? "min-w-0 flex-1 py-1" : "px-3 py-2"
+      }`}
+    >
+      <Icon
+        className={compact ? "h-6 w-6" : "h-5 w-5"}
+        strokeWidth={on ? 2.25 : 2}
+        style={{ color: on ? VINTED_TEAL : "#737373" }}
+      />
+      <span
+        className={`max-w-[4.5rem] truncate text-center ${
+          compact ? "text-[10px] leading-tight" : "text-[13px]"
+        } font-medium`}
+        style={{ color: on ? VINTED_TEAL : "#737373" }}
+      >
+        {tab.label}
+      </span>
+    </Link>
+  );
 }
 
 function MarketplaceDesktopNav() {
@@ -44,88 +94,75 @@ function MarketplaceDesktopNav() {
 
   return (
     <nav
-      className="flex flex-wrap items-center justify-center gap-1"
+      className="hidden items-center justify-center gap-1 md:flex"
       aria-label="Main"
     >
-      {tabs.map(({ href, label, icon: Icon }) => {
-        const on = tabActive(pathname, href);
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-semibold transition-colors ${
-              on
-                ? "bg-[var(--prel-primary)] text-white shadow-ios"
-                : "text-prel-label hover:bg-prel-glass"
-            }`}
-          >
-            <Icon className="h-4 w-4" strokeWidth={on ? 2.25 : 2} />
-            {label}
-          </Link>
-        );
-      })}
+      <NavTab tab={TAB_HOME} pathname={pathname} />
+      <NavTab tab={TAB_CATALOGUE} pathname={pathname} />
+      <Link
+        href="/sell"
+        className="mx-2 flex h-11 min-w-[5.5rem] items-center justify-center gap-1.5 rounded-full px-5 text-[14px] font-bold text-white shadow-md transition hover:brightness-105"
+        style={{ backgroundColor: VINTED_TEAL }}
+      >
+        <Plus className="h-5 w-5" strokeWidth={2.5} />
+        Sell
+      </Link>
+      <NavTab tab={TAB_INBOX} pathname={pathname} />
+      <NavTab tab={TAB_YOU} pathname={pathname} />
     </nav>
   );
 }
 
 function MarketplaceDesktopNavFallback() {
   return (
-    <div
-      className="flex h-10 items-center justify-center gap-2"
-      aria-hidden
-    >
-      {tabs.map(({ href }) => (
-        <div
-          key={href}
-          className="h-9 w-20 animate-pulse rounded-full bg-prel-glass"
-        />
-      ))}
-    </div>
+    <div className="hidden h-10 w-[min(520px,50vw)] animate-pulse rounded-full bg-neutral-100 md:block" />
   );
 }
 
-/** Mobile-only bottom tabs — `usePathname` isolated + Suspended. */
+/** Vinted-style mobile bottom bar: white strip, teal active, raised sell button. */
 function MarketplaceBottomNav() {
   const pathname = usePathname();
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-prel-separator bg-prel-nav/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden"
       aria-label="Primary"
     >
-      <div className="mx-auto flex max-w-lg justify-around pt-1">
-        {tabs.map(({ href, label, icon: Icon }) => {
-          const on = tabActive(pathname, href);
-          return (
-            <Link
-              key={href}
-              href={href}
-              className={`flex min-w-[64px] flex-col items-center gap-0.5 py-2 text-[10px] font-semibold ${
-                on
-                  ? "text-[var(--prel-primary)]"
-                  : "text-prel-secondary-label"
-              }`}
-            >
-              <Icon className="h-6 w-6" strokeWidth={on ? 2.25 : 2} />
-              {label}
-            </Link>
-          );
-        })}
+      <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-1 pt-1">
+        <NavTab tab={TAB_HOME} pathname={pathname} compact />
+        <NavTab tab={TAB_CATALOGUE} pathname={pathname} compact />
+        <div className="flex flex-col items-center justify-start pb-0.5">
+          <Link
+            href="/sell"
+            className="flex h-14 w-14 -translate-y-3 items-center justify-center rounded-full text-white shadow-lg ring-4 ring-white transition hover:brightness-105"
+            style={{ backgroundColor: VINTED_TEAL }}
+            aria-label="Sell"
+          >
+            <Plus className="h-7 w-7" strokeWidth={2.5} />
+          </Link>
+          <span
+            className="-mt-2 text-[10px] font-medium text-neutral-500"
+            aria-hidden
+          >
+            Sell
+          </span>
+        </div>
+        <NavTab tab={TAB_INBOX} pathname={pathname} compact />
+        <NavTab tab={TAB_YOU} pathname={pathname} compact />
       </div>
     </nav>
   );
 }
 
-/** Top-right auth actions — links to live `/login` and `/signup` (GraphQL). */
 function MarketplaceHeaderAuth() {
   const { userToken, ready, logoutUser } = useAuth();
   const router = useRouter();
 
   if (!ready) {
     return (
-      <div className="flex items-center gap-1.5 sm:gap-2" aria-hidden>
-        <div className="h-9 w-[4.25rem] animate-pulse rounded-full bg-prel-glass" />
-        <div className="h-9 w-[4.5rem] animate-pulse rounded-full bg-prel-glass" />
+      <div className="flex items-center gap-2" aria-hidden>
+        <div className="h-9 w-9 animate-pulse rounded-full bg-neutral-100" />
+        <div className="h-8 w-16 animate-pulse rounded-full bg-neutral-100" />
       </div>
     );
   }
@@ -138,7 +175,7 @@ function MarketplaceHeaderAuth() {
           logoutUser();
           router.replace("/");
         }}
-        className="shrink-0 rounded-full border border-prel-separator bg-white px-3 py-2 text-[13px] font-semibold text-prel-error shadow-ios transition-colors hover:border-prel-error/35 hover:bg-prel-error/5 sm:px-4 sm:text-[14px]"
+        className="shrink-0 rounded-full border border-neutral-200 bg-white px-3 py-2 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-50 sm:px-4 sm:text-[14px]"
       >
         Log out
       </button>
@@ -146,16 +183,17 @@ function MarketplaceHeaderAuth() {
   }
 
   return (
-    <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+    <div className="flex shrink-0 items-center gap-1 sm:gap-2">
       <Link
         href="/login"
-        className="rounded-full px-3 py-2 text-[13px] font-semibold text-prel-label transition-colors hover:bg-prel-glass sm:px-4 sm:text-[14px]"
+        className="rounded-full px-3 py-2 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-100 sm:px-4 sm:text-[14px]"
       >
         Log in
       </Link>
       <Link
         href="/signup"
-        className="rounded-full bg-[var(--prel-primary)] px-3 py-2 text-[13px] font-semibold text-white shadow-ios transition-opacity hover:opacity-95 sm:px-4 sm:text-[14px]"
+        className="rounded-full px-3 py-2 text-[13px] font-semibold text-white shadow-sm transition hover:brightness-105 sm:px-4 sm:text-[14px]"
+        style={{ backgroundColor: VINTED_TEAL }}
       >
         Sign up
       </Link>
@@ -166,35 +204,23 @@ function MarketplaceHeaderAuth() {
 function MarketplaceBottomNavFallback() {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-prel-separator bg-prel-nav/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 h-[56px] border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Primary"
-    >
-      <div className="mx-auto flex max-w-lg justify-around pt-1">
-        {tabs.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex min-w-[64px] flex-col items-center gap-0.5 py-2 text-[10px] font-semibold text-prel-secondary-label"
-          >
-            <Icon className="h-6 w-6" strokeWidth={2} />
-            {label}
-          </Link>
-        ))}
-      </div>
-    </nav>
+    />
   );
 }
 
 export function MarketplaceShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col bg-prel-bg-grouped text-prel-label">
-      <header className="sticky top-0 z-40 border-b border-prel-separator bg-prel-nav/95 pt-[env(safe-area-inset-top)] backdrop-blur-md md:pt-0">
-        <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-[4.25rem] md:gap-6 md:px-8 lg:px-10">
+    <div className="flex min-h-dvh flex-col bg-[#fafafa] text-neutral-900">
+      <header className="sticky top-0 z-40 border-b border-neutral-200 bg-white pt-[env(safe-area-inset-top)] shadow-sm md:pt-0">
+        <div className="mx-auto flex min-h-[52px] max-w-7xl items-center gap-2 px-3 sm:gap-3 sm:px-4 md:h-14 md:gap-4 md:px-6 lg:px-8">
           <Link
             href="/"
-            className="shrink-0 leading-none tracking-tight text-[var(--prel-primary)]"
+            className="shrink-0 leading-none tracking-tight"
+            style={{ color: VINTED_TEAL }}
           >
-            <BrandWordmark className="text-[20px] text-[var(--prel-primary)] md:text-[22px]" />
+            <BrandWordmark className="text-[18px] md:text-[20px]" />
           </Link>
 
           <div className="hidden min-w-0 flex-1 justify-center md:flex">
@@ -203,19 +229,20 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
             </Suspense>
           </div>
 
-          <div className="ml-auto flex shrink-0 items-center gap-2 md:ml-0 md:gap-3">
+          <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
             <MarketplaceHeaderAuth />
             <Link
               href="/search"
-              className="rounded-full bg-[var(--prel-primary)]/12 px-3 py-2 text-[13px] font-semibold text-[var(--prel-primary)] transition-colors hover:bg-[var(--prel-primary)]/18 sm:px-4 sm:text-[14px] md:px-5 md:py-2.5"
+              className="flex h-10 w-10 items-center justify-center rounded-full text-neutral-600 transition hover:bg-neutral-100 md:h-11 md:w-11"
+              aria-label="Search catalogue"
             >
-              Search
+              <Search className="h-5 w-5" strokeWidth={2} />
             </Link>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-lg flex-1 px-3 pt-4 sm:max-w-2xl sm:px-5 sm:pt-5 md:max-w-7xl md:px-8 md:pt-8 lg:px-10">
+      <main className="mx-auto w-full max-w-lg flex-1 px-3 pb-24 pt-4 sm:max-w-2xl sm:px-5 sm:pt-5 md:max-w-7xl md:px-6 md:pt-6 lg:px-8 lg:pb-8">
         {children}
       </main>
 

@@ -1,5 +1,14 @@
 import { gql } from "@apollo/client";
 
+/** Toggle like/unlike for the current user (requires consumer JWT). */
+export const LIKE_PRODUCT = gql`
+  mutation LikeProduct($productId: Int!) {
+    likeProduct(productId: $productId) {
+      success
+    }
+  }
+`;
+
 export const CREATE_CHAT = gql`
   mutation CreateChat($recipient: String!) {
     createChat(recipient: $recipient) {
