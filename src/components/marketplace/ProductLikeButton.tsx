@@ -2,86 +2,72 @@
 
 import { useMutation } from "@apollo/client";
 import { Heart } from "lucide-react";
-import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useCallback, useState } from "react";
 import { LIKE_PRODUCT } from "@/graphql/mutations/marketplace";
-import { safeReturnPath } from "@/lib/safe-return-path";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Props = {
   productId: number;
-  likes: number;
-  userLiked: boolean;
+  initialLiked: boolean;
+  initialLikes: number;
+  className?: string;
+  compact?: boolean;
 };
 
-export function ProductLikeButton({ productId, likes, userLiked }: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { userToken, ready } = useAuth();
-  const [liked, setLiked] = useState(userLiked);
-  const [count, setCount] = useState(Math.max(0, Math.floor(likes)));
-  const [likeMutation, { loading }] = useMutation(LIKE_PRODUCT);
+export function ProductLikeButton({
+  productId,
+  initialLiked,
+  initialLikes,
+  className = "",
+  compact,
+}: Props) {
+  const { userToken } = useAuth();
+  const [liked, setLiked] = useState(initialLiked);
+  const [count, setCount] = useState(initialLikes);
+  const [likeProduct, { loading }] = useMutation(LIKE_PRODUCT);
 
-  useEffect(() => {
-    setLiked(userLiked);
-    setCount(Math.max(0, Math.floor(likes)));
-  }, [productId, userLiked, likes]);
-
-  const goLogin = useCallback(() => {
-    const full =
-      typeof window !== "undefined"
-        ? `${window.location.pathname}${window.location.search}`
-        : pathname;
-    const next = safeReturnPath(full) ?? pathname;
-    router.push(`/login?next=${encodeURIComponent(next)}`);
-  }, [pathname, router]);
-
-  const onClick = useCallback(
-    async (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (!ready) return;
-      if (!userToken) {
-        goLogin();
-        return;
-      }
-      const prevLiked = liked;
-      const prevCount = count;
-      setLiked(!prevLiked);
-      setCount((c) => Math.max(0, c + (prevLiked ? -1 : 1)));
-      try {
-        const { data } = await likeMutation({
-          variables: { productId },
-        });
-        const ok = data?.likeProduct?.success === true;
-        if (!ok) {
-          setLiked(prevLiked);
-          setCount(prevCount);
-        }
-      } catch {
+  const toggle = useCallback(async () => {
+    if (!userToken) return;
+    const prevLiked = liked;
+    const prevCount = count;
+    setLiked(!prevLiked);
+    setCount((c) => Math.max(0, c + (prevLiked ? -1 : 1)));
+    try {
+      const { data, errors } = await likeProduct({
+        variables: { productId },
+        errorPolicy: "all",
+      });
+      if (errors?.length || data?.likeProduct?.success === false) {
         setLiked(prevLiked);
         setCount(prevCount);
       }
-    },
-    [ready, userToken, liked, count, goLogin, likeMutation, productId],
-  );
+    } catch {
+      setLiked(prevLiked);
+      setCount(prevCount);
+    }
+  }, [userToken, liked, count, likeProduct, productId]);
 
   return (
     <button
       type="button"
-      onClick={onClick}
-      disabled={loading}
-      className="absolute bottom-2 right-2 z-10 flex items-center gap-1 rounded-full bg-black/50 px-2 py-1 text-white shadow-md backdrop-blur-[6px] transition hover:bg-black/60 disabled:opacity-70"
+      onClick={toggle}
+      disabled={!userToken || loading}
+      className={`inline-flex items-center gap-2 rounded-full border border-prel-separator bg-white/95 px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios backdrop-blur-sm transition hover:bg-prel-bg-grouped disabled:opacity-50 ${className}`}
       aria-pressed={liked}
       aria-label={liked ? "Unlike" : "Like"}
     >
       <Heart
-        className={`h-3.5 w-3.5 shrink-0 ${
-          liked ? "fill-white text-white" : "fill-none text-white"
+        className={`${compact ? "h-4 w-4" : "h-5 w-5"} shrink-0 ${
+          liked ? "fill-[var(--prel-primary)] text-[var(--prel-primary)]" : ""
         }`}
-        strokeWidth={2}
+        strokeWidth={liked ? 0 : 2}
       />
-      <span className="text-[11px] font-bold tabular-nums leading-none">{count}</span>
+      <span className={compact ? "text-[12px]" : ""}>{count}</span>
+      {!userToken && !compact ? (
+        <span className="text-[12px] font-normal text-prel-secondary-label">
+          · Sign in to like
+        </span>
+      ) : null}
     </button>
   );
 }

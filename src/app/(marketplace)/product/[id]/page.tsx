@@ -15,7 +15,9 @@ import {
 } from "@/lib/product-display";
 import { normalizeProductImageUrls } from "@/lib/product-images";
 import { useClientMounted } from "@/lib/use-client-mounted";
+import { ProductLikeButton } from "@/components/marketplace/ProductLikeButton";
 import { ProductPurchaseSection } from "@/components/marketplace/ProductPurchaseSection";
+import { ReportListingDialog } from "@/components/marketplace/ReportListingDialog";
 
 export default function MarketplaceProductPage() {
   const mounted = useClientMounted();
@@ -167,15 +169,25 @@ export default function MarketplaceProductPage() {
             <h1 className="text-[22px] font-bold leading-tight text-prel-label sm:text-[24px] md:text-[26px] lg:text-[28px]">
               {p.name}
             </h1>
-            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-              <p className="text-[24px] font-bold text-[var(--prel-primary)] sm:text-[26px] md:text-[28px]">
-                {formatMoney(sale)}
-              </p>
-              {original != null ? (
-                <p className="text-[17px] font-semibold text-prel-secondary-label line-through">
-                  {formatMoney(original)}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                <p className="text-[24px] font-bold text-[var(--prel-primary)] sm:text-[26px] md:text-[28px]">
+                  {formatMoney(sale)}
                 </p>
-              ) : null}
+                {original != null ? (
+                  <p className="text-[17px] font-semibold text-prel-secondary-label line-through">
+                    {formatMoney(original)}
+                  </p>
+                ) : null}
+              </div>
+              <ProductLikeButton
+                productId={p.id}
+                initialLiked={!!p.userLiked}
+                initialLikes={Number(p.likes ?? 0)}
+              />
+            </div>
+            <div className="flex flex-wrap items-center gap-4">
+              <ReportListingDialog productId={p.id} productName={p.name} />
             </div>
             {metaRows.length > 0 ? (
               <dl className="mt-1 space-y-2 rounded-xl bg-white/80 px-4 py-3 shadow-ios ring-1 ring-prel-glass-border sm:px-4 sm:py-3.5">

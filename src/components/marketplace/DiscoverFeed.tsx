@@ -398,7 +398,7 @@ export function DiscoverFeed() {
           <Link
             href="/saved"
             className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-prel-label [-webkit-tap-highlight-color:transparent] hover:bg-black/5"
-            aria-label="Saved"
+            aria-label="Favourites"
           >
             <Heart className="h-5 w-5" strokeWidth={2} />
           </Link>
@@ -450,7 +450,14 @@ export function DiscoverFeed() {
               className="min-h-[48px] w-full rounded-[1.25rem] border border-prel-separator bg-prel-bg-grouped px-4 text-[16px] text-prel-label shadow-ios outline-none placeholder:text-prel-tertiary-label focus:border-[var(--prel-primary)]"
             />
             <p className="px-1 text-[12px] text-prel-tertiary-label">
-              Member search lives in the app — this field searches the catalogue.
+              Looking for a person?{" "}
+              <Link
+                href="/search/members"
+                className="font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
+              >
+                Search members
+              </Link>
+              . This field searches listings.
             </p>
           </form>
 

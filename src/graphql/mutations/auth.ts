@@ -61,3 +61,31 @@ export const ADMIN_LOGIN = gql`
     }
   }
 `;
+
+/** Request password reset email (unauthenticated). */
+export const RESET_PASSWORD_REQUEST = gql`
+  mutation ResetPasswordRequest($email: String) {
+    resetPassword(email: $email) {
+      message
+    }
+  }
+`;
+
+/** Complete reset with code from email (unauthenticated). */
+export const PASSWORD_RESET_COMPLETE = gql`
+  mutation PasswordResetComplete(
+    $email: String!
+    $code: String!
+    $password: String!
+  ) {
+    passwordReset(email: $email, code: $code, password: $password) {
+      message
+      token
+      restToken
+      user {
+        id
+        username
+      }
+    }
+  }
+`;

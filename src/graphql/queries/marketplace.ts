@@ -86,6 +86,40 @@ export const RECENTLY_VIEWED_PRODUCTS = gql`
   }
 `;
 
+/** Logged-in buyer favourites (`@login_required`). */
+export const LIKED_PRODUCTS = gql`
+  query LikedProducts($pageCount: Int!, $pageNumber: Int!) {
+    likedProducts(pageCount: $pageCount, pageNumber: $pageNumber) {
+      product {
+        id
+        name
+        listingCode
+        status
+        price
+        discountPrice
+        condition
+        imagesUrl
+        likes
+        userLiked
+        isFeatured
+        seller {
+          username
+          displayName
+          thumbnailUrl
+        }
+        brand {
+          id
+          name
+        }
+        category {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
 export const RECOMMENDED_SELLERS = gql`
   query RecommendedSellers($pageCount: Int!, $pageNumber: Int!) {
     recommendedSellers(pageCount: $pageCount, pageNumber: $pageNumber) {
@@ -148,6 +182,8 @@ export const MARKETPLACE_PRODUCT = gql`
       condition
       style
       imagesUrl
+      likes
+      userLiked
       category {
         id
         name
@@ -167,6 +203,79 @@ export const MARKETPLACE_PRODUCT = gql`
         thumbnailUrl
         isVerified
       }
+    }
+  }
+`;
+
+/** Authenticated buyer/seller order detail (`userOrder` query). */
+export const USER_ORDER = gql`
+  query UserOrder($orderId: Int!) {
+    userOrder(orderId: $orderId) {
+      id
+      publicId
+      status
+      createdAt
+      updatedAt
+      priceTotal
+      discountPrice
+      buyerProtectionFee
+      shippingFee
+      itemsSubtotal
+      shippingAddressJson
+      orderConversationId
+      trackingNumber
+      trackingUrl
+      carrierName
+      user {
+        username
+        displayName
+      }
+      seller {
+        username
+        displayName
+      }
+      lineItems {
+        id
+        productId
+        productName
+        priceAtPurchase
+        productImagesUrl
+      }
+      statusTimeline {
+        id
+        status
+        createdAt
+      }
+      payments {
+        id
+        paymentRef
+        paymentStatus
+        paymentAmount
+      }
+    }
+  }
+`;
+
+export const SEARCH_USERS = gql`
+  query SearchUsers($search: String!) {
+    searchUsers(search: $search) {
+      id
+      username
+      displayName
+      thumbnailUrl
+      profilePictureUrl
+      isVerified
+    }
+  }
+`;
+
+export const USER_MULTIBUY_DISCOUNTS = gql`
+  query UserMultibuyDiscounts($userId: Int) {
+    userMultibuyDiscounts(userId: $userId) {
+      id
+      minItems
+      discountValue
+      isActive
     }
   }
 `;

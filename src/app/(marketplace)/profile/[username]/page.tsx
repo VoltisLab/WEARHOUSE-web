@@ -10,10 +10,13 @@ import {
   MessageCircle,
   Package,
   Pencil,
+  Settings,
   Star,
 } from "lucide-react";
 import { GET_USER, USER_SHOP_PRODUCTS, VIEW_ME } from "@/graphql/queries/admin";
+import { FOLLOW_USER, UNFOLLOW_USER } from "@/graphql/mutations/account";
 import { CREATE_CHAT } from "@/graphql/mutations/marketplace";
+import { ReportProfileDialog } from "@/components/marketplace/ReportProfileDialog";
 import { SafeImage } from "@/components/ui/SafeImage";
 import {
   MarketplaceProductCard,
@@ -51,11 +54,16 @@ export default function MarketplacePublicProfilePage() {
   const [dept, setDept] = useState<string | null>(null);
   const pageSize = 80;
   const [createChat, { loading: chatLoading }] = useMutation(CREATE_CHAT);
+  const [followUser, { loading: followLoading }] = useMutation(FOLLOW_USER);
+  const [unfollowUser, { loading: unfollowLoading }] = useMutation(UNFOLLOW_USER);
 
-  const { data: userData, loading: userLoad } = useQuery(GET_USER, {
-    variables: { username: rawUsername },
-    skip: !mounted || !rawUsername,
-  });
+  const { data: userData, loading: userLoad, refetch: refetchProfile } = useQuery(
+    GET_USER,
+    {
+      variables: { username: rawUsername },
+      skip: !mounted || !rawUsername,
+    },
+  );
 
   const filters = useMemo(() => {
     const f: { status: string; parentCategory?: string } = {
@@ -97,6 +105,26 @@ export default function MarketplacePublicProfilePage() {
       if (id != null) router.push(`/messages/${id}`);
     } catch {
       /* optional toast */
+    }
+  }
+
+  async function onToggleFollow() {
+    if (!userToken || u?.id == null) {
+      router.push("/login");
+      return;
+    }
+    const followedId = Number(u.id);
+    if (Number.isNaN(followedId)) return;
+    const isFollowing = u.isFollowing === true;
+    try {
+      if (isFollowing) {
+        await unfollowUser({ variables: { followedId } });
+      } else {
+        await followUser({ variables: { followedId } });
+      }
+      await refetchProfile();
+    } catch {
+      /* noop */
     }
   }
 
@@ -149,6 +177,40 @@ export default function MarketplacePublicProfilePage() {
                 active listing{u.listing === 1 ? "" : "s"}
               </p>
             ) : null}
+            <div className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[14px] md:justify-start">
+              {userToken ? (
+                <Link
+                  href={`/profile/${encodeURIComponent(rawUsername)}/followers`}
+                  className="font-semibold text-[var(--prel-primary)]"
+                >
+                  {u?.noOfFollowers ?? 0} followers
+                </Link>
+              ) : (
+                <span className="text-prel-secondary-label">
+                  {u?.noOfFollowers ?? 0} followers
+                </span>
+              )}
+              {userToken ? (
+                <Link
+                  href={`/profile/${encodeURIComponent(rawUsername)}/following`}
+                  className="font-semibold text-[var(--prel-primary)]"
+                >
+                  {u?.noOfFollowing ?? 0} following
+                </Link>
+              ) : (
+                <span className="text-prel-secondary-label">
+                  {u?.noOfFollowing ?? 0} following
+                </span>
+              )}
+              <Link
+                href={`/profile/${encodeURIComponent(rawUsername)}/reviews`}
+                className="font-semibold text-[var(--prel-primary)]"
+              >
+                {(u?.reviewStats?.noOfReviews ?? 0) > 0
+                  ? `${(u.reviewStats?.rating ?? 0).toFixed(1)} ★ · ${u.reviewStats?.noOfReviews} reviews`
+                  : "Reviews"}
+              </Link>
+            </div>
             {isOwnProfile ? (
               <div className="mt-4 flex flex-wrap justify-center gap-2 md:justify-start">
                 <Link
@@ -156,7 +218,7 @@ export default function MarketplacePublicProfilePage() {
                   className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
                 >
                   <Bookmark className="h-4 w-4 text-[var(--prel-primary)]" />
-                  Saved
+                  Favourites
                 </Link>
                 <Link
                   href="/messages"
@@ -171,6 +233,19 @@ export default function MarketplacePublicProfilePage() {
                 >
                   <Package className="h-4 w-4 text-[var(--prel-primary)]" />
                   Orders
+                </Link>
+                <Link
+                  href="/account/notifications"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
+                >
+                  Alerts
+                </Link>
+                <Link
+                  href="/account/settings"
+                  className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-prel-separator bg-white px-4 py-2 text-[14px] font-semibold text-prel-label shadow-ios"
+                >
+                  <Settings className="h-4 w-4 text-[var(--prel-primary)]" />
+                  Settings
                 </Link>
                 <Link
                   href="/sell"
@@ -190,32 +265,42 @@ export default function MarketplacePublicProfilePage() {
                 ) : null}
               </div>
             ) : (
-              <div className="mt-4 flex flex-wrap items-center justify-center gap-3 md:justify-start">
-                <a
-                  href={publicProfileUrl(rawUsername)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="text-[14px] font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
-                >
-                  Public profile link
-                </a>
-                <button
-                  type="button"
-                  onClick={onMessageSeller}
-                  disabled={chatLoading}
-                  className="inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios disabled:opacity-50"
-                >
-                  <MessageCircle className="h-4 w-4" aria-hidden />
-                  Message
-                </button>
+              <div className="mt-4 flex flex-col items-center gap-3 md:items-start">
+                <div className="flex flex-wrap items-center justify-center gap-3 md:justify-start">
+                  <a
+                    href={publicProfileUrl(rawUsername)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[14px] font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
+                  >
+                    Public profile link
+                  </a>
+                  <button
+                    type="button"
+                    onClick={onMessageSeller}
+                    disabled={chatLoading}
+                    className="inline-flex items-center gap-2 rounded-full bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios disabled:opacity-50"
+                  >
+                    <MessageCircle className="h-4 w-4" aria-hidden />
+                    Message
+                  </button>
+                  {userToken && u?.id != null ? (
+                    <button
+                      type="button"
+                      onClick={() => onToggleFollow()}
+                      disabled={followLoading || unfollowLoading}
+                      className="inline-flex items-center gap-2 rounded-full border border-prel-separator bg-white px-5 py-2.5 text-[14px] font-semibold text-prel-label shadow-ios disabled:opacity-50"
+                    >
+                      {u.isFollowing === true ? "Following" : "Follow"}
+                    </button>
+                  ) : null}
+                </div>
+                <ReportProfileDialog
+                  username={rawUsername}
+                  displayLabel={`@${rawUsername}`}
+                />
               </div>
             )}
-            {u?.reviewStats && (u.reviewStats.noOfReviews ?? 0) > 0 ? (
-              <p className="mt-3 text-[14px] text-prel-secondary-label">
-                {(u.reviewStats.rating ?? 0).toFixed(1)} ★ ·{" "}
-                {u.reviewStats.noOfReviews} reviews
-              </p>
-            ) : null}
           </div>
         </div>
       </div>

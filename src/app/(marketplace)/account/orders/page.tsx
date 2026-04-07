@@ -140,36 +140,38 @@ export default function AccountOrdersPage() {
 
       <ul className="space-y-3">
         {rows.map(({ o, label, otherName, thumb }) => (
-          <li
-            key={o.id}
-            className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border"
-          >
-            <div className="flex gap-3 p-4">
-              <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-prel-bg-grouped">
-                <SafeImage
-                  src={thumb}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
+          <li key={o.id}>
+            <Link
+              href={`/account/orders/${o.id}`}
+              className="block overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border transition hover:ring-[var(--prel-primary)]/35"
+            >
+              <div className="flex gap-3 p-4">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-prel-bg-grouped">
+                  <SafeImage
+                    src={thumb}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[12px] font-semibold uppercase tracking-wide text-prel-secondary-label">
+                    {o.publicId || `Order #${o.id}`}
+                  </p>
+                  <p className="mt-0.5 text-[15px] font-semibold text-prel-label">
+                    {formatMoney(o.priceTotal)}
+                  </p>
+                  <p className="mt-1 text-[13px] text-prel-secondary-label">
+                    {label} {otherName}
+                  </p>
+                  <p className="mt-1 text-[12px] text-prel-tertiary-label">
+                    {o.createdAt ? formatDateTime(o.createdAt) : ""} ·{" "}
+                    <span className="font-medium text-prel-secondary-label">
+                      {String(o.status ?? "").replace(/_/g, " ")}
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div className="min-w-0 flex-1">
-                <p className="text-[12px] font-semibold uppercase tracking-wide text-prel-secondary-label">
-                  {o.publicId || `Order #${o.id}`}
-                </p>
-                <p className="mt-0.5 text-[15px] font-semibold text-prel-label">
-                  {formatMoney(o.priceTotal)}
-                </p>
-                <p className="mt-1 text-[13px] text-prel-secondary-label">
-                  {label} {otherName}
-                </p>
-                <p className="mt-1 text-[12px] text-prel-tertiary-label">
-                  {o.createdAt ? formatDateTime(o.createdAt) : ""} ·{" "}
-                  <span className="font-medium text-prel-secondary-label">
-                    {String(o.status ?? "").replace(/_/g, " ")}
-                  </span>
-                </p>
-              </div>
-            </div>
+            </Link>
           </li>
         ))}
       </ul>

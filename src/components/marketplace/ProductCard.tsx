@@ -68,7 +68,13 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
             </span>
           ) : null}
         </Link>
-        <ProductLikeButton productId={p.id} likes={likeCount} userLiked={liked} />
+        <ProductLikeButton
+          productId={p.id}
+          initialLiked={liked}
+          initialLikes={likeCount}
+          compact
+          className="absolute bottom-2 right-2 z-[6] px-2.5 py-1.5"
+        />
       </div>
       <Link href={href} className="block space-y-1 p-3">
         {p.brand?.name?.trim() ? (

@@ -12,6 +12,7 @@ export const VIEW_ME = gql`
       bio
       isVerified
       isVacationMode
+      isMultibuyEnabled
       listing
       dateJoined
       lastLogin
@@ -285,6 +286,8 @@ export const GET_USER = gql`
       bio
       isVerified
       isVacationMode
+      isFollowing
+      isMultibuyEnabled
       listing
       dateJoined
       lastLogin

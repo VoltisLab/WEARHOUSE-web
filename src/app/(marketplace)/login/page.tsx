@@ -87,9 +87,17 @@ function LoginForm() {
             />
           </div>
           <div>
-            <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
-              Password
-            </label>
+            <div className="mb-1 flex items-center justify-between gap-2">
+              <label className="block text-[13px] font-medium text-prel-secondary-label">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-[13px] font-semibold text-[var(--prel-primary)]"
+              >
+                Forgot password?
+              </Link>
+            </div>
             <input
               type="password"
               className="box-border w-full rounded-[10px] border border-prel-separator bg-prel-bg-grouped px-3 py-3 text-[17px] text-prel-label outline-none focus:ring-2 focus:ring-[var(--prel-primary)]/35"
