@@ -13,6 +13,20 @@ export const MARKETPLACE_HOME_HERO_IMAGE_URL =
   process.env.NEXT_PUBLIC_HOME_HERO_IMAGE_URL?.trim() ||
   "/marketplace/hero-banner.jpg";
 
+/**
+ * Discover feed promotional banners (image + text overlay).
+ * Each can be overridden; otherwise reuses the home hero asset.
+ */
+export const DISCOVER_BANNER_TRY_CART_IMAGE_URL =
+  process.env.NEXT_PUBLIC_DISCOVER_TRY_CART_IMAGE_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+export const DISCOVER_BANNER_STYLE_IMAGE_URL =
+  process.env.NEXT_PUBLIC_DISCOVER_STYLE_IMAGE_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+export const DISCOVER_BANNER_LOOKBOOKS_IMAGE_URL =
+  process.env.NEXT_PUBLIC_DISCOVER_LOOKBOOKS_IMAGE_URL?.trim() ||
+  MARKETPLACE_HOME_HERO_IMAGE_URL;
+
 /** Hostname for link labels (still uses `PUBLIC_WEB_BASE` href). */
 export function publicWebHostname(): string {
   try {

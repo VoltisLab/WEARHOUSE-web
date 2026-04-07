@@ -11,12 +11,15 @@ type TabDef = { href: string; label: string };
 
 const TAB_HOME: TabDef = { href: "/", label: "Home" };
 const TAB_DISCOVER: TabDef = { href: "/search", label: "Discover" };
+const TAB_SELL: TabDef = { href: "/sell", label: "Sell" };
 const TAB_INBOX: TabDef = { href: "/messages", label: "Inbox" };
 const TAB_YOU: TabDef = { href: "/profile", label: "You" };
 
 function tabActive(pathname: string, href: string) {
   if (href === "/")
     return pathname === "/" || pathname === "";
+  if (href === "/sell")
+    return pathname === "/sell" || pathname.startsWith("/sell/");
   if (href === "/search")
     return (
       pathname.startsWith("/search") || pathname.startsWith("/product/")
@@ -50,12 +53,12 @@ function NavTab({
   return (
     <Link
       href={tab.href}
-      className={`flex items-center justify-center ${
+      className={`flex items-center justify-center rounded-lg transition-colors hover:bg-neutral-50 ${
         compact ? "min-w-0 flex-1 py-2.5" : "px-3 py-2"
       }`}
     >
       <span
-        className={`truncate text-center font-semibold ${
+        className={`truncate text-center font-medium ${
           compact ? "text-[11px] leading-tight" : "text-[14px]"
         } ${on ? active : inactive}`}
       >
@@ -75,12 +78,7 @@ function MarketplaceDesktopNav() {
     >
       <NavTab tab={TAB_HOME} pathname={pathname} />
       <NavTab tab={TAB_DISCOVER} pathname={pathname} />
-      <Link
-        href="/sell"
-        className="mx-2 flex h-11 min-w-[5.5rem] items-center justify-center rounded-full bg-[var(--prel-primary)] px-5 text-[14px] font-bold text-white shadow-md transition hover:brightness-105"
-      >
-        Sell
-      </Link>
+      <NavTab tab={TAB_SELL} pathname={pathname} />
       <NavTab tab={TAB_INBOX} pathname={pathname} />
       <NavTab tab={TAB_YOU} pathname={pathname} />
     </nav>
@@ -101,17 +99,10 @@ function MarketplaceBottomNav() {
       className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden"
       aria-label="Primary"
     >
-      <div className="mx-auto grid max-w-lg grid-cols-5 items-end px-0.5 pt-1">
+      <div className="mx-auto grid max-w-lg grid-cols-5 items-stretch px-0.5 py-1">
         <NavTab tab={TAB_HOME} pathname={pathname} compact />
         <NavTab tab={TAB_DISCOVER} pathname={pathname} compact />
-        <div className="flex flex-col items-center justify-start pb-1">
-          <Link
-            href="/sell"
-            className="flex h-12 min-w-[3.25rem] -translate-y-2 items-center justify-center rounded-full bg-[var(--prel-primary)] px-3 text-[11px] font-bold leading-tight text-white shadow-lg ring-4 ring-white transition hover:brightness-105"
-          >
-            Sell
-          </Link>
-        </div>
+        <NavTab tab={TAB_SELL} pathname={pathname} compact />
         <NavTab tab={TAB_INBOX} pathname={pathname} compact />
         <NavTab tab={TAB_YOU} pathname={pathname} compact />
       </div>
@@ -140,7 +131,7 @@ function MarketplaceHeaderAuth() {
           logoutUser();
           router.replace("/");
         }}
-        className="shrink-0 rounded-full border border-neutral-200 bg-white px-3 py-2 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-50 sm:px-4 sm:text-[14px]"
+        className="shrink-0 rounded-lg border border-neutral-200 bg-white px-3 py-2 text-[13px] font-medium text-neutral-700 transition hover:bg-neutral-50 sm:px-4 sm:text-[14px]"
       >
         Log out
       </button>
@@ -151,13 +142,13 @@ function MarketplaceHeaderAuth() {
     <div className="flex shrink-0 items-center gap-1 sm:gap-2">
       <Link
         href="/login"
-        className="rounded-full px-3 py-2 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-100 sm:px-4 sm:text-[14px]"
+        className="rounded-lg px-3 py-2 text-[13px] font-medium text-neutral-700 transition hover:bg-neutral-100 sm:px-4 sm:text-[14px]"
       >
         Log in
       </Link>
       <Link
         href="/signup"
-        className="rounded-full bg-[var(--prel-primary)] px-3 py-2 text-[13px] font-semibold text-white shadow-sm transition hover:brightness-105 sm:px-4 sm:text-[14px]"
+        className="rounded-lg border border-[var(--prel-primary)] px-3 py-2 text-[13px] font-medium text-[var(--prel-primary)] transition hover:bg-[var(--prel-primary)]/5 sm:px-4 sm:text-[14px]"
       >
         Sign up
       </Link>
@@ -171,6 +162,22 @@ function MarketplaceBottomNavFallback() {
       className="fixed bottom-0 left-0 right-0 z-50 h-[56px] border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Primary"
     />
+  );
+}
+
+function HeaderSearchLink() {
+  const pathname = usePathname();
+  const on =
+    pathname.startsWith("/search") || pathname.startsWith("/product/");
+  return (
+    <Link
+      href="/search"
+      className={`shrink-0 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors hover:bg-neutral-50 sm:px-4 sm:text-[14px] ${
+        on ? "text-[var(--prel-primary)]" : "text-neutral-600"
+      }`}
+    >
+      Search
+    </Link>
   );
 }
 
@@ -194,12 +201,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
 
           <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-2 md:gap-3">
             <MarketplaceHeaderAuth />
-            <Link
-              href="/search"
-              className="shrink-0 rounded-full px-3 py-2 text-[13px] font-semibold text-neutral-700 transition hover:bg-neutral-100 sm:px-4 sm:text-[14px]"
-            >
-              Search
-            </Link>
+            <HeaderSearchLink />
           </div>
         </div>
       </header>

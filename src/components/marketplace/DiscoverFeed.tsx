@@ -18,6 +18,11 @@ import {
 } from "@/components/marketplace/ProductCard";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  DISCOVER_BANNER_LOOKBOOKS_IMAGE_URL,
+  DISCOVER_BANNER_STYLE_IMAGE_URL,
+  DISCOVER_BANNER_TRY_CART_IMAGE_URL,
+} from "@/lib/constants";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
 const FEED_PAGE = 50;
@@ -28,6 +33,76 @@ const SHOP_BY_STYLE_PARAM = "CASUAL";
 
 function divider() {
   return <div className="h-px bg-prel-separator" />;
+}
+
+/** Full-width or tile promo: photo fills the card with a dark gradient overlay + copy. */
+function DiscoverBannerCard({
+  href,
+  imageUrl,
+  title,
+  subtitle,
+  badge,
+  variant = "wide",
+  imageObjectClass = "object-cover object-[center_35%]",
+}: {
+  href: string;
+  imageUrl: string;
+  title: string;
+  subtitle?: string;
+  badge?: string;
+  variant?: "wide" | "tile";
+  imageObjectClass?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      className="relative block overflow-hidden rounded-2xl shadow-ios ring-1 ring-black/10 [-webkit-tap-highlight-color:transparent] active:opacity-[0.98]"
+    >
+      <div
+        className={
+          variant === "wide"
+            ? "relative isolate min-h-[150px] w-full sm:min-h-[168px]"
+            : "relative isolate min-h-[215px] w-full"
+        }
+      >
+        <SafeImage
+          src={imageUrl}
+          alt=""
+          className={`absolute inset-0 h-full w-full ${imageObjectClass}`}
+        />
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/48 to-black/22"
+          aria-hidden
+        />
+        {badge ? (
+          <span className="absolute right-3 top-3 z-20 rounded-full bg-black/55 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-white backdrop-blur-sm">
+            {badge}
+          </span>
+        ) : null}
+        <div className="absolute inset-0 z-10 flex flex-col justify-between px-3 py-3 sm:px-4 sm:py-4">
+          <div aria-hidden className="min-h-[18px]" />
+          <div className="flex flex-1 flex-col items-center justify-center px-1">
+            <span
+              className={`text-center font-bold leading-tight tracking-tight text-white drop-shadow-md ${
+                variant === "wide"
+                  ? "text-[20px] sm:text-[24px]"
+                  : "text-[15px] sm:text-[16px]"
+              }`}
+            >
+              {title}
+            </span>
+          </div>
+          {subtitle ? (
+            <p className="text-center text-[11px] font-medium leading-snug text-white/90 drop-shadow sm:text-[12px]">
+              {subtitle}
+            </p>
+          ) : (
+            <div aria-hidden className="h-2 sm:h-3" />
+          )}
+        </div>
+      </div>
+    </Link>
+  );
 }
 
 function ProductRailSection({
@@ -417,25 +492,15 @@ export function DiscoverFeed() {
             rows={featuredRows}
           />
 
-          <Link
+          <DiscoverBannerCard
             href="/search?browse=1"
-            className="relative block overflow-hidden rounded-2xl shadow-ios ring-1 ring-black/10 [-webkit-tap-highlight-color:transparent]"
-          >
-            <div className="relative h-[150px] w-full bg-gradient-to-br from-[#2d0a35] via-[#6b1f7a] to-[#ab28b2]">
-              <div className="absolute inset-0 bg-black/35" />
-              <span className="absolute right-3 top-3 rounded-full bg-black/55 px-2 py-1 text-[10px] font-bold uppercase text-white">
-                Beta
-              </span>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-[26px] font-bold tracking-tight text-white">
-                  Try Cart
-                </span>
-              </div>
-              <p className="absolute bottom-3 left-0 right-0 text-center text-[12px] font-medium text-white/85">
-                Shop all listings — same catalogue as the app
-              </p>
-            </div>
-          </Link>
+            imageUrl={DISCOVER_BANNER_TRY_CART_IMAGE_URL}
+            title="Try Cart"
+            subtitle="Shop all listings — same catalogue as the app"
+            badge="Beta"
+            variant="wide"
+            imageObjectClass="object-cover object-[center_30%]"
+          />
 
           <section className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border">
             <div className="flex items-center gap-2 px-4 pb-2 pt-3.5">
@@ -472,27 +537,21 @@ export function DiscoverFeed() {
           </section>
 
           <div className="grid grid-cols-2 gap-2 sm:gap-3">
-            <Link
+            <DiscoverBannerCard
               href={`/search?style=${SHOP_BY_STYLE_PARAM}`}
-              className="relative flex min-h-[215px] overflow-hidden rounded-2xl bg-gradient-to-br from-violet-900/90 to-[#5c1a6e] shadow-ios ring-1 ring-white/10 [-webkit-tap-highlight-color:transparent] active:opacity-95"
-            >
-              <div className="absolute inset-0 bg-black/40" />
-              <span className="relative m-auto px-2 text-center text-[16px] font-bold leading-snug text-white">
-                Shop by style
-              </span>
-            </Link>
-            <Link
+              imageUrl={DISCOVER_BANNER_STYLE_IMAGE_URL}
+              title="Shop by style"
+              variant="tile"
+              imageObjectClass="object-cover object-[center_25%]"
+            />
+            <DiscoverBannerCard
               href="/app"
-              className="relative flex min-h-[215px] overflow-hidden rounded-2xl bg-gradient-to-br from-[#1a3d4a] to-[#0f766e] shadow-ios ring-1 ring-white/10 [-webkit-tap-highlight-color:transparent] active:opacity-95"
-            >
-              <div className="absolute inset-0 bg-black/40" />
-              <span className="relative m-auto px-2 text-center text-[16px] font-bold leading-snug text-white">
-                Lookbooks
-              </span>
-              <span className="absolute bottom-2 left-2 right-2 text-center text-[11px] font-medium text-white/80">
-                Open in app
-              </span>
-            </Link>
+              imageUrl={DISCOVER_BANNER_LOOKBOOKS_IMAGE_URL}
+              title="Lookbooks"
+              subtitle="Open in app"
+              variant="tile"
+              imageObjectClass="object-cover object-[center_55%]"
+            />
           </div>
 
           {userToken && recentSorted.length > 0 ? (
