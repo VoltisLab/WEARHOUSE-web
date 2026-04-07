@@ -3,7 +3,7 @@
 import { useMutation, useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Headphones } from "lucide-react";
 import { CONVERSATION_BY_ID } from "@/graphql/queries/chat";
 import { CONVERSATION_MESSAGES, VIEW_ME } from "@/graphql/queries/admin";
@@ -19,6 +19,10 @@ import {
   type ChatWsInbound,
 } from "@/hooks/useChatRoomSocket";
 import { isSupportSystemUsername } from "@/lib/chat-message-parse";
+import {
+  chatMessageSenderKey,
+  normalizeChatMessageFromWs,
+} from "@/lib/chat-ws-message";
 
 function peerInitials(conv: {
   recipient?: {
@@ -48,6 +52,17 @@ export default function MarketplaceChatThreadPage() {
   const { userToken, ready } = useAuth();
   const [text, setText] = useState("");
   const [typingRemote, setTypingRemote] = useState(false);
+  const [realtimeExtra, setRealtimeExtra] = useState<Record<string, unknown>[]>(
+    [],
+  );
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const meUsernameRef = useRef("");
+  const typingHideTimerRef = useRef<number | null>(null);
+  const typingIdleRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const wsActionsRef = useRef({
+    connected: false,
+    sendTyping: (_b: boolean) => {},
+  });
 
   useEffect(() => {
     if (ready && !userToken) router.replace("/login");
@@ -67,41 +82,182 @@ export default function MarketplaceChatThreadPage() {
   } = useQuery(CONVERSATION_MESSAGES, {
     variables: { id: conversationId, pageCount: 200, pageNumber: 1 },
     skip: !userToken || !conversationId,
+    fetchPolicy: "cache-and-network",
   });
   const [sendMessage, { loading: sendLoad }] = useMutation(SEND_MESSAGE);
 
   const onWs = useCallback(
     (ev: ChatWsInbound) => {
       if (ev.type === "chat_message") {
-        refetch();
+        const p = ev.payload as Record<string, unknown>;
+        const normalized = normalizeChatMessageFromWs(p);
+        const mid = Number(normalized.id);
+        if (Number.isFinite(mid)) {
+          setRealtimeExtra((prev) => {
+            if (prev.some((x) => Number(x.id) === mid)) return prev;
+            return [...prev, normalized];
+          });
+        }
+        void refetch();
+        window.setTimeout(() => void refetch(), 900);
+        return;
       }
       if (ev.type === "typing_status") {
         const p =
           ev.payload && typeof ev.payload === "object"
             ? (ev.payload as Record<string, unknown>)
             : {};
-        const flag = p.is_typing ?? p.isTyping;
-        setTypingRemote(flag === true || flag === "true" || flag === 1);
-        if (flag) {
-          window.setTimeout(() => setTypingRemote(false), 4000);
+        const senderRaw = String(p.sender ?? "")
+          .trim()
+          .toLowerCase()
+          .replace(/^@/, "");
+        const me = meUsernameRef.current;
+        if (me && senderRaw && senderRaw === me) return;
+
+        const rawFlag = p.is_typing ?? p.isTyping;
+        if (
+          rawFlag === false ||
+          rawFlag === "false" ||
+          rawFlag === 0 ||
+          rawFlag === "0"
+        ) {
+          setTypingRemote(false);
+          if (typingHideTimerRef.current != null) {
+            window.clearTimeout(typingHideTimerRef.current);
+            typingHideTimerRef.current = null;
+          }
+          return;
+        }
+        if (
+          rawFlag === true ||
+          rawFlag === "true" ||
+          rawFlag === 1 ||
+          rawFlag === "1"
+        ) {
+          setTypingRemote(true);
+          if (typingHideTimerRef.current != null) {
+            window.clearTimeout(typingHideTimerRef.current);
+          }
+          typingHideTimerRef.current = window.setTimeout(() => {
+            setTypingRemote(false);
+            typingHideTimerRef.current = null;
+          }, 5000);
         }
       }
     },
-    [refetch]
+    [refetch],
   );
 
-  const { connected, sendChatMessage } = useChatRoomSocket(
+  const { connected, sendChatMessage, sendTyping } = useChatRoomSocket(
     userToken ? conversationId : null,
     userToken,
     onWs
   );
 
-  const messages = useMemo(() => {
+  wsActionsRef.current = { connected, sendTyping };
+
+  const scheduleTypingBurst = useCallback(() => {
+    const { connected: live, sendTyping: st } = wsActionsRef.current;
+    if (!live) return;
+    st(true);
+    if (typingIdleRef.current) clearTimeout(typingIdleRef.current);
+    typingIdleRef.current = setTimeout(() => {
+      wsActionsRef.current.sendTyping(false);
+      typingIdleRef.current = null;
+    }, 2000);
+  }, []);
+
+  const flushTypingStopped = useCallback(() => {
+    if (typingIdleRef.current) {
+      clearTimeout(typingIdleRef.current);
+      typingIdleRef.current = null;
+    }
+    wsActionsRef.current.sendTyping(false);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (typingHideTimerRef.current != null) {
+        window.clearTimeout(typingHideTimerRef.current);
+      }
+      if (typingIdleRef.current) {
+        clearTimeout(typingIdleRef.current);
+      }
+      try {
+        wsActionsRef.current.sendTyping(false);
+      } catch {
+        /* ignore */
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    setRealtimeExtra([]);
+  }, [conversationId]);
+
+  useEffect(() => {
+    if (!userToken || !conversationId || connected) return;
+    const id = window.setInterval(() => {
+      void refetch();
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, [userToken, conversationId, connected, refetch]);
+
+  const queryMessages = useMemo(() => {
     const list = (msgsData?.conversation ?? []) as Record<string, unknown>[];
-    return [...list].sort(
-      (a, b) => (Number(a.id) || 0) - (Number(b.id) || 0)
-    );
+    return [...list].sort((a, b) => {
+      const ta = new Date(String(a.createdAt ?? 0)).getTime();
+      const tb = new Date(String(b.createdAt ?? 0)).getTime();
+      if (Number.isFinite(ta) && Number.isFinite(tb) && ta !== tb) {
+        return ta - tb;
+      }
+      return (Number(a.id) || 0) - (Number(b.id) || 0);
+    });
   }, [msgsData]);
+
+  const queryIds = useMemo(
+    () =>
+      new Set(
+        queryMessages
+          .map((m) => Number(m.id))
+          .filter((n) => Number.isFinite(n)),
+      ),
+    [queryMessages],
+  );
+
+  useEffect(() => {
+    setRealtimeExtra((prev) =>
+      prev.filter((m) => !queryIds.has(Number(m.id))),
+    );
+  }, [queryIds]);
+
+  const messages = useMemo(() => {
+    const byId = new Map<number, Record<string, unknown>>();
+    for (const m of queryMessages) {
+      const id = Number(m.id);
+      if (Number.isFinite(id)) byId.set(id, m);
+    }
+    for (const m of realtimeExtra) {
+      const id = Number(m.id);
+      if (Number.isFinite(id) && !byId.has(id)) {
+        byId.set(id, m);
+      }
+    }
+    return [...byId.values()].sort((a, b) => {
+      const ta = new Date(String(a.createdAt ?? 0)).getTime();
+      const tb = new Date(String(b.createdAt ?? 0)).getTime();
+      if (Number.isFinite(ta) && Number.isFinite(tb) && ta !== tb) {
+        return ta - tb;
+      }
+      return (Number(a.id) || 0) - (Number(b.id) || 0);
+    });
+  }, [queryMessages, realtimeExtra]);
+
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
+  }, [conversationId, messages, msgLoad]);
 
   async function onSend(e: React.FormEvent) {
     e.preventDefault();
@@ -115,10 +271,14 @@ export default function MarketplaceChatThreadPage() {
         ? crypto.randomUUID()
         : `${Date.now()}-${Math.random()}`;
 
+    flushTypingStopped();
+
     if (connected) {
       sendChatMessage(t, uuid);
       setText("");
-      window.setTimeout(() => refetch(), 400);
+      void refetch();
+      window.setTimeout(() => void refetch(), 500);
+      window.setTimeout(() => void refetch(), 1500);
       return;
     }
 
@@ -132,6 +292,10 @@ export default function MarketplaceChatThreadPage() {
   const conv = meta?.conversationById;
   const meUsername =
     meData?.viewMe?.username?.trim().toLowerCase() ?? "";
+
+  useEffect(() => {
+    meUsernameRef.current = meUsername;
+  }, [meUsername]);
   const peerThumb = conv?.recipient?.thumbnailUrl ?? "";
   const peerDisplay =
     conv?.recipient?.displayName?.trim() ||
@@ -168,8 +332,8 @@ export default function MarketplaceChatThreadPage() {
   }
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col gap-3 pb-32">
-      <div className="sticky top-0 z-20 -mx-1 border-b border-prel-separator bg-prel-nav/95 px-3 py-3 backdrop-blur-md">
+    <div className="mx-auto flex h-[calc(100dvh-10.5rem)] max-w-2xl flex-col gap-0 sm:h-[calc(100dvh-9.75rem)] lg:h-[calc(100dvh-7.5rem)]">
+      <div className="z-20 shrink-0 border-b border-prel-separator bg-[#fafafa] px-1 py-3 sm:px-0">
         <div className="flex items-start gap-2">
           <Link
             href="/messages"
@@ -234,6 +398,10 @@ export default function MarketplaceChatThreadPage() {
         </div>
       </div>
 
+      <div
+        ref={scrollRef}
+        className="min-h-0 flex-1 space-y-3 overflow-y-auto overscroll-contain px-0.5 pb-2 pt-2 sm:px-0"
+      >
       {offerHistory.length > 0 && (
         <GlassCard paddingClass="p-3">
           <p className="text-[12px] font-bold uppercase tracking-wide text-prel-secondary-label">
@@ -302,8 +470,11 @@ export default function MarketplaceChatThreadPage() {
             | { username?: string | null; thumbnailUrl?: string | null }
             | null
             | undefined;
-          const senderUn = senderObj?.username?.trim().toLowerCase() ?? "";
-          const sys = isSupportSystemUsername(senderObj?.username ?? null);
+          const senderUn = chatMessageSenderKey(m);
+          const sys = isSupportSystemUsername(
+            senderObj?.username ??
+              (typeof m.senderName === "string" ? m.senderName : null),
+          );
           if (sys) {
             return (
               <ChatMessageBlock
@@ -327,8 +498,12 @@ export default function MarketplaceChatThreadPage() {
           const avatarSrc = !isOwn
             ? (senderObj?.thumbnailUrl || peerThumb || "")
             : "";
+          const handleForInitials =
+            senderUn ||
+            senderObj?.username?.trim().replace(/^@/, "") ||
+            "";
           const remoteInitials =
-            senderObj?.username?.trim().replace(/^@/, "").slice(0, 2).toUpperCase() ||
+            handleForInitials.slice(0, 2).toUpperCase() ||
             peerInitials(conv ?? null);
           return (
             <div
@@ -372,21 +547,26 @@ export default function MarketplaceChatThreadPage() {
           );
         })}
       </div>
+      </div>
 
       <form
         onSubmit={onSend}
-        className="fixed bottom-20 left-0 right-0 z-30 mx-auto flex max-w-2xl gap-2 border-t border-prel-separator bg-prel-nav/95 px-3 py-2 backdrop-blur-md md:bottom-4 md:rounded-2xl md:border md:shadow-ios"
+        className="flex shrink-0 gap-2 border-t border-neutral-200 bg-white px-0 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] sm:px-0"
       >
         <input
-          className="min-w-0 flex-1 rounded-[10px] border border-prel-separator bg-prel-bg-grouped px-3 py-2 text-[15px] text-prel-label outline-none focus:ring-2 focus:ring-[var(--prel-primary)]/30"
+          className="min-w-0 flex-1 rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px] text-prel-label outline-none focus:ring-2 focus:ring-[var(--prel-primary)]/30"
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={(e) => {
+            setText(e.target.value);
+            scheduleTypingBurst();
+          }}
+          onBlur={() => flushTypingStopped()}
           placeholder="Message…"
         />
         <button
           type="submit"
           disabled={sendLoad || !text.trim()}
-          className="shrink-0 rounded-[10px] bg-[var(--prel-primary)] px-4 py-2 text-[15px] font-semibold text-white disabled:opacity-40"
+          className="shrink-0 rounded-xl bg-[var(--prel-primary)] px-4 py-2.5 text-[15px] font-semibold text-white disabled:opacity-40"
         >
           Send
         </button>

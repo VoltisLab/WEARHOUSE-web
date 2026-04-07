@@ -3,7 +3,7 @@
 import { useQuery } from "@apollo/client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Headphones, MessageCircle, RefreshCw } from "lucide-react";
 import { CONVERSATIONS_INBOX } from "@/graphql/queries/chat";
 import { SafeImage } from "@/components/ui/SafeImage";
@@ -107,7 +107,21 @@ export default function MarketplaceMessagesInboxPage() {
     if (ready && !userToken) router.replace("/login");
   }, [ready, userToken, router]);
 
-  const rows = (data?.conversations ?? []) as ConvRow[];
+  const rows = useMemo(() => {
+    const list = (data?.conversations ?? []) as ConvRow[];
+    return [...list].sort((a, b) => {
+      const ta = new Date(
+        String(a.lastMessage?.createdAt || a.lastModified || 0),
+      ).getTime();
+      const tb = new Date(
+        String(b.lastMessage?.createdAt || b.lastModified || 0),
+      ).getTime();
+      if (Number.isFinite(ta) && Number.isFinite(tb) && ta !== tb) {
+        return tb - ta;
+      }
+      return String(b.id).localeCompare(String(a.id));
+    });
+  }, [data?.conversations]);
 
   if (!ready) {
     return (

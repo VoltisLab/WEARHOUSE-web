@@ -11,6 +11,16 @@ export const MARKETPLACE_CATEGORIES = gql`
   }
 `;
 
+/** Sizes for sell flow — same as Swift `ProductService.fetchSizes` / Flutter `sizes(path)`. */
+export const MARKETPLACE_SIZES = gql`
+  query MarketplaceSizes($path: String!) {
+    sizes(path: $path) {
+      id
+      name
+    }
+  }
+`;
+
 export const MARKETPLACE_FEED = gql`
   query MarketplaceFeed(
     $pageCount: Int!

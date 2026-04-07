@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CREATE_PRODUCT } from "@/graphql/mutations/marketplace";
 import { useAuth } from "@/contexts/AuthContext";
-import { BRAND_NAME } from "@/lib/branding";
 import { CategoryCascadePicker } from "@/components/marketplace/CategoryCascadePicker";
 import { SellPhotoPicker } from "@/components/marketplace/SellPhotoPicker";
+import { SellSizePicker } from "@/components/marketplace/SellSizePicker";
 import { uploadProductImages } from "@/lib/upload-product-images";
 
 const CONDITIONS = [
@@ -37,6 +37,7 @@ export default function MarketplaceSellPage() {
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [sizeApiPath, setSizeApiPath] = useState<string | null>(null);
   const [sizeId, setSizeId] = useState("");
   const [photoFiles, setPhotoFiles] = useState<File[]>([]);
   const [condition, setCondition] = useState<string>(CONDITIONS[2]);
@@ -48,6 +49,10 @@ export default function MarketplaceSellPage() {
   useEffect(() => {
     if (ready && !userToken) router.replace("/login");
   }, [ready, userToken, router]);
+
+  useEffect(() => {
+    setSizeId("");
+  }, [sizeApiPath]);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -120,13 +125,7 @@ export default function MarketplaceSellPage() {
 
   return (
     <div className="mx-auto max-w-lg space-y-6 pb-24">
-      <div>
-        <h1 className="text-[22px] font-bold text-prel-label">Sell</h1>
-        <p className="mt-1 text-[14px] text-prel-secondary-label">
-          List on {BRAND_NAME} with the same upload pipeline as the app — add
-          photos first, then details.
-        </p>
-      </div>
+      <h1 className="text-[22px] font-bold text-prel-label">Sell</h1>
 
       <form
         onSubmit={onSubmit}
@@ -171,6 +170,13 @@ export default function MarketplaceSellPage() {
         <CategoryCascadePicker
           categoryId={categoryId}
           onCategoryIdChange={setCategoryId}
+          onSizeApiPathChange={setSizeApiPath}
+        />
+
+        <SellSizePicker
+          sizeApiPath={sizeApiPath}
+          sizeId={sizeId}
+          onSizeIdChange={setSizeId}
         />
 
         <div>
@@ -182,19 +188,6 @@ export default function MarketplaceSellPage() {
             onChange={(e) => setPrice(e.target.value)}
             inputMode="decimal"
             placeholder="29.99"
-            className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
-          />
-        </div>
-
-        <div>
-          <label className="mb-1 block text-[13px] font-medium text-prel-secondary-label">
-            Size id (optional — from app size tables)
-          </label>
-          <input
-            value={sizeId}
-            onChange={(e) => setSizeId(e.target.value)}
-            inputMode="numeric"
-            placeholder="Leave blank if unknown"
             className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
           />
         </div>

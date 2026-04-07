@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client";
 import { ChevronRight, FolderOpen, Search, Check } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { MARKETPLACE_CATEGORIES } from "@/graphql/queries/marketplace";
+import { computeSizeApiPath } from "@/lib/sell-size-path";
 
 export type CategoryRow = {
   id: number;
@@ -15,10 +16,46 @@ export type CategoryRow = {
 type Props = {
   categoryId: string;
   onCategoryIdChange: (id: string) => void;
+  /** When a leaf category is selected, the path passed to GraphQL `sizes(path)` (Swift `sizeApiPath`). */
+  onSizeApiPathChange?: (path: string | null) => void;
 };
 
 function needsDeeperLevel(row: CategoryRow): boolean {
   return row.hasChildren === true;
+}
+
+/**
+ * API exposes `CategoryTypes.id` as GraphQL `ID` (JSON string). `categories(parentId)`
+ * expects `Int` — passing a string makes the server return HTTP 400 (variable coercion).
+ */
+function normalizeCategoryId(raw: unknown): number {
+  if (typeof raw === "number" && Number.isFinite(raw)) return Math.trunc(raw);
+  if (typeof raw === "string" && raw.trim() !== "") {
+    const n = parseInt(raw, 10);
+    return Number.isFinite(n) ? n : NaN;
+  }
+  return NaN;
+}
+
+function normalizeCategoryRows(raw: unknown[]): CategoryRow[] {
+  const out: CategoryRow[] = [];
+  for (const c of raw) {
+    if (!c || typeof c !== "object") continue;
+    const o = c as Record<string, unknown>;
+    const id = normalizeCategoryId(o.id);
+    if (!Number.isFinite(id)) continue;
+    const name = o.name != null ? String(o.name) : "";
+    out.push({
+      id,
+      name,
+      hasChildren: o.hasChildren === true,
+      fullPath:
+        o.fullPath == null || o.fullPath === ""
+          ? null
+          : String(o.fullPath),
+    });
+  }
+  return out;
 }
 
 /**
@@ -28,6 +65,7 @@ function needsDeeperLevel(row: CategoryRow): boolean {
 export function CategoryCascadePicker({
   categoryId,
   onCategoryIdChange,
+  onSizeApiPathChange,
 }: Props) {
   const [path, setPath] = useState<CategoryRow[]>([]);
   const [filter, setFilter] = useState("");
@@ -37,23 +75,31 @@ export function CategoryCascadePicker({
   const pathEndsOnLeaf =
     tail != null && !needsDeeperLevel(tail);
 
-  const parentIdForQuery = useMemo(() => {
+  const parentIdForQuery = useMemo((): number | null => {
     if (path.length === 0) return null;
     const last = path[path.length - 1];
     if (!needsDeeperLevel(last)) return null;
-    return last.id;
+    const id = normalizeCategoryId(last.id);
+    return Number.isFinite(id) ? id : null;
   }, [path]);
 
   const shouldSkipQuery = pathEndsOnLeaf;
+  const invalidParentId =
+    path.length > 0 &&
+    needsDeeperLevel(path[path.length - 1]!) &&
+    parentIdForQuery === null;
 
   const { data, loading, error, refetch } = useQuery(MARKETPLACE_CATEGORIES, {
     variables: { parentId: parentIdForQuery },
-    skip: shouldSkipQuery,
+    skip: shouldSkipQuery || invalidParentId,
     fetchPolicy: "network-only",
     notifyOnNetworkStatusChange: true,
   });
 
-  const rawOpts = (data?.categories ?? []) as CategoryRow[];
+  const rawOpts = useMemo(
+    () => normalizeCategoryRows((data?.categories ?? []) as unknown[]),
+    [data?.categories],
+  );
 
   const filterQ = filter.trim().toLowerCase();
   const opts = useMemo(() => {
@@ -98,6 +144,19 @@ export function CategoryCascadePicker({
   );
 
   const displayLeaf = pathEndsOnLeaf ? tail : null;
+
+  useEffect(() => {
+    if (!onSizeApiPathChange) return;
+    const last = path.length > 0 ? path[path.length - 1] : null;
+    const isLeaf = last != null && !needsDeeperLevel(last);
+    if (!isLeaf || !last) {
+      onSizeApiPathChange(null);
+      return;
+    }
+    onSizeApiPathChange(
+      computeSizeApiPath(last.fullPath, path.map((p) => p.name)),
+    );
+  }, [path, onSizeApiPathChange]);
 
   return (
     <div className="space-y-3">
@@ -151,6 +210,22 @@ export function CategoryCascadePicker({
       {/* Level panel */}
       {!shouldSkipQuery ? (
         <div className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border">
+          {invalidParentId ? (
+            <div className="p-4">
+              <p className="text-[13px] text-prel-error">
+                Could not read this category&apos;s id from the server. Go back and try
+                again.
+              </p>
+              <button
+                type="button"
+                onClick={() => goToCrumb(null)}
+                className="mt-2 text-[13px] font-semibold text-[var(--prel-primary)]"
+              >
+                Start over
+              </button>
+            </div>
+          ) : (
+            <>
           <div className="border-b border-prel-separator bg-prel-bg-grouped/60 px-3 py-2">
             <div className="relative">
               <Search
@@ -254,6 +329,8 @@ export function CategoryCascadePicker({
               })}
             </ul>
           </div>
+            </>
+          )}
         </div>
       ) : displayLeaf ? (
         <div className="rounded-xl bg-prel-bg-grouped px-3 py-3 ring-1 ring-prel-glass-border">
@@ -262,12 +339,6 @@ export function CategoryCascadePicker({
             {displayLeaf.fullPath?.trim() ||
               path.map((p) => p.name).join(" › ")}
           </p>
-          {categoryId && categoryId !== String(displayLeaf.id) ? (
-            <p className="mt-1 text-[11px] text-amber-800">
-              Listing will use category id <span className="font-mono">{categoryId}</span>{" "}
-              (advanced override).
-            </p>
-          ) : null}
           <button
             type="button"
             onClick={() => {
@@ -280,24 +351,6 @@ export function CategoryCascadePicker({
           </button>
         </div>
       ) : null}
-
-      <details className="rounded-xl bg-prel-bg-grouped/80 ring-1 ring-prel-glass-border">
-        <summary className="cursor-pointer px-3 py-2 text-[12px] font-semibold text-prel-secondary-label">
-          Advanced: category id override
-        </summary>
-        <div className="border-t border-prel-separator px-3 py-2">
-          <label className="mb-1 block text-[11px] font-medium text-prel-tertiary-label">
-            Numeric id (leaf only)
-          </label>
-          <input
-            value={categoryId}
-            onChange={(e) => onCategoryIdChange(e.target.value)}
-            inputMode="numeric"
-            placeholder="e.g. 42"
-            className="w-full rounded-lg border border-prel-separator bg-white px-3 py-2 text-[14px]"
-          />
-        </div>
-      </details>
     </div>
   );
 }

@@ -11,7 +11,7 @@ export const GRAPHQL_URI =
  */
 export const MARKETPLACE_HOME_HERO_IMAGE_URL =
   process.env.NEXT_PUBLIC_HOME_HERO_IMAGE_URL?.trim() ||
-  "/marketplace/hero-banner.jpg";
+  "/marketplace/hero-banner.png";
 
 /**
  * Discover feed promotional banners (image + text overlay).

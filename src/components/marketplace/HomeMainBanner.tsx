@@ -15,7 +15,7 @@ export function HomeMainBanner() {
       <img
         src={src}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover object-[52%_center] sm:object-[48%_center]"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         fetchPriority="high"
         decoding="async"
       />
