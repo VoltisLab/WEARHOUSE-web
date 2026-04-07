@@ -142,17 +142,6 @@ body {
   border-bottom-color: color-mix(in srgb, var(--prel-primary) 25%, #2a2430);
 }
 
-/* Sell tab “Ready when you are” — same pearl/lilac language, scaled for a card */
-.home-sell-cta-panel {
-  background:
-    radial-gradient(ellipse 90% 70% at 100% 0%, color-mix(in srgb, var(--prel-primary) 14%, #fefcff) 0%, transparent 52%),
-    linear-gradient(165deg, #fffdfe 0%, #f8f4fb 55%, #f0eaf6 100%);
-}
-
-.dark .home-sell-cta-panel {
-  background: linear-gradient(165deg, #1c1822 0%, #16131a 100%);
-}
-
 /* Glass card — Theme.Glass + Colors.glass* */
 .glass-card {
   background: var(--prel-glass-bg);

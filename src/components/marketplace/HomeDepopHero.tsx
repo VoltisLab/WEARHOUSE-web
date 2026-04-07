@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BRAND_NAME } from "@/lib/branding";
 import {
   MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
@@ -69,15 +69,11 @@ function panelClass(active: boolean) {
 
 /**
  * Home hero: soft gradient banner, copy left, shared 3-up collage right (buy vs sell assets).
- * Alternates buy/sell on a timer with crossfade and dot controls (keeps parent `homeMode` in sync).
+ * Alternates buy/sell on a timer with crossfade and dot controls (page content below stays unchanged).
  */
-export function HomeDepopHero({
-  mode,
-  onModeChange,
-}: {
-  mode: HomeHeroMode;
-  onModeChange: (m: HomeHeroMode) => void;
-}) {
+export function HomeDepopHero() {
+  const [mode, setMode] = useState<HomeHeroMode>("buy");
+
   const buyCollage = {
     left: MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL,
     center: MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
@@ -92,10 +88,10 @@ export function HomeDepopHero({
 
   useEffect(() => {
     const id = window.setInterval(() => {
-      onModeChange(mode === "buy" ? "sell" : "buy");
+      setMode((m) => (m === "buy" ? "sell" : "buy"));
     }, HERO_ROTATE_MS);
     return () => window.clearInterval(id);
-  }, [mode, onModeChange]);
+  }, [mode]);
 
   return (
     <section className="home-depop-hero-bg relative isolate w-full overflow-hidden">
@@ -163,7 +159,7 @@ export function HomeDepopHero({
                   role="tab"
                   aria-selected={selected}
                   aria-label={m === "buy" ? "Buying" : "Selling"}
-                  onClick={() => onModeChange(m)}
+                  onClick={() => setMode(m)}
                   className={[
                     "h-2 w-2 rounded-full transition-colors duration-300",
                     selected

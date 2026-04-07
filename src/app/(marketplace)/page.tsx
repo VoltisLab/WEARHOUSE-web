@@ -14,7 +14,6 @@ import { HomePopularThisWeek } from "@/components/marketplace/HomePopularThisWee
 import { HomePromoCarousel } from "@/components/marketplace/HomePromoCarousel";
 import { HomeShopByPrice } from "@/components/marketplace/HomeShopByPrice";
 import { HomeShopByStyleGrid } from "@/components/marketplace/HomeShopByStyleGrid";
-import { HomeSellExperience } from "@/components/marketplace/HomeSellExperience";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
@@ -82,8 +81,6 @@ export default function MarketplaceHomePage() {
   const [sort, setSort] = useState<"NEWEST" | "PRICE_ASC" | "PRICE_DESC">("NEWEST");
   const [draftSearch, setDraftSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null);
-  const [homeMode, setHomeMode] = useState<"buy" | "sell">("buy");
-
   const filters = useMemo(() => parentCategoryFilter(category), [category]);
   const search = appliedSearch?.trim() ? appliedSearch.trim() : null;
 
@@ -110,14 +107,14 @@ export default function MarketplaceHomePage() {
   );
 
   const { data: latestData, error: latestError } = useQuery(MARKETPLACE_FEED, {
-    skip: !mounted || !isLoggedIn || homeMode !== "buy",
+    skip: !mounted || !isLoggedIn,
     variables: latestVars,
   });
 
   const { data, error, fetchMore, networkStatus } = useQuery(
     MARKETPLACE_FEED,
     {
-      skip: !mounted || homeMode !== "buy",
+      skip: !mounted,
       variables: feedVars,
       notifyOnNetworkStatusChange: true,
     },
@@ -161,7 +158,7 @@ export default function MarketplaceHomePage() {
   useEffect(() => {
     pageRef.current = 1;
     setHasMore(true);
-  }, [filters, search, sort, isLoggedIn, homeMode]);
+  }, [filters, search, sort, isLoggedIn]);
 
   useEffect(() => {
     if (!mounted || loadingInitial) return;
@@ -256,24 +253,13 @@ export default function MarketplaceHomePage() {
 
   return (
     <div className="pb-6">
-      <HomeDepopHero mode={homeMode} onModeChange={setHomeMode} />
+      <HomeDepopHero />
 
-      {homeMode === "buy" ? (
-        <>
-          <HomePromoCarousel />
-          <HomeShopByStyleGrid />
-          <HomePopularThisWeek />
-          <HomeShopByPrice />
-        </>
-      ) : null}
+      <HomePromoCarousel />
+      <HomeShopByStyleGrid />
+      <HomePopularThisWeek />
+      <HomeShopByPrice />
 
-      {homeMode === "sell" ? (
-        <div className="mx-auto max-w-7xl px-3 pt-6 sm:px-5 md:px-6 lg:px-8">
-          <HomeSellExperience />
-        </div>
-      ) : null}
-
-      {homeMode === "buy" ? (
       <div className="mx-auto max-w-7xl space-y-10 px-3 pb-6 pt-6 sm:px-5 sm:pt-8 md:px-6 lg:px-8">
       <form
         onSubmit={onSearchSubmit}
@@ -508,7 +494,6 @@ export default function MarketplaceHomePage() {
         ) : null}
       </section>
       </div>
-      ) : null}
     </div>
   );
 }
