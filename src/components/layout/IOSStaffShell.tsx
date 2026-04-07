@@ -24,13 +24,12 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { BrandWordmark } from "@/components/branding/BrandWordmark";
 import {
+  DESKTOP_SIDEBAR_FLAT,
   LIVE_OPS,
   MOBILE_TABS,
-  ROADMAP_OPS,
   STAFF_BASE,
   staffPath,
   titleForPath,
-  TOOLS_OPS,
 } from "@/lib/staff-nav";
 
 const LIVE_ICONS = [
@@ -42,6 +41,17 @@ const LIVE_ICONS = [
   Flag,
   Users,
 ] as const;
+
+function sidebarIconFor(href: string): typeof LayoutDashboard {
+  if (href.includes("/analytics")) return LineChart;
+  if (href.includes("/console")) return Terminal;
+  if (href.includes("/banners")) return ImageIcon;
+  if (href === staffPath("/tools")) return Wrench;
+  if (href.includes("/roadmap")) return MapIcon;
+  const i = LIVE_OPS.findIndex((x) => x.href === href);
+  if (i >= 0) return LIVE_ICONS[i] ?? LayoutDashboard;
+  return LayoutDashboard;
+}
 
 const mobileIcon: Record<string, typeof LayoutDashboard> = {
   [staffPath("/dashboard")]: LayoutDashboard,
@@ -97,69 +107,19 @@ function IOSStaffShellReady({ children }: { children: React.ReactNode }) {
           <p className="text-lg font-bold text-prel-label">Staff admin</p>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-4 overflow-y-auto px-2 pb-4">
-          <div>
-            <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-prel-tertiary-label">
-              Live operations
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {LIVE_OPS.map((item, i) => (
-                <NavLink
-                  key={item.href}
-                  href={item.href}
-                  label={item.label}
-                  pathname={pathname}
-                  icon={LIVE_ICONS[i] ?? LayoutDashboard}
-                />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-prel-tertiary-label">
-              Tools
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {TOOLS_OPS.map(({ href, label }) => (
-                <NavLink
-                  key={href}
-                  href={href}
-                  label={label}
-                  pathname={pathname}
-                  icon={
-                    href.includes("analytics")
-                      ? LineChart
-                      : href.includes("console")
-                        ? Terminal
-                        : ImageIcon
-                  }
-                />
-              ))}
-              <NavLink
-                href={staffPath("/tools")}
-                label="All tools"
-                pathname={pathname}
-                icon={Wrench}
-              />
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-prel-tertiary-label">
-              Roadmap
-            </p>
-            <div className="flex flex-col gap-0.5">
-              {ROADMAP_OPS.map(({ href, label }) => (
-                <NavLink
-                  key={href}
-                  href={href}
-                  label={label}
-                  pathname={pathname}
-                  icon={MapIcon}
-                />
-              ))}
-            </div>
-          </div>
+        <nav className="flex flex-1 flex-col gap-0.5 overflow-y-auto px-2 pb-4">
+          <p className="px-3 pb-2 pt-1 text-[11px] font-semibold uppercase tracking-wider text-prel-tertiary-label">
+            Navigation
+          </p>
+          {DESKTOP_SIDEBAR_FLAT.map(({ href, label }) => (
+            <NavLink
+              key={href}
+              href={href}
+              label={label}
+              pathname={pathname}
+              icon={sidebarIconFor(href)}
+            />
+          ))}
         </nav>
 
         <div className="mt-auto space-y-1 border-t border-prel-separator p-2">

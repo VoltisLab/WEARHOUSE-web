@@ -187,3 +187,194 @@ a.prel-btn-danger {
   padding: 4px 10px;
   border-radius: 8px;
 }
+
+/* —— Marketing / footer pages: motion + typography —— */
+@keyframes marketing-hero-drift {
+  0%,
+  100% {
+    transform: scale(1.06) translate(0, 0);
+  }
+  50% {
+    transform: scale(1.1) translate(-0.8%, -0.4%);
+  }
+}
+
+.marketing-hero-drift {
+  object-fit: cover;
+  animation: marketing-hero-drift 32s ease-in-out infinite;
+}
+
+.marketing-hero-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+@keyframes marketing-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.marketing-stagger-children > * {
+  opacity: 0;
+  animation: marketing-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.marketing-stagger-children > *:nth-child(1) {
+  animation-delay: 0.04s;
+}
+.marketing-stagger-children > *:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.marketing-stagger-children > *:nth-child(3) {
+  animation-delay: 0.12s;
+}
+.marketing-stagger-children > *:nth-child(4) {
+  animation-delay: 0.16s;
+}
+.marketing-stagger-children > *:nth-child(5) {
+  animation-delay: 0.2s;
+}
+.marketing-stagger-children > *:nth-child(6) {
+  animation-delay: 0.24s;
+}
+.marketing-stagger-children > *:nth-child(7) {
+  animation-delay: 0.28s;
+}
+.marketing-stagger-children > *:nth-child(8) {
+  animation-delay: 0.32s;
+}
+.marketing-stagger-children > *:nth-child(9) {
+  animation-delay: 0.36s;
+}
+.marketing-stagger-children > *:nth-child(10) {
+  animation-delay: 0.4s;
+}
+.marketing-stagger-children > *:nth-child(11) {
+  animation-delay: 0.44s;
+}
+.marketing-stagger-children > *:nth-child(12) {
+  animation-delay: 0.48s;
+}
+.marketing-stagger-children > *:nth-child(13) {
+  animation-delay: 0.52s;
+}
+.marketing-stagger-children > *:nth-child(14) {
+  animation-delay: 0.56s;
+}
+.marketing-stagger-children > *:nth-child(15) {
+  animation-delay: 0.6s;
+}
+.marketing-stagger-children > *:nth-child(16) {
+  animation-delay: 0.64s;
+}
+.marketing-stagger-children > *:nth-child(17) {
+  animation-delay: 0.68s;
+}
+.marketing-stagger-children > *:nth-child(18) {
+  animation-delay: 0.72s;
+}
+.marketing-stagger-children > *:nth-child(19) {
+  animation-delay: 0.76s;
+}
+.marketing-stagger-children > *:nth-child(20) {
+  animation-delay: 0.8s;
+}
+.marketing-stagger-children > *:nth-child(n + 21) {
+  animation-delay: 0.84s;
+}
+
+.marketing-prose {
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--prel-label);
+}
+
+.marketing-prose h2 {
+  margin-top: 2.5rem;
+  scroll-margin-top: 5rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--prel-label);
+}
+
+.marketing-prose h2:first-child {
+  margin-top: 0;
+}
+
+.marketing-prose h3 {
+  margin-top: 1.75rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.marketing-prose p {
+  margin-top: 1rem;
+}
+
+.marketing-prose ul,
+.marketing-prose ol {
+  margin-top: 1rem;
+  padding-left: 1.35rem;
+}
+
+.marketing-prose li {
+  margin-top: 0.5rem;
+}
+
+.marketing-prose a {
+  font-weight: 600;
+  color: var(--prel-primary);
+  text-underline-offset: 3px;
+}
+
+.marketing-prose a:hover {
+  text-decoration: underline;
+}
+
+.marketing-prose blockquote {
+  margin-top: 1.5rem;
+  border-left: 4px solid color-mix(in srgb, var(--prel-primary) 55%, transparent);
+  padding: 0.75rem 0 0.75rem 1.25rem;
+  font-style: italic;
+  color: var(--prel-secondary-label);
+  background: color-mix(in srgb, var(--prel-primary) 6%, transparent);
+  border-radius: 0 12px 12px 0;
+}
+
+.marketing-prose table {
+  margin-top: 1.25rem;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.marketing-prose th,
+.marketing-prose td {
+  border: 1px solid var(--prel-separator);
+  padding: 0.65rem 0.85rem;
+  text-align: left;
+}
+
+.marketing-prose th {
+  background: var(--prel-bg-grouped);
+  font-weight: 700;
+}
+
+details.marketing-details summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details.marketing-details summary::-webkit-details-marker {
+  display: none;
+}
+
+details.marketing-details[open] .marketing-details-chevron {
+  transform: rotate(180deg);
+}

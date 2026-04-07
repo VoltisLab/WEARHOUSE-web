@@ -34,6 +34,14 @@ export const ROADMAP_OPS: NavItem[] = [
   { href: staffPath("/roadmap/shadow"), label: "Shadow marketplace" },
 ];
 
+/** Single flat list for desktop sidebar (every destination visible, no section headers). */
+export const DESKTOP_SIDEBAR_FLAT: NavItem[] = [
+  ...LIVE_OPS,
+  ...TOOLS_OPS,
+  { href: staffPath("/tools"), label: "All tools" },
+  ...ROADMAP_OPS,
+];
+
 export const MOBILE_TABS: NavItem[] = [
   { href: staffPath("/dashboard"), label: "Home" },
   { href: staffPath("/chat"), label: "Messages" },

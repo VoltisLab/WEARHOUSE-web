@@ -130,27 +130,57 @@ export function StaffBannerRow({ banner }: { banner: StaffBannerRowData }) {
               </div>
             </div>
           </div>
-          {urls.length > 1 && (
-            <div className="mt-2 flex flex-wrap gap-2">
-              {urls.map((url, i) => (
-                <button
-                  key={`${url}-${i}`}
-                  type="button"
-                  onClick={() => setSlide(i)}
-                  className={`h-11 w-20 overflow-hidden rounded-lg ring-2 transition-shadow ${
-                    i === safeSlide
-                      ? "ring-[var(--prel-primary)]"
-                      : "ring-prel-glass-border opacity-90 hover:opacity-100"
-                  }`}
-                >
-                  <SafeImage
-                    src={url}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
-            </div>
+          {urls.length > 0 && (
+            <>
+              {/* Desktop: every asset visible in a grid (Swift-style full strip, no tiny-only picker). */}
+              <div className="mt-3 hidden gap-3 md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {urls.map((url, i) => (
+                  <button
+                    key={`${url}-${i}`}
+                    type="button"
+                    onClick={() => setSlide(i)}
+                    className={`relative overflow-hidden rounded-xl ring-2 transition-shadow ${
+                      i === safeSlide
+                        ? "ring-[var(--prel-primary)] shadow-ios"
+                        : "ring-prel-glass-border opacity-95 hover:opacity-100"
+                    }`}
+                    style={{ aspectRatio: "343 / 120" }}
+                  >
+                    <SafeImage
+                      src={url}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                    <span className="absolute bottom-1.5 left-2 rounded bg-black/55 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                      {i + 1}/{urls.length}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              {/* Mobile: compact picker */}
+              {urls.length > 1 ? (
+                <div className="mt-2 flex flex-wrap gap-2 md:hidden">
+                  {urls.map((url, i) => (
+                    <button
+                      key={`${url}-${i}`}
+                      type="button"
+                      onClick={() => setSlide(i)}
+                      className={`h-11 w-20 overflow-hidden rounded-lg ring-2 transition-shadow ${
+                        i === safeSlide
+                          ? "ring-[var(--prel-primary)]"
+                          : "ring-prel-glass-border opacity-90 hover:opacity-100"
+                      }`}
+                    >
+                      <SafeImage
+                        src={url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </>
           )}
         </div>
 

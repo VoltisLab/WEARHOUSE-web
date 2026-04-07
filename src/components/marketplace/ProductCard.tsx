@@ -3,7 +3,10 @@
 import Link from "next/link";
 import { SafeImage } from "@/components/ui/SafeImage";
 import { formatMoney } from "@/lib/format";
-import { productPriceDisplay } from "@/lib/product-display";
+import {
+  formatProductCondition,
+  productPriceDisplay,
+} from "@/lib/product-display";
 import { firstProductImageUrl } from "@/lib/product-images";
 
 export type MarketplaceProductRow = {
@@ -11,6 +14,7 @@ export type MarketplaceProductRow = {
   name?: string | null;
   listingCode?: string | null;
   status?: string | null;
+  condition?: string | null;
   price?: number | string | null;
   discountPrice?: number | string | null;
   imagesUrl?: unknown;
@@ -32,6 +36,7 @@ export function MarketplaceProductCard({
   hideSellerUsername?: boolean;
 }) {
   const img = firstProductImageUrl(p.imagesUrl);
+  const conditionLabel = formatProductCondition(p.condition);
   const { sale, original } = productPriceDisplay(
     Number(p.price ?? 0),
     p.discountPrice != null && p.discountPrice !== ""
@@ -69,6 +74,11 @@ export function MarketplaceProductCard({
         <p className="line-clamp-2 text-[14px] font-semibold leading-snug text-prel-label">
           {p.name ?? "Listing"}
         </p>
+        {conditionLabel !== "—" ? (
+          <p className="line-clamp-1 text-[12px] text-prel-secondary-label">
+            {conditionLabel}
+          </p>
+        ) : null}
         <p className="text-[15px] font-bold text-[var(--prel-primary)]">
           {original != null ? (
             <>

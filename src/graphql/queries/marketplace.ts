@@ -32,6 +32,7 @@ export const MARKETPLACE_FEED = gql`
       status
       price
       discountPrice
+      condition
       imagesUrl
       seller {
         username
@@ -60,6 +61,7 @@ export const RECENTLY_VIEWED_PRODUCTS = gql`
       status
       price
       discountPrice
+      condition
       imagesUrl
       seller {
         username

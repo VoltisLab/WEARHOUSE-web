@@ -453,7 +453,7 @@ export default function ConsolePage() {
   }, [runProbes]);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
+    <div className="mx-auto max-w-5xl space-y-4">
       <p className="text-[13px] text-prel-secondary-label">
         Private probes mirror MyPrelura staff <code className="text-prel-primary">Console</code>{" "}
         (GraphQL, analytics, reports, public web) plus staff list surfaces (orders, users,
@@ -538,24 +538,28 @@ export default function ConsolePage() {
         <p className="text-[12px] text-prel-tertiary-label">Last probe: {probedAt}</p>
       )}
 
-      <div className="-mx-3 overflow-x-auto border-b border-prel-separator pb-3 sm:mx-0">
-        <div className="flex min-w-min flex-nowrap items-end gap-3 px-3 sm:gap-4 sm:px-0">
-        {lines.map((l) => (
-          <div key={l.id} className="flex w-14 shrink-0 flex-col items-center gap-1">
+      {/* Match Swift `ConsoleView` mixer: equal-width columns, every probe visible (no horizontal scroll). */}
+      <div className="w-full border-b border-prel-separator pb-3">
+        <div className="flex w-full items-end gap-2 sm:gap-3">
+          {lines.map((l) => (
             <div
-              className={`h-7 w-7 rounded-full shadow-md ${
-                l.up ? "bg-prel-metric-new" : "bg-prel-error"
-              }`}
-            />
-            <div
-              className="w-1.5 rounded-sm bg-prel-secondary-label/40"
-              style={{ height: `${24 + Math.min(l.ms, 400) / 20}px` }}
-            />
-            <span className="whitespace-pre-line text-center text-[9px] font-semibold leading-tight text-prel-tertiary-label">
-              {l.name.replace(/ /g, "\n")}
-            </span>
-          </div>
-        ))}
+              key={l.id}
+              className="flex min-w-0 flex-1 basis-0 flex-col items-center gap-1"
+            >
+              <div
+                className={`h-7 w-7 shrink-0 rounded-full shadow-md sm:h-8 sm:w-8 ${
+                  l.up ? "bg-prel-metric-new" : "bg-prel-error"
+                }`}
+              />
+              <div
+                className="w-1.5 shrink-0 rounded-sm bg-prel-secondary-label/40"
+                style={{ height: `${24 + Math.min(l.ms, 400) / 20}px` }}
+              />
+              <span className="w-full max-w-[4.5rem] whitespace-pre-line text-center text-[9px] font-semibold leading-tight text-prel-tertiary-label">
+                {l.name.replace(/ /g, "\n")}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 

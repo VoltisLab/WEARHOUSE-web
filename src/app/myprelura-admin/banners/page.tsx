@@ -47,7 +47,7 @@ export default function BannersPage() {
 
   if (loading && !data) {
     return (
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-5xl space-y-6">
         <BannersLoadingSkeleton />
       </div>
     );
@@ -55,7 +55,7 @@ export default function BannersPage() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-2xl space-y-4">
+      <div className="mx-auto max-w-5xl space-y-4">
         <StaffBannersHero total={0} activeCount={0} />
         <div
           className="rounded-[14px] border border-prel-error/35 bg-prel-error/10 p-4 text-[14px] text-prel-error"
@@ -68,16 +68,17 @@ export default function BannersPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6">
       <StaffBannersHero total={rows.length} activeCount={activeCount} />
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-[13px] text-prel-secondary-label">
           <span className="font-semibold text-prel-label">
-            {rows.length} banner group{rows.length === 1 ? "" : "s"}
+            {rows.length} slot{rows.length === 1 ? "" : "s"}
           </span>
           {" · "}
-          Drag-free preview; thumbnails switch the in-app strip above.
+          Each row lists every creative at desktop width; tap any tile to preview
+          in the device frame.
         </p>
         <button
           type="button"

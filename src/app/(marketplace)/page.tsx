@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "@apollo/client";
+import { NetworkStatus, useQuery } from "@apollo/client";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ArrowRight, Search } from "lucide-react";
 import { MARKETPLACE_FEED } from "@/graphql/queries/marketplace";
 import {
   MarketplaceProductCard,
@@ -13,27 +14,219 @@ import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 import { BRAND_NAME } from "@/lib/branding";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
-const DEPT_LINKS = [
-  { label: "Women", dept: "WOMEN" },
-  { label: "Men", dept: "MEN" },
-  { label: "Girls", dept: "GIRLS" },
-  { label: "Boys", dept: "BOYS" },
-  { label: "Toddlers", dept: "TODDLERS" },
-] as const;
+/** Matches Swift `HomeViewModel.pageSize` (20). */
+const HOME_PAGE_SIZE = 20;
+
+/** Latest strip: first page of newest only (Swift home does not cap this; we cap at 30 for the rail). */
+const LATEST_PAGE_SIZE = 30;
+
+/** Swift `HomeView` category chips → GraphQL `ProductFiltersInput.parentCategory`. */
+const CATEGORY_CHIPS: { label: string; value: "All" | "Women" | "Men" | "Kids" | "Toddlers" }[] =
+  [
+    { label: "All", value: "All" },
+    { label: "Women", value: "Women" },
+    { label: "Men", value: "Men" },
+    { label: "Kids", value: "Kids" },
+    { label: "Toddlers", value: "Toddlers" },
+  ];
+
+const SORT_OPTIONS: { label: string; value: "NEWEST" | "PRICE_ASC" | "PRICE_DESC" }[] = [
+  { label: "Newest", value: "NEWEST" },
+  { label: "Price ↑", value: "PRICE_ASC" },
+  { label: "Price ↓", value: "PRICE_DESC" },
+];
+
+function parentCategoryFilter(
+  category: (typeof CATEGORY_CHIPS)[number]["value"],
+): { status: "ACTIVE"; parentCategory?: string } {
+  const f: { status: "ACTIVE"; parentCategory?: string } = { status: "ACTIVE" };
+  if (category === "All") return f;
+  const map: Record<string, string> = {
+    Women: "WOMEN",
+    Men: "MEN",
+    Kids: "KIDS",
+    Toddlers: "TODDLERS",
+  };
+  const gql = map[category];
+  if (gql) f.parentCategory = gql;
+  return f;
+}
+
+function filterListed(rows: MarketplaceProductRow[]) {
+  return rows.filter((p) => p.status !== "SOLD");
+}
 
 export default function MarketplaceHomePage() {
   const mounted = useClientMounted();
-  const { data, loading, error } = useQuery(MARKETPLACE_FEED, {
-    skip: !mounted,
-    variables: {
-      pageCount: 24,
+  const pageRef = useRef(1);
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const [hasMore, setHasMore] = useState(true);
+  const [category, setCategory] =
+    useState<(typeof CATEGORY_CHIPS)[number]["value"]>("All");
+  const [sort, setSort] = useState<"NEWEST" | "PRICE_ASC" | "PRICE_DESC">("NEWEST");
+  const [draftSearch, setDraftSearch] = useState("");
+  const [appliedSearch, setAppliedSearch] = useState<string | null>(null);
+
+  const filters = useMemo(() => parentCategoryFilter(category), [category]);
+  const search = appliedSearch?.trim() ? appliedSearch.trim() : null;
+
+  const latestVars = useMemo(
+    () => ({
+      pageCount: LATEST_PAGE_SIZE,
       pageNumber: 1,
-      filters: { status: "ACTIVE" },
-      search: null,
-      sort: "NEWEST",
-    },
+      filters,
+      search,
+      sort: "NEWEST" as const,
+    }),
+    [filters, search],
+  );
+
+  const feedVars = useMemo(
+    () => ({
+      pageCount: HOME_PAGE_SIZE,
+      pageNumber: 1,
+      filters,
+      search,
+      sort,
+    }),
+    [filters, search, sort],
+  );
+
+  const { data: latestData, error: latestError } = useQuery(MARKETPLACE_FEED, {
+    skip: !mounted,
+    variables: latestVars,
   });
-  const rows = (data?.allProducts ?? []) as MarketplaceProductRow[];
+
+  const { data, error, fetchMore, networkStatus } = useQuery(
+    MARKETPLACE_FEED,
+    {
+      skip: !mounted,
+      variables: feedVars,
+      notifyOnNetworkStatusChange: true,
+    },
+  );
+
+  const loadingInitial = networkStatus === NetworkStatus.loading;
+  const loadingMore = networkStatus === NetworkStatus.fetchMore;
+
+  const latestRows = useMemo(
+    () => filterListed((latestData?.allProducts ?? []) as MarketplaceProductRow[]),
+    [latestData?.allProducts],
+  );
+
+  const latestIds = useMemo(
+    () => new Set(latestRows.map((p) => p.id)),
+    [latestRows],
+  );
+
+  const mergedMain = useMemo(() => {
+    const raw = (data?.allProducts ?? []) as MarketplaceProductRow[];
+    return filterListed(raw);
+  }, [data?.allProducts]);
+
+  /**
+   * When sort is NEWEST, hide rail IDs from the grid so the top 30 only appear in “Latest arrivals”.
+   * For other sorts, the grid order differs from the rail — do not dedupe or we would drop valid rows.
+   */
+  const gridRows = useMemo(() => {
+    if (sort !== "NEWEST") return mergedMain;
+    const deduped = mergedMain.filter((p) => !latestIds.has(p.id));
+    if (deduped.length > 0) return deduped;
+    return mergedMain;
+  }, [mergedMain, latestIds, sort]);
+
+  useEffect(() => {
+    pageRef.current = 1;
+    setHasMore(true);
+  }, [filters, search, sort]);
+
+  useEffect(() => {
+    if (!mounted || loadingInitial) return;
+    const batch = (data?.allProducts ?? []) as MarketplaceProductRow[];
+    if (pageRef.current === 1) {
+      setHasMore(batch.length >= HOME_PAGE_SIZE);
+    }
+  }, [mounted, loadingInitial, data?.allProducts]);
+
+  const loadMore = useCallback(() => {
+    if (!hasMore || loadingMore) return;
+    const nextPage = pageRef.current + 1;
+    fetchMore({
+      variables: {
+        ...feedVars,
+        pageNumber: nextPage,
+      },
+      updateQuery: (prev, { fetchMoreResult }) => {
+        if (!fetchMoreResult?.allProducts?.length) return prev;
+        const prevList = (prev.allProducts ?? []) as MarketplaceProductRow[];
+        const more = fetchMoreResult.allProducts as MarketplaceProductRow[];
+        const seen = new Set(prevList.map((p) => p.id));
+        const merged = [...prevList];
+        for (const p of more) {
+          if (!seen.has(p.id)) {
+            seen.add(p.id);
+            merged.push(p);
+          }
+        }
+        return { ...prev, allProducts: merged };
+      },
+    })
+      .then((res) => {
+        const more = (res.data?.allProducts ?? []) as MarketplaceProductRow[];
+        /**
+         * Apollo `fetchMore` returns only this page's `allProducts`, not the merged cache.
+         * `hasMore` must mirror Swift: `products.count >= pageSize` for the page just fetched.
+         */
+        setHasMore(more.length >= HOME_PAGE_SIZE);
+        pageRef.current = nextPage;
+      })
+      .catch(() => {
+        /* keep hasMore true so intersection observer / user can retry */
+      });
+  }, [fetchMore, feedVars, hasMore, loadingMore]);
+
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !mounted) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const hit = entries.some((e) => e.isIntersecting);
+        if (hit) loadMore();
+      },
+      { root: null, rootMargin: "240px 0px", threshold: 0 },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [loadMore, mounted]);
+
+  /** When sort is NEWEST and page 1 is still all inside “latest 30”, fetch more until the grid gains rows. */
+  useEffect(() => {
+    if (sort !== "NEWEST") return;
+    if (!mounted || loadingInitial || loadingMore || !hasMore) return;
+    const deduped = mergedMain.filter((p) => !latestIds.has(p.id));
+    if (mergedMain.length > 0 && deduped.length === 0) loadMore();
+  }, [
+    sort,
+    mounted,
+    loadingInitial,
+    loadingMore,
+    hasMore,
+    mergedMain,
+    latestIds,
+    loadMore,
+  ]);
+
+  const onSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setAppliedSearch(draftSearch.trim() || null);
+  };
+
+  const clearSearch = () => {
+    setDraftSearch("");
+    setAppliedSearch(null);
+  };
+
+  const showInitialSkeleton = (!mounted || loadingInitial) && !data;
 
   return (
     <div className="space-y-8 pb-6">
@@ -53,15 +246,15 @@ export default function MarketplaceHomePage() {
             Discover pre-loved fashion
           </h2>
           <p className="mt-2 text-[15px] leading-relaxed text-white/90">
-            Browse live listings from the {BRAND_NAME} catalogue — search by
-            department or keyword.
+            Browse live listings from the {BRAND_NAME} catalogue — same feed as
+            the iOS app (category + search + paging).
           </p>
           <div className="mt-4 flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center">
             <Link
               href="/search"
               className="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2.5 text-[15px] font-semibold text-[#6b1f7a] shadow-md transition hover:bg-white/95"
             >
-              Browse all
+              Advanced search
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
             <div className="[&_img]:brightness-0 [&_img]:invert">
@@ -71,42 +264,147 @@ export default function MarketplaceHomePage() {
         </div>
       </section>
 
-      <section className="space-y-4">
+      <form
+        onSubmit={onSearchSubmit}
+        className="flex flex-col gap-3 sm:flex-row sm:items-center"
+      >
+        <div className="relative min-w-0 flex-1">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-prel-tertiary-label"
+            aria-hidden
+          />
+          <input
+            type="search"
+            value={draftSearch}
+            onChange={(e) => setDraftSearch(e.target.value)}
+            placeholder="Search listings…"
+            className="h-12 w-full rounded-2xl border border-prel-separator bg-white pl-10 pr-4 text-[15px] text-prel-label shadow-ios ring-1 ring-prel-glass-border placeholder:text-prel-tertiary-label focus:border-[var(--prel-primary)]/40 focus:outline-none focus:ring-2 focus:ring-[var(--prel-primary)]/20"
+            enterKeyHint="search"
+          />
+        </div>
+        <div className="flex shrink-0 gap-2">
+          <button
+            type="submit"
+            className="h-12 rounded-2xl bg-[var(--prel-primary)] px-5 text-[15px] font-semibold text-white shadow-ios transition hover:brightness-110"
+          >
+            Search
+          </button>
+          {appliedSearch ? (
+            <button
+              type="button"
+              onClick={clearSearch}
+              className="h-12 rounded-2xl border border-prel-separator bg-white px-4 text-[14px] font-semibold text-prel-label shadow-ios"
+            >
+              Clear
+            </button>
+          ) : null}
+        </div>
+      </form>
+
+      <section className="space-y-3">
         <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-prel-secondary-label">
-          Shop by department
+          Category
         </p>
-        <div className="flex flex-wrap gap-2 md:gap-3">
-          {DEPT_LINKS.map(({ label, dept }) => (
-            <Link
-              key={dept}
-              href={`/search?dept=${dept}`}
-              className="rounded-full bg-white px-4 py-2.5 text-[14px] font-semibold text-prel-label shadow-ios ring-1 ring-prel-glass-border transition hover:bg-[#ab28b2]/10 md:px-5 md:py-3"
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 md:mx-0 md:flex-wrap md:px-0">
+          {CATEGORY_CHIPS.map(({ label, value }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setCategory(value)}
+              className={`shrink-0 rounded-full px-4 py-2.5 text-[14px] font-semibold shadow-ios ring-1 transition md:px-5 ${
+                category === value
+                  ? "bg-[var(--prel-primary)] text-white ring-[var(--prel-primary)]"
+                  : "bg-white text-prel-label ring-prel-glass-border hover:bg-prel-bg-grouped"
+              }`}
             >
               {label}
-            </Link>
+            </button>
           ))}
         </div>
       </section>
 
-      <section className="space-y-5">
+      <section className="space-y-3">
+        <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-prel-secondary-label">
+          Sort all listings
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {SORT_OPTIONS.map(({ label, value }) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setSort(value)}
+              className={`rounded-full px-4 py-2 text-[13px] font-semibold ring-1 transition ${
+                sort === value
+                  ? "bg-prel-label text-white ring-prel-label"
+                  : "bg-white text-prel-label ring-prel-glass-border hover:bg-prel-bg-grouped"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {(error || latestError) && (
+        <p className="rounded-xl bg-red-500/10 p-4 text-[14px] text-prel-error">
+          {(error ?? latestError)!.message}
+        </p>
+      )}
+
+      <section className="space-y-4">
         <div className="flex items-end justify-between gap-3">
           <h2 className="text-[20px] font-bold text-prel-label">
             Latest arrivals
           </h2>
-          <Link
-            href="/search"
-            className="shrink-0 text-[14px] font-semibold text-[var(--prel-primary)]"
-          >
-            See all
-          </Link>
+          <span className="text-[12px] text-prel-tertiary-label">
+            Newest {Math.min(LATEST_PAGE_SIZE, latestRows.length)} listings
+          </span>
         </div>
-        {error ? (
-          <p className="rounded-xl bg-red-500/10 p-4 text-[14px] text-prel-error">
-            {error.message}
+        {latestRows.length === 0 && !latestData && mounted ? (
+          <div className="flex gap-3 overflow-x-auto pb-2">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div
+                key={i}
+                className="w-[42vw] max-w-[180px] shrink-0 overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border"
+              >
+                <div className="aspect-[3/4] animate-pulse bg-prel-bg-grouped" />
+              </div>
+            ))}
+          </div>
+        ) : latestRows.length === 0 ? (
+          <p className="text-[14px] text-prel-secondary-label">
+            No listings match this filter yet.
           </p>
-        ) : null}
-        {(!mounted || loading) && !data ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+        ) : (
+          <div className="-mx-4 flex gap-3 overflow-x-auto px-4 pb-2 md:mx-0 md:px-0 [scrollbar-width:thin]">
+            {latestRows.map((p) => (
+              <div
+                key={p.id}
+                className="w-[42vw] max-w-[180px] shrink-0 sm:w-44 sm:max-w-none"
+              >
+                <MarketplaceProductCard p={p} />
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="space-y-5">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          <h2 className="text-[20px] font-bold text-prel-label">
+            All listings
+          </h2>
+          <p className="text-[13px] text-prel-tertiary-label">
+            Scroll to load more — same{" "}
+            <code className="rounded bg-prel-bg-grouped px-1 py-0.5 text-[11px]">
+              allProducts
+            </code>{" "}
+            paging as the app ({HOME_PAGE_SIZE} per page).
+          </p>
+        </div>
+
+        {showInitialSkeleton ? (
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
             {[1, 2, 3, 4, 5, 6].map((i) => (
               <div
                 key={i}
@@ -121,11 +419,45 @@ export default function MarketplaceHomePage() {
             ))}
           </div>
         ) : null}
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 sm:grid-cols-3 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-          {rows.map((p) => (
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+          {gridRows.map((p) => (
             <MarketplaceProductCard key={p.id} p={p} />
           ))}
         </div>
+
+        <div ref={sentinelRef} className="h-4 w-full" aria-hidden />
+
+        {loadingMore ? (
+          <p className="text-center text-[13px] text-prel-secondary-label">
+            Loading more listings…
+          </p>
+        ) : null}
+
+        {!hasMore && gridRows.length > 0 ? (
+          <p className="text-center text-[13px] text-prel-tertiary-label">
+            You&apos;re up to date — no more listings to load for this filter.
+          </p>
+        ) : null}
+
+        {!loadingInitial && data && gridRows.length === 0 && latestRows.length === 0 ? (
+          <p className="text-center text-[15px] text-prel-secondary-label">
+            Nothing to show. Try another category or clear search.
+          </p>
+        ) : null}
+
+        {hasMore && gridRows.length > 0 ? (
+          <div className="flex justify-center pt-2">
+            <button
+              type="button"
+              onClick={() => loadMore()}
+              disabled={loadingMore}
+              className="min-h-[48px] rounded-full bg-white px-6 text-[15px] font-semibold text-prel-label shadow-ios ring-1 ring-prel-glass-border disabled:opacity-50"
+            >
+              {loadingMore ? "Loading…" : "Load more"}
+            </button>
+          </div>
+        ) : null}
       </section>
     </div>
   );

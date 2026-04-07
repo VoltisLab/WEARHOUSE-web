@@ -330,6 +330,7 @@ export const USER_SHOP_PRODUCTS = gql`
       status
       price
       discountPrice
+      condition
       imagesUrl
       seller {
         username
