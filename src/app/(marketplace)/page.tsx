@@ -13,7 +13,6 @@ import { HomeDepopHero } from "@/components/marketplace/HomeDepopHero";
 import { HomePopularThisWeek } from "@/components/marketplace/HomePopularThisWeek";
 import { HomePromoCarousel } from "@/components/marketplace/HomePromoCarousel";
 import { HomeShopByPrice } from "@/components/marketplace/HomeShopByPrice";
-import { HomeShopByStyleGrid } from "@/components/marketplace/HomeShopByStyleGrid";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
@@ -256,7 +255,6 @@ export default function MarketplaceHomePage() {
       <HomeDepopHero />
 
       <HomePromoCarousel />
-      <HomeShopByStyleGrid />
       <HomePopularThisWeek />
       <HomeShopByPrice />
 
