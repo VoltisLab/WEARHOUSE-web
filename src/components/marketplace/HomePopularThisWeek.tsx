@@ -1,40 +1,93 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type TrendItem = {
+  id: string;
   title: string;
   searches: string;
   href: string;
+  image: string;
 };
 
 const TRENDS: TrendItem[] = [
   {
-    title: "Dr. Martens Mary Janes",
-    searches: "+3.3k searches",
-    href: "/search?q=mary+janes&browse=1",
+    id: "p1",
+    title: "New-season shop edits",
+    searches: "+3.1k searches",
+    href: "/search?q=streetwear&browse=1",
+    image: "/marketplace/popular/01.png",
   },
   {
-    title: "Carhartt Detroit jacket",
-    searches: "+2.1k searches",
-    href: "/search?q=carhartt+detroit&browse=1",
+    id: "p2",
+    title: "Chunky sneakers",
+    searches: "+2.8k searches",
+    href: "/search?q=dad+sneakers&browse=1",
+    image: "/marketplace/popular/02.png",
   },
   {
-    title: "Ariat barrel jeans",
-    searches: "+1.8k searches",
-    href: "/search?q=ariat+barrel+jeans&browse=1",
+    id: "p3",
+    title: "Film-camera aesthetic",
+    searches: "+1.9k searches",
+    href: "/search?q=vintage+camera&browse=1",
+    image: "/marketplace/popular/03.png",
   },
   {
-    title: "Timberland 6-inch boots",
-    searches: "+1.4k searches",
-    href: "/search?q=timberland+boots&browse=1",
+    id: "p4",
+    title: "Technical trainers",
+    searches: "+2.4k searches",
+    href: "/search?q=trail+sneakers&browse=1",
+    image: "/marketplace/popular/04.png",
+  },
+  {
+    id: "p5",
+    title: "Wide-leg tailoring",
+    searches: "+1.2k searches",
+    href: "/search?q=wide+leg+trousers&browse=1",
+    image: "/marketplace/popular/05.png",
+  },
+  {
+    id: "p6",
+    title: "Street colour blocks",
+    searches: "+980 searches",
+    href: "/search?q=streetwear&browse=1",
+    image: "/marketplace/popular/06.png",
+  },
+  {
+    id: "p7",
+    title: "Roller & retro sport",
+    searches: "+1.5k searches",
+    href: "/search?q=roller+skates&browse=1",
+    image: "/marketplace/popular/07.png",
+  },
+  {
+    id: "p8",
+    title: "70s lounge layers",
+    searches: "+890 searches",
+    href: "/search?q=vintage+70s&browse=1",
+    image: "/marketplace/popular/08.png",
+  },
+  {
+    id: "p9",
+    title: "Editorial duos",
+    searches: "+1.1k searches",
+    href: "/search?q=editorial+fashion&browse=1",
+    image: "/marketplace/popular/09.png",
+  },
+  {
+    id: "p10",
+    title: "Quirky fleece layers",
+    searches: "+1.3k searches",
+    href: "/search?q=fleece+jacket&browse=1",
+    image: "/marketplace/popular/10.png",
   },
 ];
 
 /**
- * Depop-style “Popular this week”: horizontal row + chevron nav (placeholder tiles until real images).
+ * Horizontal “Popular this week” rail with real photography tiles.
  */
 export function HomePopularThisWeek() {
   const scrollerRef = useRef<HTMLDivElement>(null);
@@ -77,13 +130,22 @@ export function HomePopularThisWeek() {
           ref={scrollerRef}
           className="-mx-1 flex gap-4 overflow-x-auto pb-2 pt-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-5 [&::-webkit-scrollbar]:hidden"
         >
-          {TRENDS.map((item) => (
+          {TRENDS.map((item, index) => (
             <Link
-              key={item.title}
+              key={item.id}
               href={item.href}
               className="group w-[42vw] max-w-[200px] shrink-0 [-webkit-tap-highlight-color:transparent] sm:w-44 sm:max-w-none"
             >
-              <div className="aspect-square w-full rounded-lg bg-neutral-100 shadow-sm ring-1 ring-black/[0.06] transition group-hover:shadow-md" />
+              <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-100 shadow-sm ring-1 ring-black/[0.06] transition group-hover:shadow-md">
+                <Image
+                  src={item.image}
+                  alt=""
+                  fill
+                  className="object-cover transition duration-300 group-hover:scale-[1.04]"
+                  sizes="(max-width: 640px) 42vw, 176px"
+                  priority={index === 0}
+                />
+              </div>
               <p className="mt-3 text-[14px] font-bold leading-snug text-black sm:text-[15px]">
                 {item.title}
               </p>

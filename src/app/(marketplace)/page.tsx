@@ -12,7 +12,6 @@ import {
 import { HomeDepopHero } from "@/components/marketplace/HomeDepopHero";
 import { HomePopularThisWeek } from "@/components/marketplace/HomePopularThisWeek";
 import { HomePromoCarousel } from "@/components/marketplace/HomePromoCarousel";
-import { HomeShopByPrice } from "@/components/marketplace/HomeShopByPrice";
 import { useAuth } from "@/contexts/AuthContext";
 import { useClientMounted } from "@/lib/use-client-mounted";
 
@@ -254,9 +253,8 @@ export default function MarketplaceHomePage() {
     <div className="pb-6">
       <HomeDepopHero />
 
-      <HomePromoCarousel />
       <HomePopularThisWeek />
-      <HomeShopByPrice />
+      <HomePromoCarousel />
 
       <div className="mx-auto max-w-7xl space-y-10 px-3 pb-6 pt-6 sm:px-5 sm:pt-8 md:px-6 lg:px-8">
       <form
