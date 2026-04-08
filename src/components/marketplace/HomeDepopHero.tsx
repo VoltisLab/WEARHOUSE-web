@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { BRAND_NAME } from "@/lib/branding";
 import {
   MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
@@ -11,52 +11,19 @@ import {
   MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL,
   MARKETPLACE_HOME_HERO_SELL_COLLAGE_RIGHT_URL,
 } from "@/lib/constants";
+import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 
 type HomeHeroMode = "buy" | "sell";
 
 const HERO_ROTATE_MS = 10_000;
+/** Cycle the single portrait through left / center / right URLs while a mode is active. */
+const HERO_IMAGE_CYCLE_MS = 5000;
 
-const collageShadow =
-  "shadow-[0_10px_40px_rgba(0,0,0,0.09),0_2px_8px_rgba(0,0,0,0.04)]";
+const portraitFrame =
+  "overflow-hidden rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.12),0_4px_16px_rgba(0,0,0,0.06)] ring-2 ring-[color-mix(in_srgb,var(--prel-primary)_22%,transparent)]";
 
-const frameBase = `rounded-xl object-cover ${collageShadow} ring-2 ring-[color-mix(in_srgb,var(--prel-primary)_22%,transparent)]`;
-
-/**
- * Shared 3-card layout for buy + sell: wide back plane, left + right forward cards
- * (different from the old “tall center stack” so reads as a new composition).
- */
-const COLLAGE_LAYOUT = {
-  /** Recedes — anchor layer */
-  center: `absolute left-[18%] top-[20%] z-[1] h-[54%] w-[58%] rotate-[2deg] object-center ${frameBase}`,
-  /** Mid depth, left rail */
-  left: `absolute left-[-1%] top-[8%] z-[5] h-[58%] w-[42%] -rotate-[11deg] object-left ${frameBase}`,
-  /** Front — tallest, right */
-  right: `absolute right-[-2%] top-[4%] z-[10] h-[64%] w-[44%] rotate-[12deg] object-right ${frameBase}`,
-} as const;
-
-function HeroCollageTriptych({
-  leftSrc,
-  centerSrc,
-  rightSrc,
-}: {
-  leftSrc: string;
-  centerSrc: string;
-  rightSrc: string;
-}) {
-  return (
-    <div
-      className="relative h-full w-full max-w-[21rem] sm:max-w-[26rem] md:max-w-[30rem]"
-      aria-hidden
-    >
-      {/* eslint-disable-next-line @next/next/no-img-element -- hero may be external URL from env */}
-      <img src={leftSrc} alt="" className={COLLAGE_LAYOUT.left} />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={centerSrc} alt="" className={COLLAGE_LAYOUT.center} />
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={rightSrc} alt="" className={COLLAGE_LAYOUT.right} />
-    </div>
-  );
-}
+const peekFrame =
+  "overflow-hidden rounded-2xl shadow-[0_12px_32px_rgba(0,0,0,0.08)] ring-1 ring-[color-mix(in_srgb,var(--prel-primary)_14%,transparent)]";
 
 function panelClass(active: boolean) {
   return [
@@ -67,31 +34,166 @@ function panelClass(active: boolean) {
   ].join(" ");
 }
 
+function uniqueOrdered(urls: string[]) {
+  const out: string[] = [];
+  const seen = new Set<string>();
+  for (const u of urls) {
+    if (!seen.has(u)) {
+      seen.add(u);
+      out.push(u);
+    }
+  }
+  return out;
+}
+
+function tripleIndices(center: number, n: number) {
+  const prev = (center - 1 + n) % n;
+  const curr = center % n;
+  const next = (center + 1) % n;
+  return { prev, curr, next };
+}
+
 /**
- * Home hero: soft gradient banner, copy left, shared 3-up collage right (buy vs sell assets).
- * Alternates buy/sell on a timer with crossfade and dot controls (page content below stays unchanged).
+ * Exactly three on-screen panels: previous (peek) · main · next (peek).
+ * Cycles indices on a timer; no off-screen strip, so at most three images show.
+ */
+function HeroPeekCarousel({
+  urls,
+  resetKey,
+}: {
+  urls: string[];
+  resetKey: string | number;
+}) {
+  const safe = urls.length > 0 ? urls : [""];
+  const nn = safe.length;
+
+  const [slide, setSlide] = useState(0);
+
+  useEffect(() => {
+    setSlide(0);
+  }, [resetKey]);
+
+  const goNext = useCallback(() => {
+    if (nn <= 1) return;
+    setSlide((s) => (s + 1) % nn);
+  }, [nn]);
+
+  useEffect(() => {
+    if (nn <= 1) return;
+    const id = window.setInterval(goNext, HERO_IMAGE_CYCLE_MS);
+    return () => window.clearInterval(id);
+  }, [nn, goNext]);
+
+  const { prev, curr, next } = tripleIndices(slide, nn);
+
+  const mainH =
+    "h-[calc(min(85vw,17.5rem)*4/3)] sm:h-[calc(min(82vw,19rem)*4/3)] md:h-[calc(min(78vw,20rem)*4/3)] lg:h-[min(100%,calc(min(40rem,calc(100%-1.25rem))*4/3))] lg:max-h-[min(calc(40rem*4/3),calc((100%-1.25rem)*4/3))] lg:min-h-[min(calc(18rem*4/3),50vh)]";
+
+  const viewportClass =
+    "relative mx-auto min-w-0 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl " +
+    "w-[calc(min(85vw,17.5rem)*2)] sm:w-[calc(min(82vw,19rem)*2)] md:w-[calc(min(78vw,20rem)*2)] " +
+    "lg:w-[min(calc(100%-1rem),44rem)] lg:mx-0 lg:max-w-none";
+
+  function PeekSlot({
+    src,
+    side,
+  }: {
+    src: string;
+    side: "left" | "right";
+  }) {
+    return (
+      <div className={`relative h-full min-w-0 ${peekFrame}`} aria-hidden>
+        {/* eslint-disable-next-line @next/next/no-img-element -- hero may be external URL from env */}
+        <img
+          src={src}
+          alt=""
+          className={[
+            "h-full w-[200%] max-w-none object-cover",
+            side === "left" ? "object-right" : "object-left",
+          ].join(" ")}
+        />
+      </div>
+    );
+  }
+
+  function MainSlot({ src, slideKey }: { src: string; slideKey: number }) {
+    return (
+      <figure
+        className={`relative z-10 h-full min-w-0 ${portraitFrame}`}
+        aria-hidden
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          key={slideKey}
+          src={src}
+          alt=""
+          className="h-full w-full object-cover"
+        />
+      </figure>
+    );
+  }
+
+  if (nn <= 1) {
+    const src = safe[0];
+    return (
+      <div
+        className={`relative mx-auto flex w-[min(85vw,17.5rem)] justify-center sm:w-[min(82vw,19rem)] md:w-[min(78vw,20rem)] lg:mx-0 lg:w-auto lg:max-w-none ${mainH}`}
+      >
+        <figure
+          className={`relative aspect-[3/4] w-full max-w-[min(85vw,17.5rem)] lg:aspect-auto lg:h-full lg:max-h-[min(40rem,calc(100%-1.25rem))] lg:w-auto lg:min-h-[18rem] ${portraitFrame}`}
+          aria-hidden
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={src} alt="" className="h-full w-full object-cover" />
+        </figure>
+      </div>
+    );
+  }
+
+  return (
+    <div className={`${viewportClass} ${mainH}`}>
+      <div className="grid h-full w-full grid-cols-[minmax(0,1fr)_minmax(0,2fr)_minmax(0,1fr)] items-stretch gap-0">
+        <PeekSlot src={safe[prev]} side="left" />
+        <MainSlot src={safe[curr]} slideKey={slide} />
+        <PeekSlot src={safe[next]} side="right" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Home hero: gradient banner, copy left, single portrait image right that rotates through
+ * buy/sell photo sets; buy/sell panels alternate on a timer with dot controls.
  */
 export function HomeDepopHero() {
   const [mode, setMode] = useState<HomeHeroMode>("buy");
 
-  const buyCollage = {
-    left: MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL,
-    center: MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
-    right: MARKETPLACE_HOME_HERO_COLLAGE_RIGHT_URL,
-  };
+  const buyUrls = useMemo(
+    () =>
+      uniqueOrdered([
+        MARKETPLACE_HOME_HERO_COLLAGE_LEFT_URL,
+        MARKETPLACE_HOME_HERO_COLLAGE_CENTER_URL,
+        MARKETPLACE_HOME_HERO_COLLAGE_RIGHT_URL,
+      ]),
+    [],
+  );
 
-  const sellCollage = {
-    left: MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL,
-    center: MARKETPLACE_HOME_HERO_SELL_COLLAGE_CENTER_URL,
-    right: MARKETPLACE_HOME_HERO_SELL_COLLAGE_RIGHT_URL,
-  };
+  const sellUrls = useMemo(
+    () =>
+      uniqueOrdered([
+        MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL,
+        MARKETPLACE_HOME_HERO_SELL_COLLAGE_CENTER_URL,
+        MARKETPLACE_HOME_HERO_SELL_COLLAGE_RIGHT_URL,
+      ]),
+    [],
+  );
 
   useEffect(() => {
     const id = window.setInterval(() => {
       setMode((m) => (m === "buy" ? "sell" : "buy"));
     }, HERO_ROTATE_MS);
     return () => window.clearInterval(id);
-  }, [mode]);
+  }, []);
 
   return (
     <section className="home-depop-hero-bg relative isolate w-full overflow-hidden">
@@ -103,8 +205,8 @@ export function HomeDepopHero() {
         className="pointer-events-none absolute -bottom-36 -left-24 h-80 w-80 rounded-full bg-[var(--prel-primary)] opacity-[0.14] blur-[56px] dark:opacity-[0.26]"
         aria-hidden
       />
-      <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-12 sm:gap-14 sm:px-8 sm:py-14 md:gap-16 md:px-10 md:py-16 lg:grid-cols-2 lg:items-center lg:gap-20 lg:py-[4.5rem]">
-        <div className="min-w-0">
+      <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-12 sm:gap-14 sm:px-8 sm:py-14 md:gap-16 md:px-10 md:py-16 lg:grid-cols-2 lg:items-stretch lg:gap-16 lg:py-[4.5rem] xl:gap-20">
+        <div className="min-w-0 lg:flex lg:flex-col lg:justify-center">
           <div className="grid [grid-template-areas:'stack']">
             <div className={panelClass(mode === "buy")}>
               <h1 className="text-[2.25rem] font-black leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
@@ -180,40 +282,21 @@ export function HomeDepopHero() {
               );
             })}
           </div>
+
+          <div className="mt-8 sm:mt-10">
+            <p className="mb-3 text-[12px] font-semibold uppercase tracking-[0.12em] text-neutral-500">
+              Get the app
+            </p>
+            <AppStoreBadges />
+          </div>
         </div>
 
-        <div className="relative mx-auto flex h-[min(56vw,24rem)] w-full max-w-md items-center justify-center sm:h-[min(50vw,28rem)] md:max-w-none md:justify-end lg:h-[min(38vw,30rem)] xl:h-[34rem]">
-          <div className="grid h-full w-full [grid-template-areas:'stack'] place-items-center md:place-items-end">
-            <div
-              className={[
-                "[grid-area:stack] col-start-1 row-start-1 flex h-full w-full items-center justify-center md:justify-end",
-                "transition-opacity duration-700 ease-in-out motion-reduce:transition-none",
-                mode === "buy"
-                  ? "z-10 opacity-100"
-                  : "pointer-events-none z-0 opacity-0",
-              ].join(" ")}
-            >
-              <HeroCollageTriptych
-                leftSrc={buyCollage.left}
-                centerSrc={buyCollage.center}
-                rightSrc={buyCollage.right}
-              />
-            </div>
-            <div
-              className={[
-                "[grid-area:stack] col-start-1 row-start-1 flex h-full w-full items-center justify-center md:justify-end",
-                "transition-opacity duration-700 ease-in-out motion-reduce:transition-none",
-                mode === "sell"
-                  ? "z-10 opacity-100"
-                  : "pointer-events-none z-0 opacity-0",
-              ].join(" ")}
-            >
-              <HeroCollageTriptych
-                leftSrc={sellCollage.left}
-                centerSrc={sellCollage.center}
-                rightSrc={sellCollage.right}
-              />
-            </div>
+        <div className="flex min-h-[min(56vw,22rem)] w-full min-w-0 items-stretch justify-center sm:min-h-[min(52vw,24rem)] lg:h-full lg:min-h-0 lg:py-1">
+          <div className="flex h-full w-full max-w-md min-w-0 items-center justify-center self-stretch md:max-w-lg lg:max-w-none lg:justify-end">
+            <HeroPeekCarousel
+              urls={mode === "buy" ? buyUrls : sellUrls}
+              resetKey={mode}
+            />
           </div>
         </div>
       </div>
