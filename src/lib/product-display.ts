@@ -1,7 +1,7 @@
 /** Generic backend enum / snake_case → readable words (e.g. `CASUAL` → `Casual`). */
 export function humanizeEnumLabel(raw: string | null | undefined): string {
   const s = (raw ?? "").trim();
-  if (!s) return "—";
+  if (!s) return "-";
   return s
     .split(/[\s_]+/)
     .filter(Boolean)
@@ -20,7 +20,7 @@ function normalizeConditionKey(raw: string): string {
  */
 export function formatProductCondition(condition: string | null | undefined): string {
   const raw = (condition ?? "").trim();
-  if (!raw) return "—";
+  if (!raw) return "-";
   switch (normalizeConditionKey(raw)) {
     case "BRAND_NEW_WITH_TAGS":
       return "Brand new with tags";
@@ -43,7 +43,7 @@ export function sizeDisplayValue(size: string | null | undefined): string {
   if (t.length > 5 && t.slice(0, 5).toLowerCase() === "size ") {
     return t.slice(5).trim() || t;
   }
-  return t || "—";
+  return t || "-";
 }
 
 /**

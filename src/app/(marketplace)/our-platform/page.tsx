@@ -20,8 +20,8 @@ export default function OurPlatformPage() {
     <MarketingDocShell
       eyebrow="Transparency"
       title="Our Platform"
-      subtitle="Rules, ranking, enforcement, and appeals — how decisions behind the feed are made."
-      lead={`${BRAND_NAME} is a curated marketplace, not an unmoderated bulletin board. We write rules to protect buyers and sellers, build ranking systems to surface relevant trustworthy inventory, and enforce consistently enough that outcomes feel predictable — even when you disagree with a single decision.`}
+      subtitle="Rules, ranking, enforcement, and appeals - how decisions behind the feed are made."
+      lead={`${BRAND_NAME} is a curated marketplace, not an unmoderated bulletin board. We write rules to protect buyers and sellers, build ranking systems to surface relevant trustworthy inventory, and enforce consistently enough that outcomes feel predictable - even when you disagree with a single decision.`}
       heroPosition="left"
       ctaRow={
         <>
@@ -35,7 +35,7 @@ export default function OurPlatformPage() {
       }
     >
       <MarketingFigure
-        caption="Ranking blends relevance with integrity signals — sponsored slots are labelled when shown."
+        caption="Ranking blends relevance with integrity signals - sponsored slots are labelled when shown."
         objectPosition="object-[center_25%]"
       />
 
@@ -54,7 +54,7 @@ export default function OurPlatformPage() {
         seller performance, buyer affinity, and policy health scores.
         Experiments run with guardrails; severe quality regressions roll back.
         Paid placements, when offered, are visually distinguished and compete
-        only inside approved modules — not by silently burying organic results
+        only inside approved modules - not by silently burying organic results
         without disclosure.
       </p>
 
@@ -107,12 +107,12 @@ export default function OurPlatformPage() {
       <p>
         If you believe we misread evidence, use the appeal flow with additional
         documentation (receipts, carrier logs, expert letters). Not all outcomes
-        reverse — some strikes expire naturally after a clean period. Final
+        reverse - some strikes expire naturally after a clean period. Final
         escalation paths depend on region and product surface.
       </p>
 
       <MarketingFigure
-        caption="Transparency does not mean publishing proprietary fraud logic — it means explaining what behaviour we reward."
+        caption="Transparency does not mean publishing proprietary fraud logic - it means explaining what behaviour we reward."
         objectPosition="object-left"
       />
 

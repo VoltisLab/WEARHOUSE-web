@@ -3,7 +3,7 @@ import { FavouritesPageContent } from "@/components/marketplace/FavouritesPageCo
 
 export const metadata: Metadata = {
   title: "Favourites",
-  description: "Your favourite listings — liked items from your WEARHOUSE account.",
+  description: "Your favourite listings - liked items from your WEARHOUSE account.",
 };
 
 export default function MarketplaceSavedPage() {

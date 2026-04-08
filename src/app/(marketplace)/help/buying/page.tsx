@@ -20,7 +20,7 @@ export default function HelpBuyingPage() {
     <MarketingDocShell
       eyebrow="Help"
       title="Buying on WEARHOUSE"
-      subtitle="From discovery to delivery — how to shop second-hand with confidence."
+      subtitle="From discovery to delivery - how to shop second-hand with confidence."
       lead={`Buying pre-loved fashion should feel exciting, not risky. This guide walks through evaluating listings, using chat wisely, paying only through ${BRAND_NAME}, and opening claims with the evidence moderators need. Pair it with Trust and safety for scam patterns.`}
       heroPosition="right"
       ctaRow={
@@ -60,7 +60,7 @@ export default function HelpBuyingPage() {
       <h2>Paying safely</h2>
       <p>
         Complete checkout inside {BRAND_NAME}. If a seller sends an external
-        payment link, it is a red flag — cancel the conversation and report.
+        payment link, it is a red flag - cancel the conversation and report.
         Official flows show fees, taxes, and delivery estimates before you
         authorise; screenshot that summary for your records.
       </p>
@@ -97,7 +97,7 @@ export default function HelpBuyingPage() {
       </p>
 
       <MarketingFigure
-        caption="Photograph unboxing: outer box, label, inner wrap, and the garment laid flat — claims move faster with visuals."
+        caption="Photograph unboxing: outer box, label, inner wrap, and the garment laid flat - claims move faster with visuals."
         objectPosition="object-left"
       />
 
@@ -119,7 +119,7 @@ export default function HelpBuyingPage() {
       <p>
         Rate shipping speed, accuracy of description, packaging quality, and
         communication. Avoid personal insults or revealing private details.
-        Reviews inform ranking — thoughtful feedback improves discovery for the
+        Reviews inform ranking - thoughtful feedback improves discovery for the
         next buyer.
       </p>
 

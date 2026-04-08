@@ -34,7 +34,7 @@ export default function PrivacyPage() {
       }
     >
       <MarketingFigure
-        caption="Privacy UX should be understandable at a glance — details stay available for those who want depth."
+        caption="Privacy UX should be understandable at a glance - details stay available for those who want depth."
         objectPosition="object-[center_30%]"
       />
 
@@ -49,23 +49,23 @@ export default function PrivacyPage() {
       <MarketingDetails title="Categories of personal data">
         <ul>
           <li>
-            <strong>Identity &amp; contact</strong> — name, username, email,
+            <strong>Identity &amp; contact</strong> - name, username, email,
             phone, date of birth where required.
           </li>
           <li>
-            <strong>Account &amp; profile</strong> — bio, photo, preferences,
+            <strong>Account &amp; profile</strong> - bio, photo, preferences,
             connected social logins.
           </li>
           <li>
-            <strong>Commercial</strong> — listings, messages, orders, shipping
+            <strong>Commercial</strong> - listings, messages, orders, shipping
             labels, payout details (often via payment partners).
           </li>
           <li>
-            <strong>Technical</strong> — device IDs, IP address, logs, crash
+            <strong>Technical</strong> - device IDs, IP address, logs, crash
             diagnostics, approximate location from IP.
           </li>
           <li>
-            <strong>Inferences</strong> — fraud scores, content relevance,
+            <strong>Inferences</strong> - fraud scores, content relevance,
             policy risk signals.
           </li>
         </ul>
@@ -75,8 +75,8 @@ export default function PrivacyPage() {
       <p>
         We process data to perform our contract with you (service delivery),
         pursue legitimate interests (security, product improvement, analytics
-        with safeguards), comply with law (tax, AML where required), and — where
-        needed — rely on consent (e.g. certain marketing cookies or emails).
+        with safeguards), comply with law (tax, AML where required), and - where
+        needed - rely on consent (e.g. certain marketing cookies or emails).
       </p>
 
       <table>
@@ -113,7 +113,7 @@ export default function PrivacyPage() {
         other members when necessary to complete a transaction (e.g. seller sees
         buyer shipping address). Authorities receive data when legally
         compelled. We do not sell personal information as defined by U.S. state
-        laws — if that changes, we update this notice and any required toggles.
+        laws - if that changes, we update this notice and any required toggles.
       </p>
 
       <MarketingDetails title="International transfers">
@@ -130,7 +130,7 @@ export default function PrivacyPage() {
         We keep information only as long as needed for the purposes above,
         including statutory books-and-records periods, dispute resolution, and
         model training where permitted with de-identification. Messaging content
-        may be retained shorter than financial records — specifics belong in your
+        may be retained shorter than financial records - specifics belong in your
         retention schedule appendix.
       </p>
 
@@ -143,7 +143,7 @@ export default function PrivacyPage() {
       </p>
 
       <MarketingFigure
-        caption="Automated decision-making, if any, requires extra transparency — describe logic and human review options."
+        caption="Automated decision-making, if any, requires extra transparency - describe logic and human review options."
         objectPosition="object-left"
       />
 

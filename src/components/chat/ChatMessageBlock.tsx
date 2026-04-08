@@ -402,7 +402,7 @@ export function ChatMessageBlock({
       {showInlineSender ? (
         <div className="flex justify-between gap-2 text-[12px] text-prel-tertiary-label">
           <span className="font-semibold text-[var(--prel-primary)]">
-            @{sender ?? "—"}
+            @{sender ?? "-"}
           </span>
           <span>{formatDateTime(createdAt)}</span>
         </div>

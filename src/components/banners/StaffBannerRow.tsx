@@ -41,7 +41,7 @@ export function StaffBannerRow({ banner }: { banner: StaffBannerRowData }) {
 
   return (
     <article className="overflow-hidden rounded-[14px] bg-prel-card ring-1 ring-prel-glass-border shadow-ios dark:shadow-none">
-      {/* Top accent — brand strip */}
+      {/* Top accent - brand strip */}
       <div
         className="h-1 w-full"
         style={{
@@ -72,7 +72,7 @@ export function StaffBannerRow({ banner }: { banner: StaffBannerRowData }) {
                 <Layers className="h-3.5 w-3.5 text-[var(--prel-primary)]" />
                 <span className="text-prel-tertiary-label">Style / slot</span>
                 <span className="font-medium text-prel-label">
-                  {season || "—"}
+                  {season || "-"}
                 </span>
               </span>
               <span className="inline-flex items-center gap-1.5">
@@ -86,7 +86,7 @@ export function StaffBannerRow({ banner }: { banner: StaffBannerRowData }) {
           </div>
         </div>
 
-        {/* Device frame — mimics home carousel container */}
+        {/* Device frame - mimics home carousel container */}
         <div className="mt-4">
           <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
             In-app preview
@@ -214,7 +214,7 @@ export function StaffBannerRow({ banner }: { banner: StaffBannerRowData }) {
                   @
                   {banner.createdBy?.username ??
                     banner.createdBy?.displayName ??
-                    "—"}
+                    "-"}
                 </span>
               </p>
               <p>
@@ -223,7 +223,7 @@ export function StaffBannerRow({ banner }: { banner: StaffBannerRowData }) {
                   @
                   {banner.updatedBy?.username ??
                     banner.updatedBy?.displayName ??
-                    "—"}
+                    "-"}
                 </span>
               </p>
             </div>

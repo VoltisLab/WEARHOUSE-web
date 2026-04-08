@@ -32,7 +32,7 @@ export function HomeMainBanner() {
           </h2>
           <p className="mt-3 text-[15px] leading-relaxed text-neutral-600 md:text-[16px]">
             Sell pieces you no longer wear and find pre-loved fashion at great
-            prices — all in one community on {BRAND_NAME}.
+            prices - all in one community on {BRAND_NAME}.
           </p>
           <div className="mt-6 flex flex-col gap-3">
             <Link

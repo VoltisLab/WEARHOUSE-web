@@ -88,7 +88,7 @@ export default function StaffChatPage() {
 
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-3 pb-28">
-      {/* Top bar — sticky, Swift-style context */}
+      {/* Top bar - sticky, Swift-style context */}
       <div className="sticky top-0 z-20 -mx-1 border-b border-prel-separator bg-prel-nav/95 px-3 py-3 backdrop-blur-md">
         <div className="flex items-start gap-2">
           <MessageSquare
@@ -156,7 +156,7 @@ export default function StaffChatPage() {
                     <p className="font-semibold text-prel-label">
                       {formatMoney(o.offerPrice ?? 0)}{" "}
                       <span className="font-normal text-prel-secondary-label">
-                        · {o.status ?? "—"}
+                        · {o.status ?? "-"}
                       </span>
                     </p>
                     <p className="truncate text-prel-secondary-label">

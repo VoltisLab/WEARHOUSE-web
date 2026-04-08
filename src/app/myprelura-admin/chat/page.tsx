@@ -46,7 +46,7 @@ export default function StaffMessagesInboxPage() {
     <div className="mx-auto max-w-2xl space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-[14px] text-prel-secondary-label">
-          Your signed-in inbox — same threads as the consumer app.
+          Your signed-in inbox - same threads as the consumer app.
         </p>
         <button
           type="button"

@@ -113,7 +113,7 @@ export function SellPhotoPicker({
             Add photos
           </p>
           <p className="mt-1 text-[13px] text-prel-secondary-label">
-            Tap to choose or drag images here — up to {maxFiles} photos
+            Tap to choose or drag images here - up to {maxFiles} photos
           </p>
           <p className="mt-2 text-[12px] text-prel-tertiary-label">
             Uploaded to our servers (same as the iOS app) when you publish.

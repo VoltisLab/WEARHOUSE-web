@@ -7,7 +7,7 @@ import { BRAND_NAME } from "@/lib/branding";
 
 export const metadata: Metadata = {
   title: "About us",
-  description: `Learn about ${BRAND_NAME} — the second-hand fashion marketplace.`,
+  description: `Learn about ${BRAND_NAME} - the second-hand fashion marketplace.`,
 };
 
 const btnPrimary =
@@ -20,7 +20,7 @@ export default function AboutPage() {
     <MarketingDocShell
       eyebrow="WEARHOUSE"
       title="About us"
-      subtitle="A marketplace built for people who love clothes — and hate waste."
+      subtitle="A marketplace built for people who love clothes - and hate waste."
       updated="April 2026"
       lead={`${BRAND_NAME} exists to make second-hand fashion feel as effortless as buying new: clear listings, confident buyers, and sellers who are proud of what they pass on. We are a community-first product team shipping the web experience alongside native apps, with the same standards for trust, safety, and craft.`}
       heroPosition="center"
@@ -36,14 +36,14 @@ export default function AboutPage() {
       }
     >
       <MarketingFigure
-        caption="Our community keeps garments in circulation — every resale is a small act of circular fashion."
+        caption="Our community keeps garments in circulation - every resale is a small act of circular fashion."
         objectPosition="object-[center_30%]"
       />
 
       <h2>What we believe</h2>
       <p>
         Fashion should not be disposable. The best wardrobe is often the one
-        that already exists — on racks, in closets, and now on {BRAND_NAME}.
+        that already exists - on racks, in closets, and now on {BRAND_NAME}.
         We believe resale should reward honesty: accurate photos, plain
         language about wear, and prices that reflect real life. When that
         happens, buyers feel confident, sellers build reputation, and fewer
@@ -51,14 +51,14 @@ export default function AboutPage() {
       </p>
       <blockquote>
         We are not trying to replace the joy of discovery. We are trying to
-        widen it — so the thrill of the find includes vintage, archive, and
+        widen it - so the thrill of the find includes vintage, archive, and
         gently worn pieces alongside the new.
       </blockquote>
 
       <h2>How {BRAND_NAME} fits together</h2>
       <p>
         At the centre is the marketplace: listings, search, seller shops, and
-        messaging. Around it sit the systems members rarely see — fraud
+        messaging. Around it sit the systems members rarely see - fraud
         signals, policy enforcement, payouts, notifications, and the
         infrastructure that keeps the service fast on both mobile and web. Our
         roadmap is public in spirit on the{" "}
@@ -74,7 +74,7 @@ export default function AboutPage() {
           </li>
           <li>
             <strong>Safety by default.</strong> Checkout, chat, and reporting
-            live in one governed surface — not scattered across DMs and
+            live in one governed surface - not scattered across DMs and
             payment apps.
           </li>
           <li>
@@ -85,7 +85,7 @@ export default function AboutPage() {
           </li>
           <li>
             <strong>Regional reality.</strong> Consumer law, payments, and
-            logistics differ by country — we surface what applies to you at the
+            logistics differ by country - we surface what applies to you at the
             point of use.
           </li>
         </ul>
@@ -130,7 +130,7 @@ export default function AboutPage() {
 
       <h2>Sustainability in practice</h2>
       <p>
-        Resale is not a marketing slogan for us — it is the business model.
+        Resale is not a marketing slogan for us - it is the business model.
         Every transaction extends useful life for garments and accessories. We
         are honest that platforms also consume energy; we work to measure and
         reduce operational footprint while amplifying the climate benefit of
@@ -139,7 +139,7 @@ export default function AboutPage() {
       </p>
 
       <MarketingFigure
-        caption="Detail from our marketplace photography — we celebrate texture, patina, and honest condition."
+        caption="Detail from our marketplace photography - we celebrate texture, patina, and honest condition."
         objectPosition="object-right"
       />
 
@@ -148,7 +148,7 @@ export default function AboutPage() {
         Brands, NGOs, and media partners reach us through the channels listed on{" "}
         <Link href="/advertising">Advertising</Link> and{" "}
         <Link href="/press">Press</Link>. If you are a member who needs help
-        with an order or account, use in-app support — that routing reaches the
+        with an order or account, use in-app support - that routing reaches the
         team who can see your case.
       </p>
 

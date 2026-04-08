@@ -13,7 +13,7 @@ export default function ToolsPage() {
   return (
     <div className="mx-auto max-w-lg space-y-3">
       <p className="text-[14px] text-prel-secondary-label">
-        Same layout as the consumer &quot;Tools&quot; sheet — operations that share the
+        Same layout as the consumer &quot;Tools&quot; sheet - operations that share the
         staff GraphQL token.
       </p>
       {ops.map((o) => (

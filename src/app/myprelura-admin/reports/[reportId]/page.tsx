@@ -114,7 +114,7 @@ export default function ReportDetailPage() {
           </p>
         ) : null}
         <p className="mt-3 text-[18px] font-semibold text-prel-label">
-          {String(report.reason ?? "—")}
+          {String(report.reason ?? "-")}
         </p>
         {report.context != null && String(report.context).length > 0 ? (
           <p className="mt-2 text-[14px] text-prel-secondary-label whitespace-pre-wrap">
@@ -292,7 +292,7 @@ export default function ReportDetailPage() {
                 <div className="flex justify-between text-[11px] text-prel-tertiary-label">
                   <span className="text-prel-primary">
                     @
-                    {(m.sender as { username?: string } | null)?.username ?? "—"}
+                    {(m.sender as { username?: string } | null)?.username ?? "-"}
                   </span>
                   <span>{formatDateTime(String(m.createdAt ?? ""))}</span>
                 </div>

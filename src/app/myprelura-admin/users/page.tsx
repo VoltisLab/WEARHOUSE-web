@@ -113,7 +113,7 @@ export default function UsersPage() {
                       {u.displayName ?? un}
                     </Link>
                     <p className="text-[14px] text-prel-secondary-label">
-                      @{un} · {u.email ?? "—"}
+                      @{un} · {u.email ?? "-"}
                     </p>
                     <div className="mt-1 flex flex-wrap gap-2 text-[11px] font-semibold">
                       {u.isSuperuser && (

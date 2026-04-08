@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-/** Consumer login — kept for compatibility. */
+/** Consumer login - kept for compatibility. */
 export const LOGIN = gql`
   mutation Login($password: String!, $username: String) {
     login(password: $password, username: $username) {
@@ -14,7 +14,7 @@ export const LOGIN = gql`
   }
 `;
 
-/** Consumer registration — `NewRegister` / graphql-auth fields from backend settings. */
+/** Consumer registration - `NewRegister` / graphql-auth fields from backend settings. */
 export const REGISTER = gql`
   mutation Register(
     $email: String!
@@ -46,7 +46,7 @@ export const REGISTER = gql`
   }
 `;
 
-/** Staff login — matches consumer `adminLogin` API. */
+/** Staff login - matches consumer `adminLogin` API. */
 export const ADMIN_LOGIN = gql`
   mutation AdminLogin($username: String!, $password: String!) {
     adminLogin(username: $username, password: $password) {

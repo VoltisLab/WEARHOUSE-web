@@ -115,7 +115,7 @@ export function MarketplaceProductCard({
         <p className="line-clamp-2 text-[14px] font-semibold leading-snug text-prel-label">
           {p.name ?? "Listing"}
         </p>
-        {conditionLabel !== "—" ? (
+        {conditionLabel !== "-" ? (
           <p className="line-clamp-1 text-[12px] text-prel-secondary-label">
             {conditionLabel}
           </p>

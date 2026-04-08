@@ -226,7 +226,7 @@ export default function ConsolePage() {
           name: "Public web",
           up,
           detail: up
-            ? `${host} · ${j.ms ?? ms} ms (HTTP ${j.status ?? "—"})`
+            ? `${host} · ${j.ms ?? ms} ms (HTTP ${j.status ?? "-"})`
             : j.error ||
               (j.status != null && j.status > 0
                 ? `HTTP ${j.status}`
@@ -469,7 +469,7 @@ export default function ConsolePage() {
       <p className="text-[12px] text-prel-secondary-label">
         Live chat on iOS uses Django Channels{" "}
         <code className="text-prel-primary">ws/chat/&lt;id&gt;/</code> with a JWT
-        header; browsers cannot set WS auth headers — this admin uses GraphQL
+        header; browsers cannot set WS auth headers - this admin uses GraphQL
         polling. <code className="text-prel-primary">graphql-ws</code> is wired
         for future GraphQL subscriptions when the API exposes them.
       </p>

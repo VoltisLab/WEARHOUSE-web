@@ -1,7 +1,7 @@
 export function formatMoney(value: number | string | null | undefined): string {
-  if (value == null || value === "") return "—";
+  if (value == null || value === "") return "-";
   const n = typeof value === "string" ? parseFloat(value) : value;
-  if (Number.isNaN(n)) return "—";
+  if (Number.isNaN(n)) return "-";
   return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",
@@ -9,7 +9,7 @@ export function formatMoney(value: number | string | null | undefined): string {
 }
 
 export function formatDateTime(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
   return new Intl.DateTimeFormat("en-GB", {
@@ -19,7 +19,7 @@ export function formatDateTime(iso: string | null | undefined): string {
 }
 
 export function formatRelativeShort(iso: string | null | undefined): string {
-  if (!iso) return "—";
+  if (!iso) return "-";
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return formatDateTime(iso);
   const sec = (Date.now() - d.getTime()) / 1000;

@@ -427,7 +427,7 @@ export default function MarketplaceChatThreadPage() {
                     <p className="font-semibold text-prel-label">
                       {formatMoney(o.offerPrice ?? 0)}{" "}
                       <span className="font-normal text-prel-secondary-label">
-                        · {o.status ?? "—"}
+                        · {o.status ?? "-"}
                       </span>
                     </p>
                     <p className="truncate text-prel-secondary-label">

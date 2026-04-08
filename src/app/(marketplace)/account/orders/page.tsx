@@ -64,10 +64,10 @@ export default function AccountOrdersPage() {
       const label = isBuyer ? "Bought from" : "Sold to";
       const otherName = isBuyer
         ? o.seller?.displayName?.trim() ||
-          (o.seller?.username ? `@${o.seller.username}` : "—")
+          (o.seller?.username ? `@${o.seller.username}` : "-")
         : o.user?.username
           ? `@${o.user.username}`
-          : "—";
+          : "-";
       const thumb = firstProductImageUrl(
         o.lineItems?.[0]?.productImagesUrl ?? null,
       );

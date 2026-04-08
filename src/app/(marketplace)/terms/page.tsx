@@ -20,7 +20,7 @@ export default function TermsPage() {
       title="Terms & Conditions"
       subtitle="The agreement between you and WEARHOUSE when you use the marketplace."
       updated="April 2026"
-      lead={`These terms govern access to ${BRAND_NAME} websites, apps, and related services. They are a working draft for product and engineering teams — replace with counsel-approved language before production reliance. Structure below mirrors typical marketplace agreements so reviewers can navigate quickly.`}
+      lead={`These terms govern access to ${BRAND_NAME} websites, apps, and related services. They are a working draft for product and engineering teams - replace with counsel-approved language before production reliance. Structure below mirrors typical marketplace agreements so reviewers can navigate quickly.`}
       heroPosition="center"
       ctaRow={
         <>
@@ -34,7 +34,7 @@ export default function TermsPage() {
       }
     >
       <MarketingFigure
-        caption="Legal clarity and readable UI belong together — we surface key terms again at checkout."
+        caption="Legal clarity and readable UI belong together - we surface key terms again at checkout."
         objectPosition="object-top"
       />
 
@@ -119,7 +119,7 @@ export default function TermsPage() {
         <p>
           Designate an agent, publish an address, and describe repeat
           infringer policy. This marketing draft omits statutory magic language
-          — your counsel should supply complete safe-harbour text for your
+          - your counsel should supply complete safe-harbour text for your
           hosting jurisdiction.
         </p>
       </MarketingDetails>
@@ -129,7 +129,7 @@ export default function TermsPage() {
         The service is provided on an &quot;as is&quot; and &quot;as
         available&quot; basis to the extent permitted by law. We do not
         guarantee uninterrupted access or that listings are lawful, safe, or
-        accurate — member diligence remains essential.
+        accurate - member diligence remains essential.
       </p>
 
       <h2>7. Limitation of liability</h2>
@@ -137,12 +137,12 @@ export default function TermsPage() {
         To the maximum extent permitted, neither party is liable for indirect,
         incidental, special, consequential, or punitive damages, or for loss of
         profits/data, arising from marketplace disputes between users or from
-        service outages. Caps may tie to fees paid in a rolling period — your
+        service outages. Caps may tie to fees paid in a rolling period - your
         counsel sets numbers.
       </p>
 
       <MarketingFigure
-        caption="Jurisdiction-specific consumer rights may override certain limitations — local law applies where mandatory."
+        caption="Jurisdiction-specific consumer rights may override certain limitations - local law applies where mandatory."
         objectPosition="object-[center_40%]"
       />
 
@@ -155,7 +155,7 @@ export default function TermsPage() {
 
       <h2>9. Changes</h2>
       <p>
-        We will notify you of material changes as required by law — often by
+        We will notify you of material changes as required by law - often by
         email, banner, or updated effective date on this page. Continued use may
         constitute acceptance where permissible.
       </p>

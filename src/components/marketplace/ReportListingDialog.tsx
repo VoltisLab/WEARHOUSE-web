@@ -44,7 +44,7 @@ export function ReportListingDialog({ productId, productName }: Props) {
         setMsg(errors.map((x) => x.message).join(" · "));
         return;
       }
-      setMsg(data?.reportProduct?.message ?? "Thanks — we will review this listing.");
+      setMsg(data?.reportProduct?.message ?? "Thanks - we will review this listing.");
       setTimeout(() => {
         setOpen(false);
         setNotes("");

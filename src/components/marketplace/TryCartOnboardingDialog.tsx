@@ -7,11 +7,11 @@ const STORAGE_KEY = "wearhouse_try_cart_onboarding_seen_v1";
 const PAGES = [
   {
     title: "One bag, many sellers",
-    body: "Try Cart lets you add pieces from different shops into a single bag. Keep browsing—your picks stay with you while you shop.",
+    body: "Try Cart lets you add pieces from different shops into a single bag. Keep browsing - your picks stay with you while you shop.",
   },
   {
     title: "Save time on every haul",
-    body: "No more jumping seller by seller. Search, tap Add to bag, and build your haul in one flow—with a running total so you always know where you stand.",
+    body: "No more jumping seller by seller. Search, tap Add to bag, and build your haul in one flow - with a running total so you always know where you stand.",
   },
   {
     title: "Shop smarter, checkout clearer",

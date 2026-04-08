@@ -85,17 +85,17 @@ export default function OrdersPage() {
                   </Link>
                 </td>
                 <td className="px-4 py-3">
-                  {(o.user as { username?: string } | null)?.username ?? "—"}
+                  {(o.user as { username?: string } | null)?.username ?? "-"}
                 </td>
                 <td className="px-4 py-3">
-                  {(o.seller as { username?: string } | null)?.username ?? "—"}
+                  {(o.seller as { username?: string } | null)?.username ?? "-"}
                 </td>
-                <td className="px-4 py-3">{String(o.status ?? "—")}</td>
+                <td className="px-4 py-3">{String(o.status ?? "-")}</td>
                 <td className="px-4 py-3">
                   {formatMoney(o.priceTotal as number | string | null)}
                 </td>
                 <td className="px-4 py-3 text-[13px] text-prel-secondary-label">
-                  {String(o.createdAt ?? "—")}
+                  {String(o.createdAt ?? "-")}
                 </td>
                 <td className="px-4 py-3">
                   <button

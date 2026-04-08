@@ -68,7 +68,7 @@ export default function SettingsPage() {
           </div>
         </div>
         <p className="mt-2 text-[12px] text-prel-tertiary-label">
-          Endpoint changes require redeploy / env update — not edited from here.
+          Endpoint changes require redeploy / env update - not edited from here.
         </p>
       </GlassCard>
 

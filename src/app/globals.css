@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* WEARHOUSE staff / consumer theme — primary #AB28B2, dark canvas #0C0C0C, sheet #1C1C1C */
+/* WEARHOUSE staff / consumer theme - primary #AB28B2, dark canvas #0C0C0C, sheet #1C1C1C */
 :root {
   --prel-primary: #ab28b2;
   --prel-metric-users: #5ac8fa;
@@ -61,7 +61,7 @@
   --color-prel-metric-views-today: var(--prel-metric-views-today);
   --color-prel-metric-health: var(--prel-metric-health);
 
-  /* Legacy aliases — design tokens */
+  /* Legacy aliases - design tokens */
   --color-ios-blue: var(--prel-primary);
   --color-ios-grouped: var(--prel-bg-grouped);
   --color-ios-secondary: var(--prel-card);
@@ -113,7 +113,7 @@ body {
 }
 
 /**
- * Marketplace home hero — layered sheen (radial blooms + lilac-pearl base).
+ * Marketplace home hero - layered sheen (radial blooms + lilac-pearl base).
  */
 .home-depop-hero-bg {
   background:
@@ -144,7 +144,7 @@ body {
   border-bottom-color: color-mix(in srgb, var(--prel-primary) 25%, #2a2430);
 }
 
-/* Glass card — Theme.Glass + Colors.glass* */
+/* Glass card - Theme.Glass + Colors.glass* */
 .glass-card {
   background: var(--prel-glass-bg);
   border: 1px solid var(--prel-glass-border);
@@ -152,7 +152,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
 }
 
-/* Explicit primary actions — Tailwind theme tokens can fail to apply on native <button> in some builds. */
+/* Explicit primary actions - Tailwind theme tokens can fail to apply on native <button> in some builds. */
 button.prel-btn-primary,
 a.prel-btn-primary {
   background-color: var(--prel-primary);
@@ -223,7 +223,7 @@ a.prel-btn-danger {
   border-radius: 8px;
 }
 
-/* —— Marketing / footer pages: motion + typography —— */
+/* -- Marketing / footer pages: motion + typography -- */
 @keyframes marketing-hero-drift {
   0%,
   100% {

@@ -91,7 +91,7 @@ export function SellSizePicker({
           className="w-full rounded-xl border border-prel-separator bg-prel-bg-grouped px-3 py-2.5 text-[15px]"
           aria-label="Item size"
         >
-          <option value="">Optional — choose a size</option>
+          <option value="">Optional - choose a size</option>
           {options.map((s) => (
             <option key={s.id} value={String(s.id)}>
               {displayName(s.name)}

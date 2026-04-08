@@ -9,7 +9,7 @@ Replaces the Flutter **Windows .exe** approach: same GraphQL staff operations as
 ```bash
 cd prelura-admin-web
 npm install
-# Optional: copy env — see ENV_SETUP.md
+# Optional: copy env - see ENV_SETUP.md
 npm run dev
 ```
 
@@ -24,7 +24,7 @@ npm start
 
 ## Structure (matches cleaning)
 
-- `src/app/` — routes (`login`, `(staff)/dashboard`, `orders`, `issues`, `reports`, `users`)
+- `src/app/` - routes (`login`, `(staff)/dashboard`, `orders`, `issues`, `reports`, `users`)
 - `src/components/layout`, `src/components/ui`
 - `src/graphql/queries`, `src/graphql/mutations`
 - `src/lib/apollo-client.ts`, `ApolloProviderWrapper.tsx`

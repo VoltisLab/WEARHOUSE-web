@@ -26,7 +26,7 @@ function needsDeeperLevel(row: CategoryRow): boolean {
 
 /**
  * API exposes `CategoryTypes.id` as GraphQL `ID` (JSON string). `categories(parentId)`
- * expects `Int` — passing a string makes the server return HTTP 400 (variable coercion).
+ * expects `Int` - passing a string makes the server return HTTP 400 (variable coercion).
  */
 function normalizeCategoryId(raw: unknown): number {
   if (typeof raw === "number" && Number.isFinite(raw)) return Math.trunc(raw);
@@ -71,7 +71,7 @@ export function CategoryCascadePicker({
   const [filter, setFilter] = useState("");
 
   const tail = path.length > 0 ? path[path.length - 1] : null;
-  /** Path ends on a selectable leaf — stop fetching and show summary instead of the list. */
+  /** Path ends on a selectable leaf - stop fetching and show summary instead of the list. */
   const pathEndsOnLeaf =
     tail != null && !needsDeeperLevel(tail);
 
@@ -166,7 +166,7 @@ export function CategoryCascadePicker({
         </p>
         <p className="mb-3 text-[12px] leading-relaxed text-prel-secondary-label">
           Tap a folder to open subcategories. When you reach the final type, tap
-          it once to select — your path stays visible above the list.
+          it once to select - your path stays visible above the list.
         </p>
       </div>
 
@@ -314,7 +314,7 @@ export function CategoryCascadePicker({
                         <span className="mt-0.5 block text-[11px] text-prel-tertiary-label">
                           {deeper
                             ? "Open subcategories"
-                            : "Final category — tap to select"}
+                            : "Final category - tap to select"}
                         </span>
                       </span>
                       {deeper ? (

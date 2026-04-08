@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-/** Native disclosure — animated chevron via CSS on `details[open]`. */
+/** Native disclosure - animated chevron via CSS on `details[open]`. */
 export function MarketingDetails({
   title,
   children,

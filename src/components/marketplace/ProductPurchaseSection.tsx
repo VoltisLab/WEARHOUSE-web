@@ -282,7 +282,7 @@ export function ProductPurchaseSection({
 
       {sold ? (
         <p className="text-center text-[13px] text-prel-secondary-label">
-          This item is sold — messaging and checkout are disabled.
+          This item is sold - messaging and checkout are disabled.
         </p>
       ) : (
         <p className="text-center text-[12px] text-prel-tertiary-label">
@@ -385,7 +385,7 @@ export function ProductPurchaseSection({
                 Seller:{" "}
                 <span className="font-medium text-prel-label">
                   {sellerDisplayName?.trim() ||
-                    (sellerUsername ? `@${sellerUsername}` : "—")}
+                    (sellerUsername ? `@${sellerUsername}` : "-")}
                 </span>
               </p>
             </div>

@@ -34,7 +34,7 @@ function parseDataRow(raw: unknown): { image?: string; thumbnail?: string } {
 }
 
 /**
- * Multipart GraphQL upload (`upload` mutation) — same auth as Apollo.
+ * Multipart GraphQL upload (`upload` mutation) - same auth as Apollo.
  * Returns `{ url, thumbnail }` pairs for `createProduct.imagesUrl`.
  */
 export async function uploadProductImages(
@@ -95,7 +95,7 @@ export async function uploadProductImages(
 
   const up = json.data?.upload;
   if (!up?.success || !up.baseUrl || !Array.isArray(up.data)) {
-    throw new Error("Upload failed — check file type and size.");
+    throw new Error("Upload failed - check file type and size.");
   }
 
   const out: UploadRow[] = [];

@@ -35,7 +35,7 @@ export default function HelpSellingPage() {
       }
     >
       <MarketingFigure
-        caption="Treat the first image as a shop window — full garment, even lighting, no clutter in frame."
+        caption="Treat the first image as a shop window - full garment, even lighting, no clutter in frame."
         objectPosition="object-[center_25%]"
       />
 
@@ -44,23 +44,23 @@ export default function HelpSellingPage() {
         Use six to ten images when condition is nuanced: front, back, brand
         label, size tag, fabric macro, and any flaws with a coin or ruler for
         scale. Write a title with brand + garment type + distinguishing detail.
-        Fill structured fields before stuffing keywords into the description —
+        Fill structured fields before stuffing keywords into the description -
         search quality prefers honest metadata.
       </p>
 
       <MarketingDetails title="Condition vocabulary that reduces disputes">
         <ul>
           <li>
-            <strong>New with tags</strong> — unworn, manufacturer tags attached.
+            <strong>New with tags</strong> - unworn, manufacturer tags attached.
           </li>
           <li>
-            <strong>Excellent</strong> — minimal signs of wear, no stains.
+            <strong>Excellent</strong> - minimal signs of wear, no stains.
           </li>
           <li>
-            <strong>Good</strong> — visible but acceptable wear; disclose in text.
+            <strong>Good</strong> - visible but acceptable wear; disclose in text.
           </li>
           <li>
-            <strong>Fair</strong> — obvious flaws; price accordingly and photograph each.
+            <strong>Fair</strong> - obvious flaws; price accordingly and photograph each.
           </li>
         </ul>
       </MarketingDetails>
@@ -70,7 +70,7 @@ export default function HelpSellingPage() {
         Scan sold comps when visible; otherwise compare active listings with
         similar condition tiers. Factor in shipping subsidy, platform fees, and
         potential VAT. You can run limited-time discounts where the product
-        supports them — avoid yo-yo pricing that confuses buyers who saved your
+        supports them - avoid yo-yo pricing that confuses buyers who saved your
         item.
       </p>
 
@@ -107,14 +107,14 @@ export default function HelpSellingPage() {
       </p>
 
       <MarketingFigure
-        caption="Proof of postage: photo of sealed parcel with label next to listing screenshot — invaluable in edge cases."
+        caption="Proof of postage: photo of sealed parcel with label next to listing screenshot - invaluable in edge cases."
         objectPosition="object-right"
       />
 
       <h2>Payouts &amp; verification</h2>
       <p>
         Complete KYC and tax steps early so first sales are not delayed. Payout
-        schedules vary by region and risk holds — read in-wallet notices. If a
+        schedules vary by region and risk holds - read in-wallet notices. If a
         payout fails, update bank details and retry; repeated failures may need
         support to clear a fraud hold.
       </p>
@@ -128,7 +128,7 @@ export default function HelpSellingPage() {
       </p>
 
       <blockquote>
-        Your chat history is discoverable in disputes — write as if a moderator
+        Your chat history is discoverable in disputes - write as if a moderator
         will read every line.
       </blockquote>
 

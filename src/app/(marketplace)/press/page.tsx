@@ -41,7 +41,7 @@ export default function PressPage() {
       </p>
 
       <MarketingFigure
-        caption="Brand imagery emphasises real closets, natural light, and diverse bodies — request high-res from the press team."
+        caption="Brand imagery emphasises real closets, natural light, and diverse bodies - request high-res from the press team."
         objectPosition="object-center"
       />
 

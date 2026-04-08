@@ -20,7 +20,7 @@ export default function HowItWorksPage() {
     <MarketingDocShell
       eyebrow="Guide"
       title="How it works"
-      subtitle="From first photo to delivered parcel — the full journey on WEARHOUSE."
+      subtitle="From first photo to delivered parcel - the full journey on WEARHOUSE."
       lead={`${BRAND_NAME} is a peer-to-peer marketplace for second-hand fashion. Buyers discover items through search, filters, and seller shops; sellers list with photos and structured fields; both sides coordinate in chat and complete payment through official checkout where enabled. This page walks through each phase so you know what to expect before you start.`}
       heroPosition="center"
       ctaRow={
@@ -35,34 +35,34 @@ export default function HowItWorksPage() {
       }
     >
       <MarketingFigure
-        caption="Discovery blends algorithmic ranking with your taste — save searches and favourite sellers to train the feed."
+        caption="Discovery blends algorithmic ranking with your taste - save searches and favourite sellers to train the feed."
         objectPosition="object-[center_25%]"
       />
 
       <h2>For sellers</h2>
       <ol>
         <li>
-          <strong>Account &amp; verification</strong> — create your profile,
+          <strong>Account &amp; verification</strong> - create your profile,
           complete any regional identity or payout steps so funds are not held
           up later.
         </li>
         <li>
-          <strong>Listing build</strong> — shoot in daylight, capture labels and
+          <strong>Listing build</strong> - shoot in daylight, capture labels and
           flaws, pick category, size, condition, and shipping options supported
           in your area.
         </li>
         <li>
-          <strong>Publish &amp; promote</strong> — set a fair price using
+          <strong>Publish &amp; promote</strong> - set a fair price using
           comparable listings; respond quickly to questions to improve ranking
           signals.
         </li>
         <li>
-          <strong>Sale &amp; fulfilment</strong> — once a buyer pays through{" "}
+          <strong>Sale &amp; fulfilment</strong> - once a buyer pays through{" "}
           {BRAND_NAME}, pack securely, add tracking, and mark dispatched inside
           the order timeline.
         </li>
         <li>
-          <strong>After delivery</strong> — buyers confirm receipt; payouts
+          <strong>After delivery</strong> - buyers confirm receipt; payouts
           follow policy schedules. Handle any disputes through official
           channels only.
         </li>
@@ -73,33 +73,33 @@ export default function HowItWorksPage() {
           <li>First image shows the full garment on a neutral background</li>
           <li>Close-ups of fabric, hardware, and any damage</li>
           <li>Measurements where fit is ambiguous (rise, inseam, pit-to-pit)</li>
-          <li>Honest condition tier — slightly worn beats &quot;like new&quot; disputes</li>
+          <li>Honest condition tier - slightly worn beats &quot;like new&quot; disputes</li>
         </ul>
       </MarketingDetails>
 
       <h2>For buyers</h2>
       <ol>
         <li>
-          <strong>Browse or search</strong> — filter by size, brand, price, and
+          <strong>Browse or search</strong> - filter by size, brand, price, and
           condition. Open <Link href="/search">Discover</Link> from the main
           navigation.
         </li>
         <li>
-          <strong>Evaluate the listing</strong> — read the description, zoom
+          <strong>Evaluate the listing</strong> - read the description, zoom
           photos, check seller reviews. Message before purchase if anything is
           unclear.
         </li>
         <li>
-          <strong>Checkout</strong> — pay with supported methods inside the
+          <strong>Checkout</strong> - pay with supported methods inside the
           app or web flow. Avoid wire transfers or external payment links.
         </li>
         <li>
-          <strong>Track &amp; receive</strong> — follow tracking in your
+          <strong>Track &amp; receive</strong> - follow tracking in your
           account; inspect on arrival and report issues within the stated
           window with photos.
         </li>
         <li>
-          <strong>Leave structured feedback</strong> — helps the community and
+          <strong>Leave structured feedback</strong> - helps the community and
           improves search quality for the next buyer.
         </li>
       </ol>
@@ -148,7 +148,7 @@ export default function HowItWorksPage() {
 
       <h2>Web vs app</h2>
       <p>
-        Native apps carry the fullest feature set today — push notifications,
+        Native apps carry the fullest feature set today - push notifications,
         camera tools, and some checkout paths. The website is ideal for
         discovery and reading long-form help; parity grows each quarter. See{" "}
         <Link href="/app">Mobile apps</Link> for download links.

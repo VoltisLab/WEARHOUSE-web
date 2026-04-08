@@ -2,7 +2,7 @@ import Image from "next/image";
 import { MARKETING_HERO_IMAGE } from "@/lib/marketing-constants";
 
 /**
- * In-article wide visual — reuses the marketplace hero asset with a different crop.
+ * In-article wide visual - reuses the marketplace hero asset with a different crop.
  */
 export function MarketingFigure({
   caption,

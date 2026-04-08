@@ -20,7 +20,7 @@ export default function InfoboardPage() {
     <MarketingDocShell
       eyebrow="Updates"
       title="Infoboard"
-      subtitle="Release notes, incident summaries, and reminders — the public heartbeat of the product."
+      subtitle="Release notes, incident summaries, and reminders - the public heartbeat of the product."
       updated="April 2026"
       lead={`The Infoboard is where ${BRAND_NAME} posts meaningful changes that affect trading: new web capabilities, policy clarifications, known outages, and seasonal reminders. It is not a substitute for legal terms or personalised account notices, but it is the best place to scan what changed recently.`}
       heroPosition="right"
@@ -45,7 +45,7 @@ export default function InfoboardPage() {
         <strong>Web marketplace depth.</strong> Footer destinations now ship
         with richer layouts: imagery, motion, and structured content for
         policies and guides. Browse and account flows continue on their own
-        release train — watch this board for parity milestones.
+        release train - watch this board for parity milestones.
       </p>
       <p>
         <strong>Help content refresh.</strong> Buying and selling guides were
@@ -56,19 +56,19 @@ export default function InfoboardPage() {
       <MarketingDetails title="How we classify posts">
         <ul>
           <li>
-            <strong>Feature</strong> — user-visible product change or experiment
+            <strong>Feature</strong> - user-visible product change or experiment
             graduation.
           </li>
           <li>
-            <strong>Policy</strong> — clarification or material rule change
+            <strong>Policy</strong> - clarification or material rule change
             (also reflected in legal docs when binding).
           </li>
           <li>
-            <strong>Incident</strong> — degraded performance or outage with
+            <strong>Incident</strong> - degraded performance or outage with
             customer impact.
           </li>
           <li>
-            <strong>Reminder</strong> — seasonal tips (e.g. holiday shipping
+            <strong>Reminder</strong> - seasonal tips (e.g. holiday shipping
             cutoffs).
           </li>
         </ul>
@@ -79,7 +79,7 @@ export default function InfoboardPage() {
         During active incidents we prioritise status accuracy over speed. Posts
         may start minimal and expand as engineering confirms scope. For
         account-specific credits or adjustments, members receive direct
-        messaging where applicable — not only a public note here.
+        messaging where applicable - not only a public note here.
       </p>
 
       <table>

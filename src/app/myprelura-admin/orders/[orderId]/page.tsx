@@ -42,10 +42,10 @@ export default function OrderDetailPage() {
             {o.publicId ? `· ${o.publicId}` : ""}
           </span>
         </p>
-        <Row k="Status" v={String(o.status ?? "—")} />
+        <Row k="Status" v={String(o.status ?? "-")} />
         <Row k="Placed" v={formatDateTime(String(o.createdAt ?? ""))} />
-        <Row k="Buyer" v={o.user?.username ?? "—"} />
-        <Row k="Seller" v={o.seller?.username ?? "—"} />
+        <Row k="Buyer" v={o.user?.username ?? "-"} />
+        <Row k="Seller" v={o.seller?.username ?? "-"} />
         <Row k="Items subtotal" v={formatMoney(o.itemsSubtotal)} />
         <Row k="Protection fee" v={formatMoney(o.buyerProtectionFee)} />
         <Row k="Shipping" v={formatMoney(o.shippingFee)} />
@@ -99,7 +99,7 @@ export default function OrderDetailPage() {
                           {li.productName ?? `Product #${li.productId ?? "?"}`}
                         </Link>
                         <p className="text-[12px] text-prel-tertiary-label">
-                          ID {li.productId ?? "—"}
+                          ID {li.productId ?? "-"}
                         </p>
                       </div>
                     </div>

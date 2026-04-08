@@ -101,7 +101,7 @@ function ProductsListPage() {
                   {String(p.name ?? `Product ${id}`)}
                 </p>
                 <p className="text-[13px] text-prel-secondary-label">
-                  @{(p.seller as { username?: string } | null)?.username ?? "—"}{" "}
+                  @{(p.seller as { username?: string } | null)?.username ?? "-"}{" "}
                   · {String(p.status ?? "")} · {formatMoney(p.price as number)}
                 </p>
               </div>

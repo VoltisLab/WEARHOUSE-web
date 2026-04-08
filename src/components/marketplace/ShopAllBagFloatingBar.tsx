@@ -5,7 +5,7 @@ import { ShoppingBag } from "lucide-react";
 import { useShopAllBag } from "@/contexts/ShopAllBagContext";
 
 /**
- * Swift `shopAllFloatingBar` — primary pill linking to full bag + checkout.
+ * Swift `shopAllFloatingBar` - primary pill linking to full bag + checkout.
  */
 export function ShopAllBagFloatingBar() {
   const { items, formattedTotal, hydrated } = useShopAllBag();

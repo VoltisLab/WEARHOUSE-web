@@ -20,7 +20,7 @@ export default function SafetyPage() {
     <MarketingDocShell
       eyebrow="Community"
       title="Trust and safety"
-      subtitle="Practical guidance for trading with confidence — and what we do when things go wrong."
+      subtitle="Practical guidance for trading with confidence - and what we do when things go wrong."
       lead={`${BRAND_NAME} only works when members treat one another with respect and follow the rules. We combine preventive design (checkout in-platform, reporting tools, fraud models) with responsive enforcement (strikes, suspensions, cooperation with authorities). This page translates policy into everyday behaviour.`}
       heroPosition="top"
       ctaRow={
@@ -35,7 +35,7 @@ export default function SafetyPage() {
       }
     >
       <MarketingFigure
-        caption="Most trades complete without drama — these practices keep you in that majority."
+        caption="Most trades complete without drama - these practices keep you in that majority."
         objectPosition="object-[center_30%]"
       />
 
@@ -111,7 +111,7 @@ export default function SafetyPage() {
       </p>
 
       <MarketingFigure
-        caption="Moderation scales with context — detailed reports get triaged faster than single-word flags."
+        caption="Moderation scales with context - detailed reports get triaged faster than single-word flags."
         objectPosition="object-right"
       />
 

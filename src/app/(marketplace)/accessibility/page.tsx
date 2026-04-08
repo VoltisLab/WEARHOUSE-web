@@ -20,7 +20,7 @@ export default function AccessibilityPage() {
     <MarketingDocShell
       eyebrow="Inclusion"
       title="Accessibility"
-      subtitle="We design for keyboard, screen readers, motion preferences, and zoom — not only for mouse and perfect vision."
+      subtitle="We design for keyboard, screen readers, motion preferences, and zoom - not only for mouse and perfect vision."
       updated="April 2026"
       lead={`${BRAND_NAME} is committed to WCAG-inspired practices on the web: perceivable content, operable UI, understandable copy, and robust implementation. We will not always be perfect on day one of a feature, but we treat regressions as bugs and prioritise fixes that unblock core commerce flows.`}
       heroPosition="bottom"
@@ -36,7 +36,7 @@ export default function AccessibilityPage() {
       }
     >
       <MarketingFigure
-        caption="Clear hierarchy, large tap targets, and readable type benefit everyone — not only assistive tech users."
+        caption="Clear hierarchy, large tap targets, and readable type benefit everyone - not only assistive tech users."
         objectPosition="object-top"
       />
 
@@ -102,7 +102,7 @@ export default function AccessibilityPage() {
 
       <blockquote>
         If something feels broken with your setup, tell us the browser, OS, and
-        assistive tool — we reproduce with the same stack whenever possible.
+        assistive tool - we reproduce with the same stack whenever possible.
       </blockquote>
 
       <h2>Third-party content</h2>
@@ -113,7 +113,7 @@ export default function AccessibilityPage() {
       </p>
 
       <MarketingFigure
-        caption="Feedback from members directly shapes our backlog — accessibility is not a one-time audit."
+        caption="Feedback from members directly shapes our backlog - accessibility is not a one-time audit."
         objectPosition="object-[center_45%]"
       />
 

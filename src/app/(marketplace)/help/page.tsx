@@ -49,7 +49,7 @@ export default function HelpCentrePage() {
     <MarketingHubShell
       eyebrow="Support"
       title="Help Centre"
-      subtitle="Deep guides for the moments that matter — before you list, when you pay, and after the parcel lands."
+      subtitle="Deep guides for the moments that matter - before you list, when you pay, and after the parcel lands."
       updated="April 2026"
       heroPosition="center"
     >
@@ -108,11 +108,11 @@ export default function HelpCentrePage() {
             Before you open a ticket
           </p>
           <div className="mt-6 space-y-1">
-            <MarketingDetails title="I paid but the seller never shipped — what now?">
+            <MarketingDetails title="I paid but the seller never shipped - what now?">
               <p>
                 Open the order from your purchases tab and start the official
                 help flow. Upload evidence (screenshots of chat, promised ship
-                dates). Avoid chargebacks before exhausting in-platform steps —
+                dates). Avoid chargebacks before exhausting in-platform steps -
                 they can complicate seller payouts and your own account standing.
               </p>
             </MarketingDetails>
@@ -125,8 +125,8 @@ export default function HelpCentrePage() {
             <MarketingDetails title="How do I prove an item is authentic?">
               <p>
                 Provide label photos, receipt if available, and macro shots of
-                hardware/stitching. Optional verification programmes — when live
-                in your region — appear at listing or checkout. Read{" "}
+                hardware/stitching. Optional verification programmes - when live
+                in your region - appear at listing or checkout. Read{" "}
                 <Link
                   href="/item-verification"
                   className="font-semibold text-[var(--prel-primary)] underline-offset-2 hover:underline"
@@ -163,7 +163,7 @@ export default function HelpCentrePage() {
           </div>
           <div className="absolute inset-0 flex flex-col justify-center px-6 py-6 md:px-12">
             <p className="max-w-lg text-[18px] font-bold leading-snug text-white md:text-[20px]">
-              Still stuck? Support can see live order state — describe what you
+              Still stuck? Support can see live order state - describe what you
               tapped, what you expected, and what happened instead.
             </p>
             <p className="mt-3 max-w-md text-[14px] leading-relaxed text-white/85">

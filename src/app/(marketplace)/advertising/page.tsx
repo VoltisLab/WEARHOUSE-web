@@ -20,7 +20,7 @@ export default function AdvertisingPage() {
     <MarketingDocShell
       eyebrow="Partnerships"
       title="Advertising"
-      subtitle="Reach people who are already in a shopping mindset — without compromising trust."
+      subtitle="Reach people who are already in a shopping mindset - without compromising trust."
       lead={`${BRAND_NAME} connects brands and agencies with audiences actively listing, browsing, and buying fashion. Inventory is pre-loved, but attention is fresh: campaigns here should respect community norms, disclose sponsorship clearly, and align with our safety and authenticity standards.`}
       heroPosition="left"
       ctaRow={
@@ -39,22 +39,22 @@ export default function AdvertisingPage() {
       </p>
 
       <MarketingFigure
-        caption="Campaigns work best when they feel native to discovery — editorial collections, not intrusive takeovers."
+        caption="Campaigns work best when they feel native to discovery - editorial collections, not intrusive takeovers."
         objectPosition="object-[center_35%]"
       />
 
       <h2>Why advertisers choose {BRAND_NAME}</h2>
       <ul>
         <li>
-          <strong>High-intent sessions</strong> — users compare prices, sizes,
+          <strong>High-intent sessions</strong> - users compare prices, sizes,
           and sellers; attention is closer to conversion than on passive feeds.
         </li>
         <li>
-          <strong>Values alignment</strong> — resale audiences skew toward
+          <strong>Values alignment</strong> - resale audiences skew toward
           sustainability and mindful consumption; creative can lean authentic.
         </li>
         <li>
-          <strong>Brand-safe surfaces</strong> — we enforce listing rules and
+          <strong>Brand-safe surfaces</strong> - we enforce listing rules and
           moderation; adjacency controls are available for sensitive categories.
         </li>
       </ul>
@@ -65,7 +65,7 @@ export default function AdvertisingPage() {
         include sponsored modules in browse/search, curated brand edits,
         seasonal tentpoles, and co-created content with our studio (subject to
         capacity). Everything is labelled per policy and measurable through
-        agreed KPIs — reach, clicks, attributed orders where attribution is
+        agreed KPIs - reach, clicks, attributed orders where attribution is
         technically supported.
       </p>
 
@@ -115,7 +115,7 @@ export default function AdvertisingPage() {
       </p>
 
       <MarketingFigure
-        caption="Partnership storytelling works when product truth matches ad promise — we decline misleading sustainability claims."
+        caption="Partnership storytelling works when product truth matches ad promise - we decline misleading sustainability claims."
         objectPosition="object-right"
       />
 
@@ -124,7 +124,7 @@ export default function AdvertisingPage() {
         NGOs, resale coalitions, and educational institutions sometimes
         collaborate on guides, events, or research. Those programmes may not
         involve paid media but still route through partnerships for legal
-        sign-off — use the same contact channel with &quot;programmatic
+        sign-off - use the same contact channel with &quot;programmatic
         partnership&quot; in the subject line.
       </p>
     </MarketingDocShell>

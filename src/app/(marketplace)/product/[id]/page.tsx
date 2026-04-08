@@ -89,7 +89,7 @@ export default function MarketplaceProductPage() {
     metaRows.push({ label: "Category", value: p.category.name.trim() });
   if (p.size?.name?.trim()) {
     const sz = sizeDisplayValue(p.size.name);
-    if (sz && sz !== "—") metaRows.push({ label: "Size", value: sz });
+    if (sz && sz !== "-") metaRows.push({ label: "Size", value: sz });
   }
   if (p.brand?.name?.trim()) {
     const bid = p.brand?.id;
@@ -104,11 +104,11 @@ export default function MarketplaceProductPage() {
   }
   if (p.condition) {
     const cond = formatProductCondition(String(p.condition));
-    if (cond && cond !== "—") metaRows.push({ label: "Condition", value: cond });
+    if (cond && cond !== "-") metaRows.push({ label: "Condition", value: cond });
   }
   if (p.style?.trim()) {
     const st = humanizeEnumLabel(p.style.trim());
-    if (st && st !== "—") metaRows.push({ label: "Style", value: st });
+    if (st && st !== "-") metaRows.push({ label: "Style", value: st });
   }
 
   return (

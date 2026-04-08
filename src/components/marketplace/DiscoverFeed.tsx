@@ -499,7 +499,7 @@ export function DiscoverFeed() {
             href="/search?browse=1&tryCart=1"
             imageUrl={DISCOVER_BANNER_TRY_CART_IMAGE_URL}
             title="Try Cart"
-            subtitle="Shop all listings — same catalogue as the app"
+            subtitle="Shop all listings - same catalogue as the app"
             badge="Beta"
             variant="wide"
             imageObjectClass="object-cover object-[center_30%]"

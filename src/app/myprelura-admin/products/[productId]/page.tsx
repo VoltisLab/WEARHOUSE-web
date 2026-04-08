@@ -51,7 +51,7 @@ function hashtagsFromField(raw: unknown): string[] {
 }
 
 function formatParcelSize(raw: string | null | undefined): string {
-  if (!raw?.trim()) return "—";
+  if (!raw?.trim()) return "-";
   return raw.replace(/_/g, " ");
 }
 
@@ -277,7 +277,7 @@ export default function StaffProductDetailPage() {
 
         <div className="mt-3 flex flex-wrap gap-3">
           {colors.length === 0 ? (
-            <span className="text-[15px] text-prel-secondary-label">—</span>
+            <span className="text-[15px] text-prel-secondary-label">-</span>
           ) : (
             colors.map((c) => (
               <span key={c} className="flex items-center gap-1.5 text-[15px] text-prel-label">
@@ -339,7 +339,7 @@ export default function StaffProductDetailPage() {
               <p className="whitespace-pre-wrap text-[15px] text-prel-label">{desc}</p>
             )
           ) : (
-            <p className="text-prel-secondary-label">—</p>
+            <p className="text-prel-secondary-label">-</p>
           )}
         </div>
         {allTags.length > 0 && (
@@ -356,18 +356,18 @@ export default function StaffProductDetailPage() {
 
       <div className="bg-prel-bg pb-4">
         {[
-          { label: "Category", value: categoryName ?? "—" },
+          { label: "Category", value: categoryName ?? "-" },
           {
             label: "Materials",
-            value: materials || "—",
+            value: materials || "-",
           },
           {
             label: "Style",
-            value: stylesList.length ? stylesList.join(", ") : "—",
+            value: stylesList.length ? stylesList.join(", ") : "-",
           },
           {
             label: "Size",
-            value: sizeName ? sizeDisplayValue(sizeName) : "—",
+            value: sizeName ? sizeDisplayValue(sizeName) : "-",
           },
           {
             label: "Condition",
@@ -387,7 +387,7 @@ export default function StaffProductDetailPage() {
             label: "Postage",
             value: formatParcelSize(p.parcelSize as string),
           },
-          { label: "Listing code", value: String(p.listingCode ?? "—") },
+          { label: "Listing code", value: String(p.listingCode ?? "-") },
           { label: "Product id", value: String(p.id) },
         ].map((row) => (
           <div key={row.label}>

@@ -156,8 +156,8 @@ export default function IssuesPage() {
         {o.status != null && <Labeled k="Status" v={String(o.status)} />}
         {o.createdAt && <Labeled k="Placed" v={formatDateTime(o.createdAt)} />}
         {o.updatedAt && <Labeled k="Updated" v={formatDateTime(o.updatedAt)} />}
-        <Labeled k="Buyer" v={o.user?.username ?? "—"} />
-        <Labeled k="Seller" v={o.seller?.username ?? "—"} />
+        <Labeled k="Buyer" v={o.user?.username ?? "-"} />
+        <Labeled k="Seller" v={o.seller?.username ?? "-"} />
         {o.itemsSubtotal != null && (
           <Labeled k="Items subtotal" v={formatMoney(o.itemsSubtotal)} />
         )}
@@ -218,7 +218,7 @@ export default function IssuesPage() {
             {o.payments.map((p) => (
               <Labeled
                 key={p.id}
-                k={p.paymentRef ?? "—"}
+                k={p.paymentRef ?? "-"}
                 v={`${p.paymentStatus ?? ""} · ${formatMoney(p.paymentAmount ?? null)}`}
               />
             ))}
@@ -264,8 +264,8 @@ export default function IssuesPage() {
                   {issue.publicId ?? `Issue #${issue.id}`}
                 </p>
                 <p className="text-[13px] text-prel-secondary-label">
-                  {issue.issueType ?? "—"} · Raised by{" "}
-                  {issue.raisedBy?.username ?? "—"}
+                  {issue.issueType ?? "-"} · Raised by{" "}
+                  {issue.raisedBy?.username ?? "-"}
                 </p>
               </div>
               {issue.order?.orderConversationId != null && (
@@ -281,7 +281,7 @@ export default function IssuesPage() {
             </button>
             {exp && (
               <div className="space-y-3 border-t border-prel-separator px-4 py-4">
-                <Labeled k="Status" v={issue.status ?? "—"} />
+                <Labeled k="Status" v={issue.status ?? "-"} />
                 {issue.resolution && (
                   <Labeled k="Resolution" v={issue.resolution} />
                 )}
@@ -300,7 +300,7 @@ export default function IssuesPage() {
                     Description
                   </p>
                   <p className="text-[15px] text-prel-label">
-                    {issue.description ?? "—"}
+                    {issue.description ?? "-"}
                   </p>
                   {issue.otherIssueDescription ? (
                     <p className="mt-2 text-[14px] text-prel-secondary-label">

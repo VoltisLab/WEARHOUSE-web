@@ -33,7 +33,7 @@ const GUEST_LATEST_STRIP = 12;
 const LATEST_PAGE_SIZE = 30;
 
 /**
- * Same order as Swift `HomeView.categories` — horizontal pills under search, no separate “Filter/Sort” row
+ * Same order as Swift `HomeView.categories` - horizontal pills under search, no separate “Filter/Sort” row
  * (home feed has no sort UI; `HomeViewModel` only passes parentCategory + search).
  */
 const CATEGORY_CHIPS: {
@@ -81,7 +81,7 @@ export default function MarketplaceHomePage() {
   });
   const meUsername =
     meData?.viewMe?.username?.trim().toLowerCase() ?? "";
-  /** Only after profile loads — avoids treating everyone as non-test during fetch. */
+  /** Only after profile loads - avoids treating everyone as non-test during fetch. */
   const isDefinitelyTestUser =
     !!userToken &&
     !meLoading &&
@@ -149,7 +149,7 @@ export default function MarketplaceHomePage() {
 
   /**
    * Signed-in: hide rail IDs from the grid so the top 30 only appear in “Latest arrivals”.
-   * Guest: one capped fetch — strip is first N rows, grid is the remainder (no duplicate cards).
+   * Guest: one capped fetch - strip is first N rows, grid is the remainder (no duplicate cards).
    */
   const gridRows = useMemo(() => {
     if (!isLoggedIn) {
@@ -234,7 +234,7 @@ export default function MarketplaceHomePage() {
         </div>
       </form>
 
-      {/* Swift `HomeView.categoryFiltersSection` — horizontal pills only; no home-level Sort sheet */}
+      {/* Swift `HomeView.categoryFiltersSection` - horizontal pills only; no home-level Sort sheet */}
       <section className="-mx-3 sm:-mx-5 md:-mx-6" aria-label="Category">
         <div className="overflow-x-auto py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           <div className="flex w-max items-stretch gap-2 px-3 sm:px-5 md:px-6">

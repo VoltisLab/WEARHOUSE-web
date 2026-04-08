@@ -25,7 +25,7 @@ export default function CookiePolicyPage() {
       title="Cookie Policy"
       subtitle="What we store in the browser, why, and how you can control it."
       updated="April 2026"
-      lead={`${BRAND_NAME} uses cookies, local storage, session tokens, and similar technologies to keep you signed in, protect against abuse, remember preferences, and — where you agree — measure campaigns. You can accept all cookies, decline non-essential categories, or customise choices below.`}
+      lead={`${BRAND_NAME} uses cookies, local storage, session tokens, and similar technologies to keep you signed in, protect against abuse, remember preferences, and - where you agree - measure campaigns. You can accept all cookies, decline non-essential categories, or customise choices below.`}
       heroPosition="bottom"
       ctaRow={
         <>
@@ -39,7 +39,7 @@ export default function CookiePolicyPage() {
       }
     >
       <MarketingFigure
-        caption="Essential cookies power sessions and CSRF protection — they are not optional for a secure account."
+        caption="Essential cookies power sessions and CSRF protection - they are not optional for a secure account."
         objectPosition="object-center"
       />
 
@@ -47,28 +47,28 @@ export default function CookiePolicyPage() {
       <p>
         Cookies are small text files placed on your device. Pixels and SDK
         counterparts exist in apps. Together they let us recognise returning
-        visitors, attribute conversions, and debug performance — within the
+        visitors, attribute conversions, and debug performance - within the
         bounds of consent law in your region.
       </p>
 
       <h2>Categories we use</h2>
       <ul>
         <li>
-          <strong>Strictly necessary</strong> — authentication, load balancing,
+          <strong>Strictly necessary</strong> - authentication, load balancing,
           security hardening, fraud prevention. No consent banner required in
           many jurisdictions because they are essential to deliver the
           service you asked for.
         </li>
         <li>
-          <strong>Functional</strong> — language, accessibility settings, UI
+          <strong>Functional</strong> - language, accessibility settings, UI
           experiments you opt into. Can often be first-party only.
         </li>
         <li>
-          <strong>Analytics</strong> — aggregated usage to prioritise roadmap
+          <strong>Analytics</strong> - aggregated usage to prioritise roadmap
           work. We prefer privacy-preserving configurations and data minimisation.
         </li>
         <li>
-          <strong>Marketing / attribution</strong> — measure ad performance,
+          <strong>Marketing / attribution</strong> - measure ad performance,
           build audiences where permitted. Requires consent in GDPR/EEA-like
           regimes before non-essential tags fire.
         </li>

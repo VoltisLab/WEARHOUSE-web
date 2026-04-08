@@ -150,7 +150,7 @@ export function FavouritesPageContent() {
           <h1 className="text-[22px] font-bold text-prel-label">Favourites</h1>
           <p className="text-[15px] leading-relaxed text-prel-secondary-label">
             Sign in to see items you&apos;ve liked. Your favourites sync with your{" "}
-            {BRAND_NAME} account — same as the app.
+            {BRAND_NAME} account - same as the app.
           </p>
           <Link
             href={loginHref}

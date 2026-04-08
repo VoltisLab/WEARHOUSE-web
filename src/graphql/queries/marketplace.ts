@@ -11,7 +11,7 @@ export const MARKETPLACE_CATEGORIES = gql`
   }
 `;
 
-/** Sizes for sell flow — same as Swift `ProductService.fetchSizes` / Flutter `sizes(path)`. */
+/** Sizes for sell flow - same as Swift `ProductService.fetchSizes` / Flutter `sizes(path)`. */
 export const MARKETPLACE_SIZES = gql`
   query MarketplaceSizes($path: String!) {
     sizes(path: $path) {
@@ -65,7 +65,7 @@ export const MARKETPLACE_FEED = gql`
   }
 `;
 
-/** Logged-in only — same catalogue fields as `MARKETPLACE_FEED`. */
+/** Logged-in only - same catalogue fields as `MARKETPLACE_FEED`. */
 export const RECENTLY_VIEWED_PRODUCTS = gql`
   query RecentlyViewedProducts {
     recentlyViewedProducts {

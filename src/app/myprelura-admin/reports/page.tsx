@@ -109,7 +109,7 @@ export default function ReportsPage() {
                 </span>
               </div>
               <p className="mt-2 font-semibold text-prel-label">
-                {String(r.reason ?? "—")}
+                {String(r.reason ?? "-")}
               </p>
               {r.context != null && String(r.context).length > 0 ? (
                 <p className="mt-1 line-clamp-3 text-[13px] text-prel-secondary-label">

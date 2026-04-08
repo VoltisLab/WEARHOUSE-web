@@ -3,7 +3,7 @@ import { LayoutGrid, Sparkles } from "lucide-react";
 import { staffPath } from "@/lib/staff-nav";
 
 /**
- * Page-level hero for staff banner management — primary gradient, glass panel, metric chips.
+ * Page-level hero for staff banner management - primary gradient, glass panel, metric chips.
  */
 export function StaffBannersHero({
   total,

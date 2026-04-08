@@ -25,7 +25,7 @@ export function MarketplaceSiteFooter() {
             className="text-[22px] leading-tight tracking-tight text-white"
           />
           <p className="mt-2 max-w-md text-[14px] leading-relaxed text-zinc-400">
-            Second-hand fashion marketplace — buy and sell with confidence on{" "}
+            Second-hand fashion marketplace - buy and sell with confidence on{" "}
             {BRAND_NAME}.
           </p>
         </div>

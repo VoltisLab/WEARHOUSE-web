@@ -22,7 +22,7 @@ export function sortListingRowsStableRandom<T extends { id: number }>(
   );
 }
 
-/** Usernames (lowercase) that should see API order — useful for QA. */
+/** Usernames (lowercase) that should see API order - useful for QA. */
 export const MARKETPLACE_TEST_USERNAMES: string[] = (() => {
   const multi = process.env.NEXT_PUBLIC_MARKETPLACE_TEST_USERNAMES?.trim();
   if (multi) {

@@ -9,7 +9,7 @@ type Props = {
   sizes?: string;
 };
 
-/** Remote CDN URLs — use native img (no Next image domain allowlist maintenance). */
+/** Remote CDN URLs - use native img (no Next image domain allowlist maintenance). */
 export function SafeImage({ src, alt, className = "", sizes: _s }: Props) {
   const [err, setErr] = useState(false);
   if (!src || err) {

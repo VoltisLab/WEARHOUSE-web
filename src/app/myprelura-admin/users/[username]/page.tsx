@@ -217,7 +217,7 @@ export default function StaffUserProfilePage() {
         <div className="flex justify-between gap-2">
           <span className="text-prel-secondary-label">Email</span>
           <span className="max-w-[60%] truncate text-right text-prel-label">
-            {u.email ?? "—"}
+            {u.email ?? "-"}
           </span>
         </div>
         <div className="h-px bg-prel-separator" />

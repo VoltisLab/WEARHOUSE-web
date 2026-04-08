@@ -15,7 +15,7 @@ import { SafeImage } from "@/components/ui/SafeImage";
 import { VIEW_ME } from "@/graphql/queries/admin";
 import { USER_MULTIBUY_DISCOUNTS } from "@/graphql/queries/marketplace";
 
-/** Swift `DeliveryType.shippingFee` — used when sellers have no custom postage on the client. */
+/** Swift `DeliveryType.shippingFee` - used when sellers have no custom postage on the client. */
 const STANDARD_HOME_FEE = 2.29;
 const STANDARD_COLLECTION_FEE = 2.99;
 
@@ -526,7 +526,7 @@ export function ShopAllBagCheckoutForm({ items }: Props) {
           <p className="text-[13px] text-prel-secondary-label">
             {buyerProtectionEnabled
               ? formatMoney(buyerProtectionFee)
-              : "Off — same default as app until you enable"}
+              : "Off - same default as app until you enable"}
           </p>
         </div>
       </label>

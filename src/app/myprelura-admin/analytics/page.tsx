@@ -15,7 +15,7 @@ export default function AnalyticsPage() {
   const health = a ? marketplaceHealthScore(a) : null;
 
   function delta(pct: number | null | undefined) {
-    if (pct == null) return "—";
+    if (pct == null) return "-";
     const sign = pct >= 0 ? "+" : "";
     return `${sign}${pct.toFixed(1)}% vs prior day`;
   }

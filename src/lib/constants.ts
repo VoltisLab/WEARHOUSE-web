@@ -42,7 +42,7 @@ export const DISCOVER_BANNER_LOOKBOOKS_IMAGE_URL =
   MARKETPLACE_HOME_HERO_IMAGE_URL;
 
 /**
- * Hero “Selling” tab 3-up collage — same frame layout as buy; override per slot with
+ * Hero “Selling” tab 3-up collage - same frame layout as buy; override per slot with
  * `NEXT_PUBLIC_HOME_HERO_SELL_COLLAGE_LEFT_URL`, `_CENTER_URL`, `_RIGHT_URL`.
  */
 export const MARKETPLACE_HOME_HERO_SELL_COLLAGE_LEFT_URL =
@@ -85,7 +85,7 @@ export function publicItemUrl(listingCode: string | null | undefined, productId:
   return `${PUBLIC_WEB_BASE}/item/${encodeURIComponent(slug)}`;
 }
 
-/** Legacy numeric path — prefer publicItemUrl when listing code exists. */
+/** Legacy numeric path - prefer publicItemUrl when listing code exists. */
 export function publicProductUrl(productId: number) {
   return `${PUBLIC_WEB_BASE}/product/${productId}`;
 }

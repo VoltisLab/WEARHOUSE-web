@@ -152,7 +152,7 @@ export default function AccountOrderDetailPage() {
               @{buyerU}
             </Link>
           ) : (
-            "—"
+            "-"
           )}
         </p>
         <p className="mt-1 text-[15px] text-prel-label">
@@ -165,7 +165,7 @@ export default function AccountOrderDetailPage() {
               @{sellerU}
             </Link>
           ) : (
-            "—"
+            "-"
           )}
         </p>
         {counterparty && counterparty !== meUsername ? (

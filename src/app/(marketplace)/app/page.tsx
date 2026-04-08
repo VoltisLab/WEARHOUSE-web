@@ -20,7 +20,7 @@ export default function MobileAppsPage() {
       eyebrow="Download"
       title="Mobile apps"
       subtitle="List faster, chat instantly, and get the checkout experience we ship updates to first."
-      lead={`The native ${BRAND_NAME} apps for iOS and Android are where camera capture, push notifications, and full transactional flows are most polished. The website complements them for discovery and reading help — and we are steadily narrowing the gap.`}
+      lead={`The native ${BRAND_NAME} apps for iOS and Android are where camera capture, push notifications, and full transactional flows are most polished. The website complements them for discovery and reading help - and we are steadily narrowing the gap.`}
       heroPosition="center"
       ctaRow={
         <>
@@ -34,7 +34,7 @@ export default function MobileAppsPage() {
       }
     >
       <MarketingFigure
-        caption="Apps receive performance and security patches continuously — enable auto-update."
+        caption="Apps receive performance and security patches continuously - enable auto-update."
         objectPosition="object-[center_40%]"
       />
 
@@ -44,21 +44,21 @@ export default function MobileAppsPage() {
         tapping your organisation&apos;s official link. Sign in with the same
         credentials as the web; iCloud Keychain and Face ID / Touch ID speed
         return visits. Enable notifications for offers, messages, and shipping
-        events you care about — granular toggles live in system settings.
+        events you care about - granular toggles live in system settings.
       </p>
 
       <MarketingDetails title="iOS permissions we may request">
         <ul>
           <li>
-            <strong>Camera &amp; photos</strong> — to list items and upload
+            <strong>Camera &amp; photos</strong> - to list items and upload
             profile imagery.
           </li>
           <li>
-            <strong>Microphone</strong> — only if a feature explicitly uses
+            <strong>Microphone</strong> - only if a feature explicitly uses
             audio; otherwise off.
           </li>
           <li>
-            <strong>Location</strong> — optional for local discovery or
+            <strong>Location</strong> - optional for local discovery or
             shipping estimates; never required to browse.
           </li>
         </ul>
@@ -68,7 +68,7 @@ export default function MobileAppsPage() {
       <p>
         Download from Google Play. We publish separate APK tracks for staged
         rollouts; beta programmes (if offered) are opt-in. Battery optimisations
-        on some OEMs can delay notifications — if messages feel slow, disable
+        on some OEMs can delay notifications - if messages feel slow, disable
         aggressive background restrictions for {BRAND_NAME} while we work on
         vendor-specific guidance.
       </p>
@@ -104,12 +104,12 @@ export default function MobileAppsPage() {
       <p>
         Use this site for long-form policies, Infoboard updates, and relaxed
         browsing sessions. Some account actions may deep-link into the app when
-        a flow is not yet ported — that is intentional while we maintain quality
+        a flow is not yet ported - that is intentional while we maintain quality
         bars.
       </p>
 
       <MarketingFigure
-        caption="One account across surfaces — your messages and watchlist follow you when you sign in."
+        caption="One account across surfaces - your messages and watchlist follow you when you sign in."
         objectPosition="object-left"
       />
 

@@ -1,5 +1,5 @@
 /**
- * Mirrors MyPrelura `SellCategory.sizeApiPath` — backend `sizes(path)` uses the first two
+ * Mirrors MyPrelura `SellCategory.sizeApiPath` - backend `sizes(path)` uses the first two
  * path segments; Boys/Girls are normalized to Kids like the Swift app.
  */
 export function computeSizeApiPath(

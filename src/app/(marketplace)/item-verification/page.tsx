@@ -20,8 +20,8 @@ export default function ItemVerificationPage() {
     <MarketingDocShell
       eyebrow="Authenticity"
       title="Item verification"
-      subtitle="How we think about fakes, high-value pieces, and expert review — without over-promising certainty."
-      lead={`${BRAND_NAME} prohibits counterfeit goods. Sellers warrant they list genuine items. Where we operate optional authentication or verification programmes, eligibility, fees, SLAs, and liability caps are disclosed in-product — because authentication is probabilistic and context-dependent. This page sets expectations for everyone else trading without a formal programme.`}
+      subtitle="How we think about fakes, high-value pieces, and expert review - without over-promising certainty."
+      lead={`${BRAND_NAME} prohibits counterfeit goods. Sellers warrant they list genuine items. Where we operate optional authentication or verification programmes, eligibility, fees, SLAs, and liability caps are disclosed in-product - because authentication is probabilistic and context-dependent. This page sets expectations for everyone else trading without a formal programme.`}
       heroPosition="top"
       ctaRow={
         <>
@@ -35,7 +35,7 @@ export default function ItemVerificationPage() {
       }
     >
       <MarketingFigure
-        caption="Legitimate listings show serial numbers, stitching, and hardware — when in doubt, ask the seller for additional angles before purchase."
+        caption="Legitimate listings show serial numbers, stitching, and hardware - when in doubt, ask the seller for additional angles before purchase."
         objectPosition="object-[center_30%]"
       />
 
@@ -44,7 +44,7 @@ export default function ItemVerificationPage() {
         Listing an item implies you have the right to sell it and that it is
         not a replica. Misrepresenting brand, material, or provenance violates
         our rules and may trigger refunds, strikes, or permanent suspension.
-        Buyers should still exercise judgment — especially for luxury
+        Buyers should still exercise judgment - especially for luxury
         categories where replicas are sophisticated.
       </p>
 
@@ -105,7 +105,7 @@ export default function ItemVerificationPage() {
       </p>
 
       <MarketingFigure
-        caption="Community reports train our models and reviewer queues — your specificity speeds resolution."
+        caption="Community reports train our models and reviewer queues - your specificity speeds resolution."
         objectPosition="object-right"
       />
 

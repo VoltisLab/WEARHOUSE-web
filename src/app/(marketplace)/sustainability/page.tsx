@@ -21,7 +21,7 @@ export default function SustainabilityPage() {
       eyebrow="Impact"
       title="Sustainability"
       subtitle="Keeping clothes in use is the most direct climate lever a wardrobe can pull."
-      lead={`Every completed sale on ${BRAND_NAME} is a garment that continues its life with a new owner — displacing demand for virgin production, reducing pressure on water and chemistry-intensive manufacturing, and cutting the likelihood of incineration or landfill. We are a technology company; our environmental story is inseparable from what millions of small decisions on the platform add up to.`}
+      lead={`Every completed sale on ${BRAND_NAME} is a garment that continues its life with a new owner - displacing demand for virgin production, reducing pressure on water and chemistry-intensive manufacturing, and cutting the likelihood of incineration or landfill. We are a technology company; our environmental story is inseparable from what millions of small decisions on the platform add up to.`}
       heroPosition="top"
       ctaRow={
         <>
@@ -35,7 +35,7 @@ export default function SustainabilityPage() {
       }
     >
       <MarketingFigure
-        caption="Second-hand does not mean second-best — quality pieces age with character."
+        caption="Second-hand does not mean second-best - quality pieces age with character."
         objectPosition="object-[center_40%]"
       />
 
@@ -45,7 +45,7 @@ export default function SustainabilityPage() {
         reaches a closet: fibre production, dyeing, finishing, and assembly.
         Extending wear by even a few months across many items compounds into
         meaningful avoided emissions. Marketplaces like ours do not erase
-        shipping or packaging impact — we work to right-size both — but the
+        shipping or packaging impact - we work to right-size both - but the
         dominant win comes from substituting reused inventory for new.
       </p>
 
@@ -57,15 +57,15 @@ export default function SustainabilityPage() {
       <h2>What we optimise for</h2>
       <ul>
         <li>
-          <strong>Longer wear cycles</strong> — accurate condition reporting so
+          <strong>Longer wear cycles</strong> - accurate condition reporting so
           buyers know what they are getting and keep items longer.
         </li>
         <li>
-          <strong>Lower return waste</strong> — better photos and sizing context
+          <strong>Lower return waste</strong> - better photos and sizing context
           to reduce back-and-forth shipping.
         </li>
         <li>
-          <strong>Responsible operations</strong> — efficient infrastructure,
+          <strong>Responsible operations</strong> - efficient infrastructure,
           mindful defaults in product, and transparent reporting as we mature.
         </li>
       </ul>
@@ -84,7 +84,7 @@ export default function SustainabilityPage() {
       <p>
         Care labels, fabric composition, and honest flaw photography help buyers
         trust pre-loved stock. We surface tips in the listing flow and in{" "}
-        <Link href="/help/selling">Selling</Link> guides — not as nagging, but
+        <Link href="/help/selling">Selling</Link> guides - not as nagging, but
         as shortcuts to faster sales and happier recipients.
       </p>
 
