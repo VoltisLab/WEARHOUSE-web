@@ -32,6 +32,11 @@ export const VIEW_ME = gql`
         noOfReviews
         rating
       }
+      shippingAddress
+      phone {
+        countryCode
+        number
+      }
     }
   }
 `;

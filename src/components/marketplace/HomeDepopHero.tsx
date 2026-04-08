@@ -19,7 +19,7 @@ const HERO_ROTATE_MS = 10_000;
 const collageShadow =
   "shadow-[0_10px_40px_rgba(0,0,0,0.09),0_2px_8px_rgba(0,0,0,0.04)]";
 
-const frameBase = `rounded-xl object-cover ${collageShadow} ring-1 ring-black/[0.06]`;
+const frameBase = `rounded-xl object-cover ${collageShadow} ring-2 ring-[color-mix(in_srgb,var(--prel-primary)_22%,transparent)]`;
 
 /**
  * Shared 3-card layout for buy + sell: wide back plane, left + right forward cards
@@ -95,22 +95,32 @@ export function HomeDepopHero() {
 
   return (
     <section className="home-depop-hero-bg relative isolate w-full overflow-hidden">
-      <div className="mx-auto grid max-w-7xl gap-12 px-5 py-12 sm:gap-14 sm:px-8 sm:py-14 md:gap-16 md:px-10 md:py-16 lg:grid-cols-2 lg:items-center lg:gap-20 lg:py-[4.5rem]">
+      <div
+        className="pointer-events-none absolute -right-20 -top-28 h-[min(70vw,24rem)] w-[min(70vw,24rem)] rounded-full bg-[var(--prel-primary)] opacity-[0.2] blur-[64px] dark:opacity-[0.32]"
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute -bottom-36 -left-24 h-80 w-80 rounded-full bg-[var(--prel-primary)] opacity-[0.14] blur-[56px] dark:opacity-[0.26]"
+        aria-hidden
+      />
+      <div className="relative mx-auto grid max-w-7xl gap-12 px-5 py-12 sm:gap-14 sm:px-8 sm:py-14 md:gap-16 md:px-10 md:py-16 lg:grid-cols-2 lg:items-center lg:gap-20 lg:py-[4.5rem]">
         <div className="min-w-0">
           <div className="grid [grid-template-areas:'stack']">
             <div className={panelClass(mode === "buy")}>
               <h1 className="text-[2.25rem] font-black leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
                 <span className="block">Buy preloved.</span>
-                <span className="mt-1 block sm:mt-1.5">Wear it your way</span>
+                <span className="mt-1 block text-[var(--prel-primary)] sm:mt-1.5">
+                  Wear it your way
+                </span>
               </h1>
-              <p className="mt-5 max-w-md text-[16px] font-normal leading-relaxed text-neutral-700 sm:text-[17px] md:text-lg">
+              <p className="mt-5 max-w-md text-[16px] font-normal leading-relaxed text-neutral-800 sm:text-[17px] md:text-lg">
                 Together, we&apos;re keeping fashion circular.
               </p>
 
               <div className="mt-8 sm:mt-10">
                 <Link
                   href="/search"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-9 text-[15px] font-bold text-white transition hover:brightness-110 sm:min-h-[52px] sm:px-10 sm:text-[16px]"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-9 text-[15px] font-bold text-white shadow-md transition hover:brightness-110 sm:min-h-[52px] sm:px-10 sm:text-[16px]"
                 >
                   Discover
                 </Link>
@@ -120,18 +130,18 @@ export function HomeDepopHero() {
             <div className={panelClass(mode === "sell")}>
               <h1 className="text-[2.25rem] font-black leading-[1.05] tracking-[-0.03em] text-neutral-950 sm:text-5xl md:text-[3.25rem] lg:text-[3.5rem]">
                 <span className="block">Sell smarter.</span>
-                <span className="mt-1 block text-neutral-800 sm:mt-1.5">
+                <span className="mt-1 block text-[var(--prel-primary)] sm:mt-1.5">
                   On {BRAND_NAME}.
                 </span>
               </h1>
-              <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-neutral-700 sm:text-[17px]">
+              <p className="mt-5 max-w-lg text-[16px] leading-relaxed text-neutral-800 sm:text-[17px]">
                 List from the web, chat with buyers, and ship when you sell —
                 same flow as the app.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
                 <Link
                   href="/sell"
-                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-8 text-[15px] font-bold text-white shadow-sm transition hover:brightness-110 sm:min-h-[52px] sm:px-10 sm:text-[16px]"
+                  className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-8 text-[15px] font-bold text-white shadow-md transition hover:brightness-110 sm:min-h-[52px] sm:px-10 sm:text-[16px]"
                 >
                   Start selling
                 </Link>
@@ -163,8 +173,8 @@ export function HomeDepopHero() {
                   className={[
                     "h-2 w-2 rounded-full transition-colors duration-300",
                     selected
-                      ? "bg-neutral-900"
-                      : "bg-neutral-300 hover:bg-neutral-400",
+                      ? "bg-[var(--prel-primary)]"
+                      : "bg-neutral-300 hover:bg-neutral-400 dark:bg-neutral-600 dark:hover:bg-neutral-500",
                   ].join(" ")}
                 />
               );

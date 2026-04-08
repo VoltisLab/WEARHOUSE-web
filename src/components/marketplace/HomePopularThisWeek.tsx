@@ -146,7 +146,7 @@ export function HomePopularThisWeek() {
                   priority={index === 0}
                 />
               </div>
-              <p className="mt-3 text-[14px] font-bold leading-snug text-black sm:text-[15px]">
+              <p className="mt-3 text-[14px] font-medium leading-snug text-black sm:text-[15px]">
                 {item.title}
               </p>
               <p className="mt-1 text-[13px] font-normal text-neutral-500">

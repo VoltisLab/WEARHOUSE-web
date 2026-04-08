@@ -48,6 +48,7 @@ export const MARKETPLACE_FEED = gql`
       userLiked
       isFeatured
       seller {
+        id
         username
         displayName
         thumbnailUrl
@@ -80,6 +81,7 @@ export const RECENTLY_VIEWED_PRODUCTS = gql`
       userLiked
       isFeatured
       seller {
+        id
         username
         displayName
         thumbnailUrl
@@ -113,6 +115,7 @@ export const LIKED_PRODUCTS = gql`
         userLiked
         isFeatured
         seller {
+          id
           username
           displayName
           thumbnailUrl

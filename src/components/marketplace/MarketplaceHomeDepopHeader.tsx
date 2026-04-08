@@ -281,7 +281,7 @@ export function MarketplaceHomeDepopHeader() {
                     <div key={item.label} className="min-w-0">
                       <Link
                         href={item.href}
-                        className={`text-[13px] font-bold uppercase tracking-wide sm:text-[12px] ${
+                        className={`text-[13px] font-medium uppercase tracking-wide sm:text-[12px] ${
                           item.highlight
                             ? "text-[var(--prel-primary)]"
                             : "text-neutral-900"

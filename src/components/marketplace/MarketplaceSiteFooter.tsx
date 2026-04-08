@@ -18,7 +18,7 @@ export function MarketplaceSiteFooter() {
 
   return (
     <footer className="mt-auto bg-zinc-900 text-zinc-300">
-      <div className="mx-auto max-w-7xl px-4 py-12 pb-[calc(3rem+5.25rem+env(safe-area-inset-bottom))] md:px-8 md:pb-14 lg:px-10 lg:pb-12">
+      <div className="mx-auto max-w-7xl px-4 py-12 pb-[calc(3rem+5.25rem+env(safe-area-inset-bottom)+var(--prel-vv-bottom-inset,0px))] md:px-8 md:pb-14 lg:px-10 lg:pb-12">
         <div className="mb-10 border-b border-zinc-700 pb-10">
           <BrandWordmark
             as="div"

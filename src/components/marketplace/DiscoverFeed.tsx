@@ -496,7 +496,7 @@ export function DiscoverFeed() {
           />
 
           <DiscoverBannerCard
-            href="/search?browse=1"
+            href="/search?browse=1&tryCart=1"
             imageUrl={DISCOVER_BANNER_TRY_CART_IMAGE_URL}
             title="Try Cart"
             subtitle="Shop all listings — same catalogue as the app"
@@ -582,27 +582,27 @@ export function DiscoverFeed() {
                   Buy from trusted and popular sellers
                 </p>
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-1 pl-1 pr-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <div className="flex gap-4 overflow-x-auto pb-1 pl-1 pr-1 [-ms-overflow-style:none] [scrollbar-width:none] sm:gap-5 [&::-webkit-scrollbar]:hidden">
                 {sectionModel.topShops.map((s) => (
                   <Link
                     key={s.username}
                     href={`/profile/${encodeURIComponent(s.username)}`}
-                    className="flex w-[100px] shrink-0 flex-col items-center gap-1.5 [-webkit-tap-highlight-color:transparent]"
+                    className="group flex w-[42vw] max-w-[200px] shrink-0 flex-col [-webkit-tap-highlight-color:transparent] sm:w-44 sm:max-w-none"
                   >
-                    <div className="relative h-[100px] w-[100px] overflow-hidden rounded-lg bg-[var(--prel-primary)] ring-1 ring-black/10">
+                    <div className="relative aspect-square w-full overflow-hidden rounded-lg bg-neutral-100 shadow-sm ring-1 ring-black/[0.06] transition group-hover:shadow-md">
                       {s.thumb ? (
                         <SafeImage
                           src={s.thumb}
                           alt=""
-                          className="h-full w-full object-cover"
+                          className="h-full w-full object-cover transition duration-300 group-hover:scale-[1.04]"
                         />
                       ) : (
-                        <span className="flex h-full w-full items-center justify-center text-[28px] font-bold text-white">
+                        <span className="flex h-full w-full items-center justify-center bg-[var(--prel-primary)] text-[2.25rem] font-bold text-white sm:text-[2.5rem]">
                           {s.username.slice(0, 1).toUpperCase()}
                         </span>
                       )}
                     </div>
-                    <span className="line-clamp-1 w-full text-center text-[12px] text-prel-label">
+                    <span className="mt-3 line-clamp-1 w-full text-center text-[14px] font-medium leading-snug text-neutral-900 sm:text-[15px]">
                       {s.username}
                     </span>
                   </Link>

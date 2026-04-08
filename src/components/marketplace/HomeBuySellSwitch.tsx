@@ -43,7 +43,7 @@ export function HomeBuySellSwitch({
           role="tab"
           aria-selected={mode === "buy"}
           onClick={() => onModeChange("buy")}
-          className={`relative min-w-0 flex-1 rounded-full py-2.5 text-[15px] font-bold transition [-webkit-tap-highlight-color:transparent] sm:py-3 ${
+          className={`relative min-w-0 flex-1 rounded-full py-2.5 text-[15px] font-medium transition [-webkit-tap-highlight-color:transparent] sm:py-3 ${
             mode === "buy"
               ? isDark
                 ? "bg-white text-black shadow-lg"
@@ -64,7 +64,7 @@ export function HomeBuySellSwitch({
           role="tab"
           aria-selected={mode === "sell"}
           onClick={() => onModeChange("sell")}
-          className={`relative min-w-0 flex-1 rounded-full py-2.5 text-[15px] font-bold transition [-webkit-tap-highlight-color:transparent] sm:py-3 ${
+          className={`relative min-w-0 flex-1 rounded-full py-2.5 text-[15px] font-medium transition [-webkit-tap-highlight-color:transparent] sm:py-3 ${
             mode === "sell"
               ? isDark
                 ? "bg-white text-black shadow-lg"

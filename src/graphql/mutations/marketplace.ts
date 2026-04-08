@@ -53,13 +53,15 @@ export const CREATE_ORDER = gql`
     $productIds: [Int]
     $shippingFee: Float
     $buyerProtection: Boolean
-    $deliveryDetails: DeliveryDetailsInput!
+    $sellerShippingFees: [SellerShippingFeeInput!]
+    $deliveryDetails: DeliveryDetailsInputType!
   ) {
     createOrder(
       productId: $productId
       productIds: $productIds
       shippingFee: $shippingFee
       buyerProtection: $buyerProtection
+      sellerShippingFees: $sellerShippingFees
       deliveryDetails: $deliveryDetails
     ) {
       success

@@ -58,7 +58,7 @@ export function HomeDepopCategoryRail() {
             <div
               className={`flex h-[7.5rem] w-[6.25rem] flex-col justify-end overflow-hidden rounded-2xl p-3 shadow-sm ring-1 ring-black/[0.08] transition group-hover:ring-black/14 group-active:scale-[0.98] sm:h-[8.5rem] sm:w-[7rem] ${surface}`}
             >
-              <span className="text-[14px] font-bold leading-tight text-neutral-900 sm:text-[15px]">
+              <span className="text-[14px] font-medium leading-tight text-neutral-900 sm:text-[15px]">
                 {label}
               </span>
             </div>

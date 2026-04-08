@@ -16,7 +16,7 @@ export function CookieConsentBanner() {
 
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px))] z-[55] px-3 sm:px-4 lg:bottom-6 lg:px-4"
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px)+var(--prel-vv-bottom-inset,0px))] z-[55] px-3 sm:px-4 lg:bottom-6 lg:px-4"
       role="dialog"
       aria-modal="false"
       aria-labelledby="cookie-banner-title"

@@ -16,6 +16,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+  /** Chrome/Android: resize layout when URL bar / toolbars change (reduces fixed-bottom gaps). */
+  interactiveWidget: "resizes-content",
 };
 
 export default function RootLayout({

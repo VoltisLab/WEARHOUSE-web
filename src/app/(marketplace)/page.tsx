@@ -2,9 +2,10 @@
 
 import { NetworkStatus, useQuery } from "@apollo/client";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { MARKETPLACE_FEED } from "@/graphql/queries/marketplace";
+import { VIEW_ME } from "@/graphql/queries/admin";
 import {
   MarketplaceProductCard,
   type MarketplaceProductRow,
@@ -13,13 +14,17 @@ import { HomeDepopHero } from "@/components/marketplace/HomeDepopHero";
 import { HomePopularThisWeek } from "@/components/marketplace/HomePopularThisWeek";
 import { HomePromoCarousel } from "@/components/marketplace/HomePromoCarousel";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  MARKETPLACE_TEST_USERNAMES,
+  sortListingRowsStableRandom,
+} from "@/lib/listing-shuffle";
 import { useClientMounted } from "@/lib/use-client-mounted";
-
-/** Matches Swift `HomeViewModel.pageSize` (20). */
-const HOME_PAGE_SIZE = 20;
 
 /** Logged-out home: one request, max this many products (browse more after sign-in). */
 const GUEST_HOME_CAP = 30;
+
+/** Max product cards on the home feed before showing “Shop all” (`/shop`). */
+const HOME_SHOP_ALL_CAP = GUEST_HOME_CAP;
 
 /** Logged-out: how many of the cap appear in the horizontal “Latest” strip; rest go in the grid below. */
 const GUEST_LATEST_STRIP = 12;
@@ -27,24 +32,23 @@ const GUEST_LATEST_STRIP = 12;
 /** Latest strip (signed-in): first page of newest only. */
 const LATEST_PAGE_SIZE = 30;
 
-/** Category chips → GraphQL `ProductFiltersInput.parentCategory` (web search uses Girls/Boys, not combined Kids). */
+/**
+ * Same order as Swift `HomeView.categories` — horizontal pills under search, no separate “Filter/Sort” row
+ * (home feed has no sort UI; `HomeViewModel` only passes parentCategory + search).
+ */
 const CATEGORY_CHIPS: {
   label: string;
-  value: "All" | "Women" | "Men" | "Girls" | "Boys" | "Toddlers";
+  value: "All" | "Women" | "Men" | "Boys" | "Girls" | "Toddlers";
 }[] = [
   { label: "All", value: "All" },
   { label: "Women", value: "Women" },
   { label: "Men", value: "Men" },
-  { label: "Girls", value: "Girls" },
   { label: "Boys", value: "Boys" },
+  { label: "Girls", value: "Girls" },
   { label: "Toddlers", value: "Toddlers" },
 ];
 
-const SORT_OPTIONS: { label: string; value: "NEWEST" | "PRICE_ASC" | "PRICE_DESC" }[] = [
-  { label: "Newest", value: "NEWEST" },
-  { label: "Price ↑", value: "PRICE_ASC" },
-  { label: "Price ↓", value: "PRICE_DESC" },
-];
+const HOME_FEED_SORT = "NEWEST" as const;
 
 function parentCategoryFilter(
   category: (typeof CATEGORY_CHIPS)[number]["value"],
@@ -71,14 +75,24 @@ export default function MarketplaceHomePage() {
   const mounted = useClientMounted();
   const { userToken, ready: authReady } = useAuth();
   const isLoggedIn = authReady && !!userToken;
-  const pageRef = useRef(1);
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
-  const [hasMore, setHasMore] = useState(true);
+
+  const { data: meData, loading: meLoading } = useQuery(VIEW_ME, {
+    skip: !authReady || !userToken,
+  });
+  const meUsername =
+    meData?.viewMe?.username?.trim().toLowerCase() ?? "";
+  /** Only after profile loads — avoids treating everyone as non-test during fetch. */
+  const isDefinitelyTestUser =
+    !!userToken &&
+    !meLoading &&
+    MARKETPLACE_TEST_USERNAMES.includes(meUsername);
   const [category, setCategory] =
     useState<(typeof CATEGORY_CHIPS)[number]["value"]>("All");
-  const [sort, setSort] = useState<"NEWEST" | "PRICE_ASC" | "PRICE_DESC">("NEWEST");
   const [draftSearch, setDraftSearch] = useState("");
   const [appliedSearch, setAppliedSearch] = useState<string | null>(null);
+  const [listingShuffleSeed, setListingShuffleSeed] = useState(() =>
+    Math.floor(Math.random() * 0x7fffffff),
+  );
   const filters = useMemo(() => parentCategoryFilter(category), [category]);
   const search = appliedSearch?.trim() ? appliedSearch.trim() : null;
 
@@ -95,13 +109,13 @@ export default function MarketplaceHomePage() {
 
   const feedVars = useMemo(
     () => ({
-      pageCount: isLoggedIn ? HOME_PAGE_SIZE : GUEST_HOME_CAP,
+      pageCount: isLoggedIn ? HOME_SHOP_ALL_CAP : GUEST_HOME_CAP,
       pageNumber: 1,
       filters,
       search,
-      sort,
+      sort: HOME_FEED_SORT,
     }),
-    [filters, search, sort, isLoggedIn],
+    [filters, search, isLoggedIn],
   );
 
   const { data: latestData, error: latestError } = useQuery(MARKETPLACE_FEED, {
@@ -109,17 +123,12 @@ export default function MarketplaceHomePage() {
     variables: latestVars,
   });
 
-  const { data, error, fetchMore, networkStatus } = useQuery(
-    MARKETPLACE_FEED,
-    {
-      skip: !mounted,
-      variables: feedVars,
-      notifyOnNetworkStatusChange: true,
-    },
-  );
+  const { data, error, networkStatus } = useQuery(MARKETPLACE_FEED, {
+    skip: !mounted,
+    variables: feedVars,
+  });
 
   const loadingInitial = networkStatus === NetworkStatus.loading;
-  const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
   const mergedMain = useMemo(() => {
     const raw = (data?.allProducts ?? []) as MarketplaceProductRow[];
@@ -139,103 +148,34 @@ export default function MarketplaceHomePage() {
   );
 
   /**
-   * Signed-in + NEWEST: hide rail IDs from the grid so the top 30 only appear in “Latest arrivals”.
+   * Signed-in: hide rail IDs from the grid so the top 30 only appear in “Latest arrivals”.
    * Guest: one capped fetch — strip is first N rows, grid is the remainder (no duplicate cards).
-   * Other sorts (signed-in): no dedupe vs rail.
    */
   const gridRows = useMemo(() => {
     if (!isLoggedIn) {
       return mergedMain.slice(latestRows.length);
     }
-    if (sort !== "NEWEST") return mergedMain;
     const deduped = mergedMain.filter((p) => !latestIds.has(p.id));
     if (deduped.length > 0) return deduped;
     return mergedMain;
-  }, [isLoggedIn, mergedMain, latestRows.length, latestIds, sort]);
+  }, [isLoggedIn, mergedMain, latestRows.length, latestIds]);
+
+  const displayGridRows = useMemo(() => {
+    if (isDefinitelyTestUser) return gridRows;
+    return sortListingRowsStableRandom(gridRows, listingShuffleSeed);
+  }, [gridRows, isDefinitelyTestUser, listingShuffleSeed]);
+
+  const gridCap = Math.max(0, HOME_SHOP_ALL_CAP - latestRows.length);
+  const homeGridRows = useMemo(
+    () => displayGridRows.slice(0, gridCap),
+    [displayGridRows, gridCap],
+  );
+  const productsShownCount = latestRows.length + homeGridRows.length;
+  const showShopAll = productsShownCount >= HOME_SHOP_ALL_CAP;
 
   useEffect(() => {
-    pageRef.current = 1;
-    setHasMore(true);
-  }, [filters, search, sort, isLoggedIn]);
-
-  useEffect(() => {
-    if (!mounted || loadingInitial) return;
-    const batch = (data?.allProducts ?? []) as MarketplaceProductRow[];
-    if (pageRef.current === 1) {
-      if (!isLoggedIn) setHasMore(false);
-      else setHasMore(batch.length >= HOME_PAGE_SIZE);
-    }
-  }, [mounted, loadingInitial, data?.allProducts, isLoggedIn]);
-
-  const loadMore = useCallback(() => {
-    if (!isLoggedIn || !hasMore || loadingMore) return;
-    const nextPage = pageRef.current + 1;
-    fetchMore({
-      variables: {
-        ...feedVars,
-        pageNumber: nextPage,
-      },
-      updateQuery: (prev, { fetchMoreResult }) => {
-        if (!fetchMoreResult?.allProducts?.length) return prev;
-        const prevList = (prev.allProducts ?? []) as MarketplaceProductRow[];
-        const more = fetchMoreResult.allProducts as MarketplaceProductRow[];
-        const seen = new Set(prevList.map((p) => p.id));
-        const merged = [...prevList];
-        for (const p of more) {
-          if (!seen.has(p.id)) {
-            seen.add(p.id);
-            merged.push(p);
-          }
-        }
-        return { ...prev, allProducts: merged };
-      },
-    })
-      .then((res) => {
-        const more = (res.data?.allProducts ?? []) as MarketplaceProductRow[];
-        /**
-         * Apollo `fetchMore` returns only this page's `allProducts`, not the merged cache.
-         * `hasMore` must mirror Swift: `products.count >= pageSize` for the page just fetched.
-         */
-        setHasMore(more.length >= HOME_PAGE_SIZE);
-        pageRef.current = nextPage;
-      })
-      .catch(() => {
-        /* keep hasMore true so intersection observer / user can retry */
-      });
-  }, [fetchMore, feedVars, hasMore, loadingMore, isLoggedIn]);
-
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el || !mounted) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        const hit = entries.some((e) => e.isIntersecting);
-        if (hit) loadMore();
-      },
-      { root: null, rootMargin: "240px 0px", threshold: 0 },
-    );
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, [loadMore, mounted]);
-
-  /** When sort is NEWEST and page 1 is still all inside “latest 30”, fetch more until the grid gains rows. */
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    if (sort !== "NEWEST") return;
-    if (!mounted || loadingInitial || loadingMore || !hasMore) return;
-    const deduped = mergedMain.filter((p) => !latestIds.has(p.id));
-    if (mergedMain.length > 0 && deduped.length === 0) loadMore();
-  }, [
-    sort,
-    mounted,
-    loadingInitial,
-    loadingMore,
-    hasMore,
-    mergedMain,
-    latestIds,
-    loadMore,
-    isLoggedIn,
-  ]);
+    setListingShuffleSeed(Math.floor(Math.random() * 0x7fffffff));
+  }, [category, appliedSearch, isLoggedIn]);
 
   const onSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -278,7 +218,7 @@ export default function MarketplaceHomePage() {
         <div className="flex shrink-0 gap-2">
           <button
             type="submit"
-            className="h-12 rounded-full bg-black px-6 text-[14px] font-bold text-white transition hover:bg-neutral-800"
+            className="h-12 rounded-full bg-[var(--prel-primary)] px-6 text-[14px] font-medium text-white shadow-sm transition hover:brightness-110"
           >
             Apply
           </button>
@@ -286,7 +226,7 @@ export default function MarketplaceHomePage() {
             <button
               type="button"
               onClick={clearSearch}
-              className="h-12 rounded-full border border-neutral-200 bg-white px-4 text-[14px] font-bold text-neutral-800"
+              className="h-12 rounded-full border border-neutral-200 bg-white px-4 text-[14px] font-medium text-neutral-800"
             >
               Clear
             </button>
@@ -294,47 +234,25 @@ export default function MarketplaceHomePage() {
         </div>
       </form>
 
-      <section className="space-y-3">
-        <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-neutral-500">
-          Filter feed by category
-        </h3>
-        <div className="-mx-1 flex flex-wrap gap-2">
-          {CATEGORY_CHIPS.map(({ label, value }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setCategory(value)}
-              className={`rounded-full px-4 py-2.5 text-[14px] font-bold transition ring-1 ${
-                category === value
-                  ? "bg-black text-white ring-black"
-                  : "bg-white text-neutral-800 ring-black/[0.08] hover:bg-neutral-50"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </section>
-
-      <section className="space-y-3">
-        <h3 className="text-[13px] font-bold uppercase tracking-[0.12em] text-neutral-500">
-          Sort
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {SORT_OPTIONS.map(({ label, value }) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => setSort(value)}
-              className={`rounded-full px-4 py-2 text-[13px] font-bold ring-1 transition ${
-                sort === value
-                  ? "bg-black text-white ring-black"
-                  : "bg-white text-neutral-800 ring-black/[0.08] hover:bg-neutral-50"
-              }`}
-            >
-              {label}
-            </button>
-          ))}
+      {/* Swift `HomeView.categoryFiltersSection` — horizontal pills only; no home-level Sort sheet */}
+      <section className="-mx-3 sm:-mx-5 md:-mx-6" aria-label="Category">
+        <div className="overflow-x-auto py-3 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex w-max items-stretch gap-2 px-3 sm:px-5 md:px-6">
+            {CATEGORY_CHIPS.map(({ label, value }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setCategory(value)}
+                className={`flex min-h-[44px] shrink-0 items-center rounded-full border px-4 text-[14px] font-medium leading-none transition [-webkit-tap-highlight-color:transparent] ${
+                  category === value
+                    ? "border-[var(--prel-primary)] bg-[var(--prel-primary)] text-white"
+                    : "border-neutral-200 bg-white text-neutral-800 hover:bg-neutral-50"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -384,111 +302,112 @@ export default function MarketplaceHomePage() {
         )}
       </section>
 
-      <section className="space-y-5">
-        <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
-          <h2 className="text-[1.5rem] font-black tracking-tight text-neutral-900 sm:text-[1.65rem]">
-            All listings
-          </h2>
-          <p className="text-[13px] font-medium text-neutral-500">
-            {isLoggedIn ? (
-              <>Scroll down to load more.</>
-            ) : (
-              <>
-                Showing up to {GUEST_HOME_CAP} listings.{" "}
-                <Link
-                  href="/login"
-                  className="font-bold text-[var(--prel-primary)] underline-offset-2 hover:underline"
-                >
-                  Sign in
-                </Link>{" "}
-                for the full feed.
-              </>
-            )}
-          </p>
+      {showShopAll && gridCap === 0 ? (
+        <div className="flex justify-center pt-2">
+          <Link
+            href="/shop"
+            className="inline-flex min-h-[52px] w-full max-w-md items-center justify-center rounded-full bg-[var(--prel-primary)] px-8 text-[16px] font-semibold text-white shadow-ios transition hover:brightness-110 sm:w-auto"
+          >
+            Shop all
+          </Link>
         </div>
+      ) : null}
 
-        {showInitialSkeleton ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border"
-              >
-                <div className="aspect-[3/4] animate-pulse bg-prel-bg-grouped" />
-                <div className="space-y-2 p-3">
-                  <div className="h-4 animate-pulse rounded bg-prel-bg-grouped" />
-                  <div className="h-4 w-1/2 animate-pulse rounded bg-prel-bg-grouped" />
-                </div>
-              </div>
-            ))}
+      {gridCap > 0 ? (
+        <section className="space-y-5">
+          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="text-[1.5rem] font-black tracking-tight text-neutral-900 sm:text-[1.65rem]">
+              All listings
+            </h2>
+            <p className="text-[13px] font-medium text-neutral-500">
+              {isLoggedIn ? (
+                <>
+                  Showing up to {HOME_SHOP_ALL_CAP} on the home feed. Use{" "}
+                  <span className="text-neutral-700">Shop all</span> below for the
+                  full catalogue.
+                </>
+              ) : (
+                <>
+                  Showing up to {GUEST_HOME_CAP} listings.{" "}
+                  <Link
+                    href="/login"
+                    className="font-medium text-[var(--prel-primary)] underline-offset-2 hover:underline"
+                  >
+                    Sign in
+                  </Link>{" "}
+                  for the full feed.
+                </>
+              )}
+            </p>
           </div>
-        ) : null}
 
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
-          {gridRows.map((p) => (
-            <MarketplaceProductCard key={p.id} p={p} />
-          ))}
-        </div>
+          {showInitialSkeleton ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div
+                  key={i}
+                  className="overflow-hidden rounded-2xl bg-white shadow-ios ring-1 ring-prel-glass-border"
+                >
+                  <div className="aspect-[3/4] animate-pulse bg-prel-bg-grouped" />
+                  <div className="space-y-2 p-3">
+                    <div className="h-4 animate-pulse rounded bg-prel-bg-grouped" />
+                    <div className="h-4 w-1/2 animate-pulse rounded bg-prel-bg-grouped" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:gap-5 lg:grid-cols-4 xl:grid-cols-5">
+              {homeGridRows.map((p) => (
+                <MarketplaceProductCard key={p.id} p={p} />
+              ))}
+            </div>
+          )}
 
-        <div ref={sentinelRef} className="h-4 w-full" aria-hidden />
-
-        {loadingMore ? (
-          <p className="text-center text-[13px] text-prel-secondary-label">
-            Loading more listings…
-          </p>
-        ) : null}
-
-        {!isLoggedIn && mergedMain.length >= GUEST_HOME_CAP ? (
-          <div className="rounded-2xl border border-prel-separator bg-prel-bg-grouped/80 p-5 text-center shadow-ios ring-1 ring-prel-glass-border">
-            <p className="text-[15px] font-semibold text-prel-label">
-              Want the full marketplace?
-            </p>
-            <p className="mt-1 text-[14px] text-prel-secondary-label">
-              You&apos;ve reached the guest preview limit ({GUEST_HOME_CAP} listings).
-              Sign in to keep scrolling the full catalogue.
-            </p>
-            <div className="mt-4 flex flex-wrap justify-center gap-3">
+          {showShopAll ? (
+            <div className="flex justify-center pt-2">
               <Link
-                href="/login"
-                className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-6 text-[15px] font-semibold text-white shadow-ios"
+                href="/shop"
+                className="inline-flex min-h-[52px] w-full max-w-md items-center justify-center rounded-full bg-[var(--prel-primary)] px-8 text-[16px] font-semibold text-white shadow-ios transition hover:brightness-110 sm:w-auto"
               >
-                Log in
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-prel-separator bg-white px-6 text-[15px] font-semibold text-prel-label shadow-ios"
-              >
-                Create account
+                Shop all
               </Link>
             </div>
-          </div>
-        ) : null}
+          ) : null}
+        </section>
+      ) : null}
 
-        {isLoggedIn && !hasMore && gridRows.length > 0 ? (
-          <p className="text-center text-[13px] text-prel-tertiary-label">
-            You&apos;re up to date — no more listings to load for this filter.
+      {!isLoggedIn && mergedMain.length >= GUEST_HOME_CAP ? (
+        <div className="rounded-2xl border border-prel-separator bg-prel-bg-grouped/80 p-5 text-center shadow-ios ring-1 ring-prel-glass-border">
+          <p className="text-[15px] font-semibold text-prel-label">
+            Want the full marketplace?
           </p>
-        ) : null}
-
-        {!loadingInitial && data && gridRows.length === 0 && latestRows.length === 0 ? (
-          <p className="text-center text-[15px] text-prel-secondary-label">
-            Nothing to show. Try another category or clear search.
+          <p className="mt-1 text-[14px] text-prel-secondary-label">
+            You&apos;ve reached the guest preview limit ({GUEST_HOME_CAP} listings).
+            Sign in to keep scrolling the full catalogue.
           </p>
-        ) : null}
-
-        {isLoggedIn && hasMore && gridRows.length > 0 ? (
-          <div className="flex justify-center pt-2">
-            <button
-              type="button"
-              onClick={() => loadMore()}
-              disabled={loadingMore}
-              className="min-h-[48px] rounded-full bg-white px-6 text-[15px] font-semibold text-prel-label shadow-ios ring-1 ring-prel-glass-border disabled:opacity-50"
+          <div className="mt-4 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/login"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-[var(--prel-primary)] px-6 text-[15px] font-semibold text-white shadow-ios"
             >
-              {loadingMore ? "Loading…" : "Load more"}
-            </button>
+              Log in
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-prel-separator bg-white px-6 text-[15px] font-semibold text-prel-label shadow-ios"
+            >
+              Create account
+            </Link>
           </div>
-        ) : null}
-      </section>
+        </div>
+      ) : null}
+
+      {!loadingInitial && data && gridRows.length === 0 && latestRows.length === 0 ? (
+        <p className="text-center text-[15px] text-prel-secondary-label">
+          Nothing to show. Try another category or clear search.
+        </p>
+      ) : null}
       </div>
     </div>
   );

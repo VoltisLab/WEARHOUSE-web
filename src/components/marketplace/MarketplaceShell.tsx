@@ -97,7 +97,8 @@ function MarketplaceBottomNav() {
 
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden"
+      className="fixed left-0 right-0 z-50 border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden"
+      style={{ bottom: "var(--prel-vv-bottom-inset, 0px)" }}
       aria-label="Primary"
     >
       <div className="mx-auto grid max-w-lg grid-cols-5 items-stretch px-0.5 py-1">
@@ -160,7 +161,8 @@ function MarketplaceHeaderAuth() {
 function MarketplaceBottomNavFallback() {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 h-[56px] border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed left-0 right-0 z-50 h-[56px] border-t border-neutral-200 bg-white pb-[env(safe-area-inset-bottom)] lg:hidden"
+      style={{ bottom: "var(--prel-vv-bottom-inset, 0px)" }}
       aria-label="Primary"
     />
   );
@@ -213,7 +215,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
   const isMarketplaceHome = pathname === "/" || pathname === "";
 
   return (
-    <div className="flex min-h-dvh flex-col overflow-x-hidden bg-[#fafafa] text-neutral-900">
+    <div className="flex min-h-dvh flex-col overflow-x-clip bg-[#fafafa] text-neutral-900">
       {isMarketplaceHome ? (
         <div className="sticky top-0 z-[100]">
           <MarketplaceHomeDepopHeader />
@@ -223,7 +225,7 @@ export function MarketplaceShell({ children }: { children: React.ReactNode }) {
       )}
 
       <main
-        className={`mx-auto w-full flex-1 pb-24 lg:pb-8 ${
+        className={`mx-auto w-full flex-1 max-lg:pb-[calc(6rem+var(--prel-vv-bottom-inset,0px))] lg:pb-8 ${
           isMarketplaceHome
             ? "relative z-0 max-w-none px-0 pt-0"
             : "max-w-lg px-3 pt-4 sm:max-w-2xl sm:px-5 sm:pt-5 md:max-w-7xl md:px-6 md:pt-6 lg:px-8"

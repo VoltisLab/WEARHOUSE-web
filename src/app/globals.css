@@ -21,6 +21,9 @@
   --prel-glass-bg: rgba(0, 0, 0, 0.06);
   --prel-glass-border: rgba(0, 0, 0, 0.12);
   --prel-error: #ff3b30;
+
+  /* Mobile: updated by `VisualViewportBottomInset` when browser UI shows/hides */
+  --prel-vv-bottom-inset: 0px;
 }
 
 .dark {
@@ -111,7 +114,6 @@ body {
 
 /**
  * Marketplace home hero — layered sheen (radial blooms + lilac-pearl base).
- * Reads softer than a single diagonal grey↔primary mix.
  */
 .home-depop-hero-bg {
   background:

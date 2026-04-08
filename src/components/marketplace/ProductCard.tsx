@@ -20,6 +20,7 @@ export type MarketplaceProductRow = {
   discountPrice?: number | string | null;
   imagesUrl?: unknown;
   seller?: {
+    id?: number | null;
     username?: string | null;
     displayName?: string | null;
     thumbnailUrl?: string | null;
@@ -31,7 +32,19 @@ export type MarketplaceProductRow = {
   isFeatured?: boolean | null;
 };
 
-export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
+export type MarketplaceProductCardTryCartProps = {
+  enabled: boolean;
+  inBag: boolean;
+  onToggle: () => void;
+};
+
+export function MarketplaceProductCard({
+  p,
+  tryCart,
+}: {
+  p: MarketplaceProductRow;
+  tryCart?: MarketplaceProductCardTryCartProps;
+}) {
   const href = `/product/${p.id}`;
   const img = firstProductImageUrl(p.imagesUrl);
   const conditionLabel = formatProductCondition(p.condition);
@@ -75,10 +88,27 @@ export function MarketplaceProductCard({ p }: { p: MarketplaceProductRow }) {
           compact
           className="absolute bottom-2 right-2 z-[6] px-2.5 py-1.5"
         />
+        {tryCart?.enabled && p.status !== "SOLD" ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              tryCart.onToggle();
+            }}
+            className={`absolute left-2 top-2 z-[7] min-h-[36px] rounded-full px-3.5 text-[12px] font-medium shadow-md ring-1 transition [-webkit-tap-highlight-color:transparent] ${
+              tryCart.inBag
+                ? "bg-[var(--prel-primary)] text-white ring-[var(--prel-primary)]"
+                : "bg-white/95 text-neutral-900 ring-black/10 hover:bg-white"
+            }`}
+          >
+            {tryCart.inBag ? "In bag" : "Add to bag"}
+          </button>
+        ) : null}
       </div>
       <Link href={href} className="block space-y-1 p-3">
         {p.brand?.name?.trim() ? (
-          <p className="line-clamp-1 text-[11px] font-semibold uppercase tracking-wide text-prel-tertiary-label">
+          <p className="line-clamp-1 text-[11px] font-semibold uppercase tracking-wide text-[var(--prel-primary)]">
             {p.brand.name.trim()}
           </p>
         ) : null}

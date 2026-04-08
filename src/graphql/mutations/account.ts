@@ -35,6 +35,19 @@ export const UPDATE_PROFILE = gql`
   }
 `;
 
+/** Saves UK shipping address to profile (required by `createOrder` server validation). */
+export const UPDATE_PROFILE_SHIPPING = gql`
+  mutation UpdateProfileShipping($shippingAddress: ShippingAddressInputType!) {
+    updateProfile(shippingAddress: $shippingAddress) {
+      message
+      user {
+        id
+        shippingAddress
+      }
+    }
+  }
+`;
+
 export const CREATE_MULTIBUY_DISCOUNT = gql`
   mutation CreateMultibuyDiscount($inputs: [MultibuyInputType]!) {
     createMultibuyDiscount(inputs: $inputs) {
