@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Our Platform",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function OurPlatformPage() {
   return (
@@ -23,6 +24,7 @@ export default function OurPlatformPage() {
       subtitle="Rules, ranking, enforcement, and appeals - how decisions behind the feed are made."
       lead={`${BRAND_NAME} is a curated marketplace, not an unmoderated bulletin board. We write rules to protect buyers and sellers, build ranking systems to surface relevant trustworthy inventory, and enforce consistently enough that outcomes feel predictable - even when you disagree with a single decision.`}
       heroPosition="left"
+      heroImage={DOC_PAGE_HERO.ourPlatform}
       ctaRow={
         <>
           <Link href="/terms" className={btnPrimary}>

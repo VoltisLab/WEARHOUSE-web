@@ -5,12 +5,12 @@ export function MarketingDetails({
   title,
   children,
 }: {
-  title: string;
+  title: ReactNode;
   children: ReactNode;
 }) {
   return (
-    <details className="marketing-details group my-4 overflow-hidden rounded-2xl border border-prel-separator bg-prel-bg-grouped/50 shadow-sm open:bg-white open:shadow-ios">
-      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-[15px] font-semibold text-prel-label transition hover:bg-white/60">
+    <details className="marketing-details group my-4 overflow-hidden rounded-2xl bg-prel-bg-grouped/50 shadow-none">
+      <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 text-[15px] font-semibold text-prel-label transition hover:bg-prel-bg-grouped">
         <span>{title}</span>
         <span
           className="marketing-details-chevron text-prel-tertiary-label transition-transform duration-300 ease-out"
@@ -30,7 +30,7 @@ export function MarketingDetails({
           </svg>
         </span>
       </summary>
-      <div className="border-t border-prel-separator px-4 py-4 text-[14px] leading-relaxed text-prel-secondary-label">
+      <div className="px-4 py-4 text-[14px] leading-relaxed text-prel-secondary-label">
         {children}
       </div>
     </details>

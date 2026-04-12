@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Item verification",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function ItemVerificationPage() {
   return (
@@ -23,6 +24,7 @@ export default function ItemVerificationPage() {
       subtitle="How we think about fakes, high-value pieces, and expert review - without over-promising certainty."
       lead={`${BRAND_NAME} prohibits counterfeit goods. Sellers warrant they list genuine items. Where we operate optional authentication or verification programmes, eligibility, fees, SLAs, and liability caps are disclosed in-product - because authentication is probabilistic and context-dependent. This page sets expectations for everyone else trading without a formal programme.`}
       heroPosition="top"
+      heroImage={DOC_PAGE_HERO.itemVerification}
       ctaRow={
         <>
           <Link href="/safety" className={btnPrimary}>

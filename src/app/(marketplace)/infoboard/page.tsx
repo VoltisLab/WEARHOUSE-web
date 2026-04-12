@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Infoboard",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function InfoboardPage() {
   return (
@@ -24,6 +25,7 @@ export default function InfoboardPage() {
       updated="April 2026"
       lead={`The Infoboard is where ${BRAND_NAME} posts meaningful changes that affect trading: new web capabilities, policy clarifications, known outages, and seasonal reminders. It is not a substitute for legal terms or personalised account notices, but it is the best place to scan what changed recently.`}
       heroPosition="right"
+      heroImage={DOC_PAGE_HERO.infoboard}
       ctaRow={
         <>
           <Link href="/help" className={btnPrimary}>

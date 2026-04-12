@@ -5,6 +5,7 @@ import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { AppStoreBadges } from "@/components/marketplace/AppStoreBadges";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Mobile apps",
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function MobileAppsPage() {
   return (
@@ -22,6 +23,7 @@ export default function MobileAppsPage() {
       subtitle="List faster, chat instantly, and get the checkout experience we ship updates to first."
       lead={`The native ${BRAND_NAME} apps for iOS and Android are where camera capture, push notifications, and full transactional flows are most polished. The website complements them for discovery and reading help - and we are steadily narrowing the gap.`}
       heroPosition="center"
+      heroImage={DOC_PAGE_HERO.app}
       ctaRow={
         <>
           <div className="flex flex-wrap gap-3">

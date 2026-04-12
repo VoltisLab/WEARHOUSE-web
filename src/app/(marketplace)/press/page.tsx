@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Press",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function PressPage() {
   return (
@@ -24,6 +25,7 @@ export default function PressPage() {
       updated="April 2026"
       lead={`${BRAND_NAME} welcomes coverage that helps audiences understand resale: how marketplaces work, what buyers should expect, and how sellers build livelihoods. This page centralises how to reach us, what you can use without permission, and what requires a sign-off.`}
       heroPosition="right"
+      heroImage={DOC_PAGE_HERO.press}
       ctaRow={
         <>
           <a href="mailto:press@wearhouse.example" className={btnPrimary}>

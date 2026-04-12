@@ -8,6 +8,7 @@ export function MarketingHubShell({
   subtitle,
   updated,
   heroPosition = "center",
+  heroImage,
   children,
 }: {
   title: string;
@@ -15,20 +16,22 @@ export function MarketingHubShell({
   subtitle?: string;
   updated?: string;
   heroPosition?: "center" | "top" | "right" | "left" | "bottom";
+  heroImage?: string;
   children: ReactNode;
 }) {
   return (
-    <div className="pb-8">
+    <div className="pb-0">
       <MarketingPageHero
         title={title}
         eyebrow={eyebrow}
         subtitle={subtitle}
         updated={updated}
+        imageSrc={heroImage}
         imagePosition={heroPosition}
       />
-      <div className="relative z-[2] mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
-        {children}
-      </div>
+      <section className="relative bg-prel-bg-grouped px-4 pt-10 pb-10 md:px-8 lg:px-10">
+        <div className="mx-auto max-w-7xl">{children}</div>
+      </section>
       <MarketingRelatedStrip />
     </div>
   );

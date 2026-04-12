@@ -521,7 +521,7 @@ export function MarketplaceShopBrowse() {
                       inBag: has(p.id),
                       onToggle: () => {
                         if (has(p.id)) remove(p.id);
-                        else add(p.id);
+                        else add(p);
                       },
                     }
                   : undefined

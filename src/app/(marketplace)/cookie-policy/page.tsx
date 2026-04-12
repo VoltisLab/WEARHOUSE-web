@@ -5,6 +5,7 @@ import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { CookiePolicyPreferencesBlock } from "@/components/marketplace/CookiePolicyPreferencesBlock";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 import {
   COOKIE_CONSENT_POLICY_VERSION,
   COOKIE_CONSENT_STORAGE_KEY,
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function CookiePolicyPage() {
   return (
@@ -27,6 +28,7 @@ export default function CookiePolicyPage() {
       updated="April 2026"
       lead={`${BRAND_NAME} uses cookies, local storage, session tokens, and similar technologies to keep you signed in, protect against abuse, remember preferences, and - where you agree - measure campaigns. You can accept all cookies, decline non-essential categories, or customise choices below.`}
       heroPosition="bottom"
+      heroImage={DOC_PAGE_HERO.cookiePolicy}
       ctaRow={
         <>
           <Link href="/privacy" className={btnSecondary}>

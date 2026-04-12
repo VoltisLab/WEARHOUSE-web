@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Accessibility",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function AccessibilityPage() {
   return (
@@ -24,6 +25,7 @@ export default function AccessibilityPage() {
       updated="April 2026"
       lead={`${BRAND_NAME} is committed to WCAG-inspired practices on the web: perceivable content, operable UI, understandable copy, and robust implementation. We will not always be perfect on day one of a feature, but we treat regressions as bugs and prioritise fixes that unblock core commerce flows.`}
       heroPosition="bottom"
+      heroImage={DOC_PAGE_HERO.accessibility}
       ctaRow={
         <>
           <Link href="/help" className={btnPrimary}>

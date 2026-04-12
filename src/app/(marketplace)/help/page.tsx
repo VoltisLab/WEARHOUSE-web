@@ -4,8 +4,9 @@ import Link from "next/link";
 import { MarketingHubShell } from "@/components/marketing/MarketingHubShell";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
-import { MARKETING_HERO_IMAGE } from "@/lib/marketing-constants";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 import { HelpCircle, Package, ShoppingBag, Shield } from "lucide-react";
+import { HELP_HOME_TOPIC_SECTIONS } from "@/lib/help-centre-nav";
 
 export const metadata: Metadata = {
   title: "Help Centre",
@@ -20,6 +21,7 @@ const CARDS = [
     desc: "Listings, pricing, shipping, payouts, and growing a trusted shop.",
     Icon: Package,
     imageClass: "object-[center_35%]",
+    imageSrc: DOC_PAGE_HERO.helpSelling,
   },
   {
     href: "/help/buying",
@@ -27,6 +29,7 @@ const CARDS = [
     desc: "Discovery, checkout, delivery, claims, and leaving useful reviews.",
     Icon: ShoppingBag,
     imageClass: "object-[center_20%]",
+    imageSrc: DOC_PAGE_HERO.helpBuying,
   },
   {
     href: "/safety",
@@ -34,6 +37,7 @@ const CARDS = [
     desc: "Scams, reporting, counterfeits, and how we enforce community rules.",
     Icon: Shield,
     imageClass: "object-left",
+    imageSrc: DOC_PAGE_HERO.safety,
   },
   {
     href: "/how-it-works",
@@ -41,6 +45,7 @@ const CARDS = [
     desc: "End-to-end journeys for sellers and buyers on web and app.",
     Icon: HelpCircle,
     imageClass: "object-right",
+    imageSrc: DOC_PAGE_HERO.howItWorks,
   },
 ] as const;
 
@@ -52,25 +57,48 @@ export default function HelpCentrePage() {
       subtitle="Deep guides for the moments that matter - before you list, when you pay, and after the parcel lands."
       updated="April 2026"
       heroPosition="center"
+      heroImage={DOC_PAGE_HERO.helpHome}
     >
-      <div className="-mt-10 space-y-12 pb-8">
+      <div className="space-y-12">
         <p className="max-w-3xl text-[17px] leading-relaxed text-prel-secondary-label md:text-[18px]">
-          These articles mirror how members actually use {BRAND_NAME}: fast
-          answers up front, scenarios below, and links into policy pages when
-          the law or platform rules matter. For account-specific issues, route
-          through in-app support so agents can see orders and messages.
+          These articles are written to match the <strong>iPhone app</strong>{" "}
+          (tabs, Profile → Menu, Sell form, Orders, Help Centre). The web
+          marketplace may differ in places — when a step says “tap”, it means
+          the app. For account-specific issues, use{" "}
+          <strong>Help Centre → Start a conversation</strong> in the app so
+          agents can see orders and messages.
         </p>
 
+        <Link
+          href="/help/guide"
+          className="block rounded-2xl bg-[var(--prel-primary)] px-6 py-5 text-white transition hover:brightness-110 md:px-8 md:py-6"
+        >
+          <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-white/80">
+            Master reference
+          </p>
+          <p className="mt-2 text-[20px] font-bold leading-snug md:text-[22px]">
+            Complete app guide
+          </p>
+          <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-white/90">
+            Every topic from the product team&apos;s{" "}
+            <strong>HELP_CENTRE_FEATURE_INVENTORY</strong> — 66 features with why /
+            steps / tips, plus in-app help URLs and device QA checklists.
+          </p>
+          <span className="mt-4 inline-block text-[14px] font-semibold underline underline-offset-2">
+            Open the full guide →
+          </span>
+        </Link>
+
         <ul className="marketing-stagger-children grid gap-5 sm:grid-cols-2">
-          {CARDS.map(({ href, title, desc, Icon, imageClass }) => (
+          {CARDS.map(({ href, title, desc, Icon, imageClass, imageSrc }) => (
             <li key={href}>
               <Link
                 href={href}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_25px_50px_-12px_rgba(0,0,0,0.12)] ring-1 ring-prel-glass-border transition duration-300 hover:-translate-y-1 hover:shadow-[0_28px_55px_-12px_rgba(0,0,0,0.18)] hover:ring-[var(--prel-primary)]/25"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl bg-white transition duration-300 hover:-translate-y-0.5 hover:bg-prel-bg-grouped"
               >
                 <div className="relative h-36 w-full overflow-hidden">
                   <Image
-                    src={MARKETING_HERO_IMAGE}
+                    src={imageSrc}
                     alt=""
                     fill
                     className={`object-cover transition duration-700 ease-out group-hover:scale-105 ${imageClass}`}
@@ -80,7 +108,7 @@ export default function HelpCentrePage() {
                     className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/15 to-transparent"
                     aria-hidden
                   />
-                  <span className="absolute bottom-3 left-4 flex h-11 w-11 items-center justify-center rounded-xl bg-white/95 text-[var(--prel-primary)] shadow-ios backdrop-blur-sm">
+                  <span className="absolute bottom-3 left-4 flex h-11 w-11 items-center justify-center rounded-xl bg-white/95 text-[var(--prel-primary)] backdrop-blur-sm">
                     <Icon className="h-5 w-5" strokeWidth={1.75} />
                   </span>
                 </div>
@@ -100,7 +128,59 @@ export default function HelpCentrePage() {
           ))}
         </ul>
 
-        <div className="rounded-2xl bg-white p-6 shadow-ios ring-1 ring-prel-glass-border md:p-10">
+        <div className="space-y-10">
+          <div
+            id="browse-topics"
+            className="scroll-mt-28 pt-10"
+          >
+            <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-prel-tertiary-label">
+              Browse by topic
+            </h2>
+            <p className="mt-2 max-w-3xl text-[17px] leading-relaxed text-prel-secondary-label md:text-[18px]">
+              Step-by-step help aligned with the in-app experience (tabs, Menu
+              rows, and Settings). Open a hub or jump straight to an article —
+              URLs match the mobile Help Centre where noted in our inventory.
+            </p>
+          </div>
+
+          {HELP_HOME_TOPIC_SECTIONS.map((section) => (
+            <div
+              key={section.title}
+              className="rounded-2xl bg-white p-6 md:p-8"
+            >
+              <h3 className="text-[20px] font-bold text-prel-label">
+                {section.title}
+              </h3>
+              {section.description ? (
+                <p className="mt-2 text-[15px] leading-relaxed text-prel-secondary-label">
+                  {section.description}
+                </p>
+              ) : null}
+              <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {section.links.map((link) => (
+                  <li key={link.href}>
+                    <Link
+                      href={link.href}
+                      className="flex h-full flex-col rounded-xl bg-prel-bg-grouped/60 p-4 transition hover:bg-prel-bg-grouped"
+                    >
+                      <span className="text-[15px] font-bold text-prel-label">
+                        {link.label}
+                      </span>
+                      <span className="mt-1 flex-1 text-[13px] leading-relaxed text-prel-secondary-label">
+                        {link.desc}
+                      </span>
+                      <span className="mt-3 text-[12px] font-semibold text-[var(--prel-primary)]">
+                        Open →
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        <div className="rounded-2xl bg-white p-6 md:p-10">
           <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-prel-tertiary-label">
             Quick answers
           </h2>
@@ -147,10 +227,10 @@ export default function HelpCentrePage() {
           </div>
         </div>
 
-        <div className="relative overflow-hidden rounded-2xl ring-1 ring-prel-glass-border">
+        <div className="relative overflow-hidden rounded-2xl">
           <div className="relative aspect-[21/8] min-h-[120px] w-full sm:aspect-[21/6]">
             <Image
-              src={MARKETING_HERO_IMAGE}
+              src={DOC_PAGE_HERO.helpBottomStrip}
               alt=""
               fill
               className="object-cover object-[center_40%]"

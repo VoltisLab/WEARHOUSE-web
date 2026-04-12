@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function TermsPage() {
   return (
@@ -22,6 +23,7 @@ export default function TermsPage() {
       updated="April 2026"
       lead={`These terms govern access to ${BRAND_NAME} websites, apps, and related services. They are a working draft for product and engineering teams - replace with counsel-approved language before production reliance. Structure below mirrors typical marketplace agreements so reviewers can navigate quickly.`}
       heroPosition="center"
+      heroImage={DOC_PAGE_HERO.terms}
       ctaRow={
         <>
           <Link href="/privacy" className={btnSecondary}>

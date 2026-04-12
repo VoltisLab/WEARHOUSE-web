@@ -6,15 +6,26 @@ import { usePathname } from "next/navigation";
 export function HelpNavLink({
   href,
   label,
+  matchExact,
+  activePrefixes,
 }: {
   href: string;
   label: string;
+  /** When true, only an exact `pathname === href` match is active. */
+  matchExact?: boolean;
+  /** Treat pathname as active if it equals or starts with any of these (e.g. article URLs under a hub). */
+  activePrefixes?: string[];
 }) {
   const pathname = usePathname();
-  const active =
-    href === "/help"
-      ? pathname === "/help"
-      : pathname === href || pathname.startsWith(`${href}/`);
+
+  const prefixHit =
+    activePrefixes?.some(
+      (p) => pathname === p || pathname.startsWith(`${p}/`),
+    ) ?? false;
+
+  const active = matchExact
+    ? pathname === href
+    : prefixHit || pathname === href || pathname.startsWith(`${href}/`);
 
   return (
     <Link

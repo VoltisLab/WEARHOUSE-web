@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Sustainability",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function SustainabilityPage() {
   return (
@@ -23,6 +24,7 @@ export default function SustainabilityPage() {
       subtitle="Keeping clothes in use is the most direct climate lever a wardrobe can pull."
       lead={`Every completed sale on ${BRAND_NAME} is a garment that continues its life with a new owner - displacing demand for virgin production, reducing pressure on water and chemistry-intensive manufacturing, and cutting the likelihood of incineration or landfill. We are a technology company; our environmental story is inseparable from what millions of small decisions on the platform add up to.`}
       heroPosition="top"
+      heroImage={DOC_PAGE_HERO.sustainability}
       ctaRow={
         <>
           <Link href="/how-it-works" className={btnPrimary}>

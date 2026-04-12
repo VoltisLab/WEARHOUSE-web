@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Buying",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:bg-prel-bg-grouped/90";
 
 export default function HelpBuyingPage() {
   return (
@@ -23,6 +24,7 @@ export default function HelpBuyingPage() {
       subtitle="From discovery to delivery - how to shop second-hand with confidence."
       lead={`Buying pre-loved fashion should feel exciting, not risky. This guide walks through evaluating listings, using chat wisely, paying only through ${BRAND_NAME}, and opening claims with the evidence moderators need. Pair it with Trust and safety for scam patterns.`}
       heroPosition="right"
+      heroImage={DOC_PAGE_HERO.helpBuying}
       ctaRow={
         <>
           <Link href="/help" className={btnPrimary}>
@@ -38,6 +40,16 @@ export default function HelpBuyingPage() {
         caption="Use every photo: zoom fabric, compare colour to daylight shots, read the full description before messaging."
         objectPosition="object-[center_30%]"
       />
+
+      <h2>Checkout on iPhone (how the app works)</h2>
+      <p>
+        Product pages use <strong>Buy now</strong> and <strong>Send an offer</strong>{" "}
+        (not “Make an offer”). After you buy, track the order under{" "}
+        <strong>Profile → Menu (three lines) → Orders</strong> and switch purchases
+        at the top. You can also shop multi-seller <strong>Try Cart / Shop All</strong>{" "}
+        from Discover when you see it — offers may be limited in some bag flows, so
+        read the on-screen actions.
+      </p>
 
       <h2>Before you buy</h2>
       <p>

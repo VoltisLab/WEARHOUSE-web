@@ -19,7 +19,7 @@ export function MarketingRelatedStrip({ excludeHref }: { excludeHref?: string })
   if (links.length === 0) return null;
 
   return (
-    <section className="border-t border-prel-separator bg-prel-bg-grouped/80 py-12">
+    <section className="bg-prel-bg-grouped/80 py-12">
       <div className="mx-auto max-w-7xl px-4 md:px-8 lg:px-10">
         <h2 className="text-[11px] font-bold uppercase tracking-[0.2em] text-prel-tertiary-label">
           Explore next
@@ -32,7 +32,7 @@ export function MarketingRelatedStrip({ excludeHref }: { excludeHref?: string })
             <li key={l.href}>
               <Link
                 href={l.href}
-                className="group flex items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3.5 text-[14px] font-semibold text-prel-label shadow-ios ring-1 ring-prel-glass-border transition duration-300 hover:-translate-y-0.5 hover:ring-[var(--prel-primary)]/30"
+                className="group flex items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:bg-prel-bg-grouped"
               >
                 <span>
                   <span className="block text-[11px] font-medium uppercase tracking-wide text-prel-tertiary-label">

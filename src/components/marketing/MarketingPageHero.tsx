@@ -56,7 +56,7 @@ export function MarketingPageHero({
             {eyebrow}
           </p>
         ) : null}
-        <h1 className="max-w-3xl text-[clamp(1.75rem,5vw,2.75rem)] font-bold leading-[1.08] tracking-tight text-white drop-shadow-sm">
+        <h1 className="max-w-3xl text-[clamp(1.75rem,5vw,2.75rem)] font-bold leading-[1.08] tracking-tight text-white">
           {title}
         </h1>
         {subtitle ? (

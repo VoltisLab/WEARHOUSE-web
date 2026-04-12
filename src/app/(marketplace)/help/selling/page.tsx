@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Selling",
@@ -11,9 +12,9 @@ export const metadata: Metadata = {
 };
 
 const btnPrimary =
-  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white shadow-ios transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
+  "inline-flex items-center justify-center rounded-xl bg-[var(--prel-primary)] px-5 py-2.5 text-[14px] font-semibold text-white transition duration-300 hover:-translate-y-0.5 hover:brightness-110";
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:bg-prel-bg-grouped/90";
 
 export default function HelpSellingPage() {
   return (
@@ -23,6 +24,7 @@ export default function HelpSellingPage() {
       subtitle="Listings that convert, shipping that protects, and payouts without surprises."
       lead={`Selling on ${BRAND_NAME} rewards clarity: buyers who trust your photos and descriptions check out faster, leave stronger reviews, and generate fewer claims. This guide covers listing creation, pricing discipline, fulfilment hygiene, and the rules that keep your shop in good standing.`}
       heroPosition="top"
+      heroImage={DOC_PAGE_HERO.helpSelling}
       ctaRow={
         <>
           <Link href="/help" className={btnPrimary}>
@@ -39,28 +41,75 @@ export default function HelpSellingPage() {
         objectPosition="object-[center_25%]"
       />
 
+      <h2>How to list an item in the app</h2>
+      <p>
+        On iPhone, tap the <strong>Sell</strong> tab. The form matches what you
+        see below: you must complete every required row before{" "}
+        <strong>Upload</strong> is enabled (you can also save a{" "}
+        <strong>draft</strong> and reopen it from{" "}
+        <strong>Upload from drafts</strong> when you return).
+      </p>
+      <ol>
+        <li>
+          <strong>Photos</strong> — Add up to <strong>20</strong> images from
+          your library. Order matters: the first photo is the cover. For tricky
+          condition, use many angles (front, back, label, size tag, flaws).
+        </li>
+        <li>
+          <strong>Item Details</strong> — <strong>Title</strong> and{" "}
+          <strong>Describe your item</strong> (free-text description). Put the
+          story here; category, brand, and condition are separate fields next.
+        </li>
+        <li>
+          <strong>Item Information</strong> — <strong>Category</strong> (picker),{" "}
+          <strong>Brand</strong>, <strong>Condition</strong> (fixed options
+          below), <strong>Colours</strong> (up to three), and{" "}
+          <strong>Size</strong> for the category.
+        </li>
+        <li>
+          <strong>Additional Details</strong> — Optional{" "}
+          <strong>Measurements</strong>, <strong>Material</strong>, and{" "}
+          <strong>Style</strong> (the app can send up to two style values with
+          the listing).
+        </li>
+        <li>
+          <strong>Pricing &amp; Shipping</strong> — <strong>Price</strong>{" "}
+          (required), optional <strong>Discount Price</strong>, and required{" "}
+          <strong>Parcel Size</strong> (small / medium / large). The form reminds
+          you that <strong>the buyer pays for postage</strong>.
+        </li>
+      </ol>
+
       <h2>Creating a standout listing</h2>
       <p>
-        Use six to ten images when condition is nuanced: front, back, brand
-        label, size tag, fabric macro, and any flaws with a coin or ruler for
-        scale. Write a title with brand + garment type + distinguishing detail.
-        Fill structured fields before stuffing keywords into the description -
-        search quality prefers honest metadata.
+        More photos help buyers trust nuance: front, back, brand label, size
+        tag, fabric close-ups, and any flaws (coin or ruler for scale). A clear
+        title (brand + garment + detail) and honest description still convert
+        best—keywords belong after you have filled the structured fields.
       </p>
 
-      <MarketingDetails title="Condition vocabulary that reduces disputes">
+      <MarketingDetails title="Condition options (same labels as the app)">
+        <p className="mb-3 text-[13px] text-prel-secondary-label">
+          When you tap <strong>Condition</strong> on the sell form, you pick
+          one of these—use the same ideas in your photos and description.
+        </p>
         <ul>
           <li>
-            <strong>New with tags</strong> - unworn, manufacturer tags attached.
+            <strong>Brand New With Tags</strong> — Never worn, with original
+            tags.
           </li>
           <li>
-            <strong>Excellent</strong> - minimal signs of wear, no stains.
+            <strong>Brand new Without Tags</strong> — Never worn, tags removed.
           </li>
           <li>
-            <strong>Good</strong> - visible but acceptable wear; disclose in text.
+            <strong>Excellent Condition</strong> — Like new, minimal wear.
           </li>
           <li>
-            <strong>Fair</strong> - obvious flaws; price accordingly and photograph each.
+            <strong>Good Condition</strong> — Light wear, fully functional.
+          </li>
+          <li>
+            <strong>Heavily Used</strong> — Visible wear, still usable (show
+            every flaw in photos).
           </li>
         </ul>
       </MarketingDetails>

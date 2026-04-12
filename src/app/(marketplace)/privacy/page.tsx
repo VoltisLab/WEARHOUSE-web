@@ -4,6 +4,7 @@ import { MarketingDocShell } from "@/components/marketing/MarketingDocShell";
 import { MarketingFigure } from "@/components/marketing/MarketingFigure";
 import { MarketingDetails } from "@/components/marketing/MarketingDetails";
 import { BRAND_NAME } from "@/lib/branding";
+import { DOC_PAGE_HERO } from "@/lib/marketing-hero-registry";
 
 export const metadata: Metadata = {
   title: "Privacy Centre",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 const btnSecondary =
-  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35 hover:shadow-ios";
+  "inline-flex items-center justify-center rounded-xl border border-prel-separator bg-prel-bg-grouped px-5 py-2.5 text-[14px] font-semibold text-prel-label transition duration-300 hover:-translate-y-0.5 hover:border-[var(--prel-primary)]/35";
 
 export default function PrivacyPage() {
   return (
@@ -22,6 +23,7 @@ export default function PrivacyPage() {
       updated="April 2026"
       lead={`This Privacy Centre summarises ${BRAND_NAME} data practices for buyers, sellers, and visitors. It supports transparency goals but is not a substitute for a jurisdiction-specific privacy notice reviewed by counsel. Cross-links to cookies and terms appear throughout; data subject request channels belong in your final legal pack.`}
       heroPosition="right"
+      heroImage={DOC_PAGE_HERO.privacy}
       ctaRow={
         <>
           <Link href="/cookie-policy" className={btnSecondary}>
